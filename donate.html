@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Donate to Dola Foundation and help transform lives through education, healthcare, and community development in Bangladesh." />
+  <meta name="keywords" content="donate Bangladesh NGO, Dola Foundation donate, bKash donation, charity Bangladesh" />
+  <meta property="og:title" content="Donate — Dola Foundation" />
+  <meta property="og:description" content="Your generosity changes lives. Donate to Dola Foundation via bKash, Nagad, or bank transfer." />
+  <title>Donate — Dola Foundation</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" aria-label="Main navigation">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
+          <img src="assets/logo-white.svg" alt="Dola Foundation" class="logo-white" />
+          <img src="assets/logo.svg" alt="Dola Foundation" class="logo-dark" />
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="programs.html">Programs</a>
+          <a href="volunteer.html">Volunteer</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="nav-cta">
+          <a href="donate.html" class="btn btn-primary active"><i class="fa-solid fa-heart"></i> Donate Now</a>
+        </div>
+        <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-nav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About Us</a>
+    <a href="programs.html">Our Programs</a>
+    <a href="volunteer.html">Volunteer</a>
+    <a href="contact.html">Contact</a>
+    <a href="donate.html" class="btn btn-primary"><i class="fa-solid fa-heart"></i> Donate Now</a>
+  </div>
+
+  <!-- ===== PAGE HERO ===== -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="sep"><i class="fa-solid fa-chevron-right"></i></span>
+        <span class="current">Donate</span>
+      </div>
+      <h1>Your Generosity Changes Lives</h1>
+      <p>Every taka you give creates real, measurable impact in the lives of Bangladesh's most vulnerable communities.</p>
+    </div>
+  </section>
+
+  <!-- ===== IMPACT SECTION ===== -->
+  <section class="section bg-blue-light">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag blue">Your Impact</span>
+        <h2>What Your Donation Provides</h2>
+        <p>We believe in transparency. Here is exactly what different donation amounts accomplish in our programs.</p>
+      </div>
+      <div class="impact-grid animate-on-scroll">
+        <div class="impact-item highlighted">
+          <div class="impact-amount">৳500</div>
+          <div class="impact-desc">Provides school supplies for one child for an entire semester, including books, pens, and a school bag.</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-amount">৳1,000</div>
+          <div class="impact-desc">Covers essential medicines for a family of four at one of our free medical camps for three months.</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-amount">৳2,500</div>
+          <div class="impact-desc">Funds a Ramadan food package for one family, including rice, lentils, oil, and essential groceries.</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-amount">৳5,000</div>
+          <div class="impact-desc">Sponsors a full year of primary school scholarship for one underprivileged child, including all fees and materials.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DONATION FORM ===== -->
+  <section class="section" id="give">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:3rem;align-items:start">
+        <!-- Form -->
+        <div class="animate-on-scroll">
+          <span class="section-tag">Make a Donation</span>
+          <h2>Choose Your Gift</h2>
+          <div class="divider-gold"></div>
+
+          <!-- Frequency Toggle -->
+          <label class="form-label" style="margin-bottom:0.75rem">Donation Frequency</label>
+          <div class="donation-frequency" style="margin-bottom:1.5rem">
+            <button class="freq-btn active" type="button">One-Time</button>
+            <button class="freq-btn" type="button">Monthly</button>
+          </div>
+
+          <!-- Amount Selector -->
+          <label class="form-label" style="margin-bottom:0.75rem">Select Amount</label>
+          <div class="donation-amounts">
+            <button class="amount-btn" type="button" data-value="500">৳500</button>
+            <button class="amount-btn active" type="button" data-value="1000">৳1,000</button>
+            <button class="amount-btn" type="button" data-value="2500">৳2,500</button>
+            <button class="amount-btn" type="button" data-value="5000">৳5,000</button>
+            <button class="amount-btn" type="button" data-value="10000">৳10,000</button>
+            <button class="amount-btn" type="button" data-value="25000">৳25,000</button>
+            <button class="amount-btn" type="button" data-value="50000">৳50,000</button>
+            <button class="amount-btn" type="button" data-value="custom">Custom</button>
+          </div>
+          <div class="custom-amount-wrap" id="custom-amount-wrap">
+            <label class="form-label" for="custom-amount">Enter Custom Amount (৳)</label>
+            <input type="number" id="custom-amount" class="form-control" placeholder="Enter amount in BDT" min="100" />
+          </div>
+
+          <!-- Program Designation -->
+          <div class="form-group" style="margin-top:1.5rem">
+            <label class="form-label" for="donate-program">Designate to Program (optional)</label>
+            <select id="donate-program" class="form-control">
+              <option value="">General Fund — Where Most Needed</option>
+              <option>Education Program</option>
+              <option>Healthcare Program</option>
+              <option>Charity &amp; Relief</option>
+              <option>Environment Program</option>
+              <option>Youth Development</option>
+              <option>Orphan Care</option>
+            </select>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="form-group">
+            <label class="form-label">Payment Method</label>
+            <div class="payment-methods">
+              <div class="payment-method active" data-target="bkash-detail">
+                <h5><i class="fa-solid fa-mobile-screen-button" style="color:#E2136E"></i> bKash</h5>
+                <p>Mobile banking — instant transfer</p>
+              </div>
+              <div class="payment-method" data-target="nagad-detail">
+                <h5><i class="fa-solid fa-mobile-screen-button" style="color:#F7941D"></i> Nagad</h5>
+                <p>Bangladesh Post Office MFS</p>
+              </div>
+              <div class="payment-method" data-target="bank-detail">
+                <h5><i class="fa-solid fa-building-columns" style="color:var(--blue)"></i> Bank Transfer</h5>
+                <p>Direct bank transfer</p>
+              </div>
+              <div class="payment-method" data-target="intl-detail">
+                <h5><i class="fa-brands fa-paypal" style="color:#003087"></i> International</h5>
+                <p>PayPal &amp; international cards</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Details -->
+          <div id="bkash-detail" class="payment-detail" style="background:rgba(226,19,110,0.06);border:1px solid rgba(226,19,110,0.2);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem">
+            <h5 style="color:#E2136E;margin-bottom:0.75rem"><i class="fa-solid fa-mobile-screen-button"></i> bKash Payment Details</h5>
+            <p style="margin:0;font-size:0.9rem"><strong>bKash Number:</strong> 01700-000000</p>
+            <p style="margin:0.4rem 0;font-size:0.9rem"><strong>Account Type:</strong> Personal</p>
+            <p style="margin:0;font-size:0.85rem;color:var(--gray-500)">Send money to the number above and fill the form with your bKash transaction ID for confirmation.</p>
+          </div>
+          <div id="nagad-detail" class="payment-detail" style="display:none;background:rgba(247,148,29,0.06);border:1px solid rgba(247,148,29,0.2);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem">
+            <h5 style="color:#F7941D;margin-bottom:0.75rem"><i class="fa-solid fa-mobile-screen-button"></i> Nagad Payment Details</h5>
+            <p style="margin:0;font-size:0.9rem"><strong>Nagad Number:</strong> 01700-000000</p>
+            <p style="margin:0.4rem 0;font-size:0.9rem"><strong>Account Type:</strong> Personal</p>
+            <p style="margin:0;font-size:0.85rem;color:var(--gray-500)">Use your Nagad app to send money, then confirm with the transaction ID below.</p>
+          </div>
+          <div id="bank-detail" class="payment-detail" style="display:none;background:var(--bg-blue);border:1px solid rgba(27,79,138,0.15);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem">
+            <h5 style="color:var(--blue);margin-bottom:0.75rem"><i class="fa-solid fa-building-columns"></i> Bank Transfer Details</h5>
+            <p style="margin:0;font-size:0.9rem"><strong>Bank:</strong> Dutch-Bangla Bank Limited</p>
+            <p style="margin:0.3rem 0;font-size:0.9rem"><strong>Account Name:</strong> Dola Foundation</p>
+            <p style="margin:0.3rem 0;font-size:0.9rem"><strong>Account No:</strong> 1234567890</p>
+            <p style="margin:0.3rem 0;font-size:0.9rem"><strong>Branch:</strong> Motijheel, Dhaka</p>
+            <p style="margin:0.3rem 0;font-size:0.9rem"><strong>Routing No:</strong> 090261234</p>
+          </div>
+          <div id="intl-detail" class="payment-detail" style="display:none;background:rgba(0,48,135,0.05);border:1px solid rgba(0,48,135,0.15);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem">
+            <h5 style="color:#003087;margin-bottom:0.75rem"><i class="fa-brands fa-paypal"></i> International Donation</h5>
+            <p style="margin:0;font-size:0.9rem"><strong>PayPal:</strong> donate@dolafoundation.org</p>
+            <p style="margin:0.4rem 0;font-size:0.85rem;color:var(--gray-500)">For wire transfers or large international donations, please contact us at finance@dolafoundation.org for bank details.</p>
+          </div>
+
+          <!-- Donor Form -->
+          <form data-validate id="donation-form" novalidate>
+            <h4 style="margin-bottom:1.25rem">Your Information</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="donor-name">Full Name <span class="required">*</span></label>
+                <input type="text" id="donor-name" class="form-control" placeholder="Your full name" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="donor-email">Email Address <span class="required">*</span></label>
+                <input type="email" id="donor-email" class="form-control" placeholder="your@email.com" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="donor-phone">Phone Number <span class="required">*</span></label>
+                <input type="tel" id="donor-phone" class="form-control" placeholder="+880 1700-000000" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="donor-txn">Transaction ID <span class="required">*</span></label>
+                <input type="text" id="donor-txn" class="form-control" placeholder="e.g. TXN123456789" required />
+                <span class="form-hint">Enter bKash/Nagad/bank transaction reference.</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="donor-message">Message (optional)</label>
+              <textarea id="donor-message" class="form-control" rows="3" placeholder="Leave a message or dedication for your donation..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-item" style="align-items:flex-start;gap:0.75rem">
+                <input type="checkbox" style="margin-top:3px;width:18px;height:18px;accent-color:var(--blue)" />
+                <span style="font-size:0.88rem;color:var(--gray-700)">List me on the Donor Wall (your name will appear publicly)</span>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" style="width:100%">
+              <i class="fa-solid fa-heart"></i> Confirm Donation
+            </button>
+            <div class="form-success" style="display:none;margin-top:1rem;padding:1rem 1.5rem;background:rgba(46,139,87,0.1);border-radius:var(--radius-sm);border-left:4px solid var(--green)">
+              <strong style="color:var(--green)"><i class="fa-solid fa-circle-check"></i> Thank You!</strong>
+              <p style="margin:0.25rem 0 0;font-size:0.9rem">Your donation has been recorded. A confirmation email will be sent to you shortly.</p>
+            </div>
+          </form>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="animate-on-scroll delay-2">
+          <div class="card" style="margin-bottom:1.5rem;border-top:4px solid var(--gold)">
+            <div class="card-body">
+              <h4 style="margin-bottom:1rem"><i class="fa-solid fa-shield-heart" style="color:var(--gold)"></i> Your Donation is Safe</h4>
+              <ul style="display:flex;flex-direction:column;gap:0.75rem">
+                <li style="display:flex;gap:0.75rem;font-size:0.9rem;color:var(--gray-700)">
+                  <i class="fa-solid fa-check" style="color:var(--green);margin-top:3px"></i>
+                  100% of your donation reaches our programs
+                </li>
+                <li style="display:flex;gap:0.75rem;font-size:0.9rem;color:var(--gray-700)">
+                  <i class="fa-solid fa-check" style="color:var(--green);margin-top:3px"></i>
+                  Full transparency — annual reports published
+                </li>
+                <li style="display:flex;gap:0.75rem;font-size:0.9rem;color:var(--gray-700)">
+                  <i class="fa-solid fa-check" style="color:var(--green);margin-top:3px"></i>
+                  Registered NGO with government oversight
+                </li>
+                <li style="display:flex;gap:0.75rem;font-size:0.9rem;color:var(--gray-700)">
+                  <i class="fa-solid fa-check" style="color:var(--green);margin-top:3px"></i>
+                  Donation receipt provided for all gifts
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:1.5rem;background:var(--blue);color:white">
+            <div class="card-body">
+              <h4 style="color:white;margin-bottom:0.75rem"><i class="fa-solid fa-phone"></i> Need Help Donating?</h4>
+              <p style="color:rgba(255,255,255,0.85);font-size:0.9rem;margin-bottom:1rem">Our team is happy to assist with your donation or answer any questions you may have.</p>
+              <p style="color:rgba(255,255,255,0.9);font-size:0.95rem;margin-bottom:0.35rem"><i class="fa-solid fa-phone"></i> +880 1700-000000</p>
+              <p style="color:rgba(255,255,255,0.9);font-size:0.95rem;margin-bottom:0"><i class="fa-solid fa-envelope"></i> donate@dolafoundation.org</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <h4 style="margin-bottom:0.75rem">Other Ways to Give</h4>
+              <ul style="display:flex;flex-direction:column;gap:0.75rem">
+                <li style="font-size:0.9rem;color:var(--gray-700);display:flex;gap:0.75rem;align-items:flex-start">
+                  <i class="fa-solid fa-rotate" style="color:var(--blue);margin-top:3px"></i>
+                  <div><strong>Monthly Giving</strong> — Set up a recurring gift to provide sustained support</div>
+                </li>
+                <li style="font-size:0.9rem;color:var(--gray-700);display:flex;gap:0.75rem;align-items:flex-start">
+                  <i class="fa-solid fa-briefcase" style="color:var(--blue);margin-top:3px"></i>
+                  <div><strong>Corporate Giving</strong> — Partner with us through CSR programs</div>
+                </li>
+                <li style="font-size:0.9rem;color:var(--gray-700);display:flex;gap:0.75rem;align-items:flex-start">
+                  <i class="fa-solid fa-gifts" style="color:var(--blue);margin-top:3px"></i>
+                  <div><strong>In-Kind Donations</strong> — Donate goods, supplies, or services</div>
+                </li>
+                <li style="font-size:0.9rem;color:var(--gray-700);display:flex;gap:0.75rem;align-items:flex-start">
+                  <i class="fa-solid fa-scroll" style="color:var(--blue);margin-top:3px"></i>
+                  <div><strong>Legacy Giving</strong> — Include Dola Foundation in your will</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DONOR WALL ===== -->
+  <section class="section bg-blue-light">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag blue">Donor Recognition</span>
+        <h2>Our Generous Donors</h2>
+        <p>We are deeply grateful to every person who has supported our mission. Your names represent thousands of lives changed.</p>
+      </div>
+      <div class="donor-wall animate-on-scroll">
+        <span class="donor-tag">Rashida Khanam</span>
+        <span class="donor-tag">Md. Tariqul Islam</span>
+        <span class="donor-tag">Dr. Samira Ahmed</span>
+        <span class="donor-tag">Arif &amp; Nadia Chowdhury</span>
+        <span class="donor-tag">Sabrina Hossain</span>
+        <span class="donor-tag">Khaled Mahmud</span>
+        <span class="donor-tag">Tasnia Akter</span>
+        <span class="donor-tag">Md. Rubel Mia</span>
+        <span class="donor-tag">Protik Foundation</span>
+        <span class="donor-tag">Sultana Begum</span>
+        <span class="donor-tag">Rahman Family</span>
+        <span class="donor-tag">Hafiz Uddin</span>
+        <span class="donor-tag">Dilruba Parveen</span>
+        <span class="donor-tag">Shafiq Enterprises</span>
+        <span class="donor-tag">Noor Mohammed</span>
+        <span class="donor-tag">Anonymous Donor</span>
+        <span class="donor-tag">Feroza &amp; Family</span>
+        <span class="donor-tag">M. Ashrafuzzaman</span>
+        <span class="donor-tag">Bangladeshi Diaspora UK</span>
+        <span class="donor-tag">Tania Yasmin</span>
+        <span class="donor-tag">Green Earth Trust</span>
+        <span class="donor-tag">Jahangir Alam</span>
+        <span class="donor-tag">Mitra Social Welfare</span>
+        <span class="donor-tag">Nafisa Islam</span>
+      </div>
+      <p style="text-align:center;margin-top:2rem;color:var(--gray-500);font-size:0.9rem">
+        <i class="fa-solid fa-heart" style="color:var(--gold)"></i> Showing recent donors who consented to public recognition. Join them by donating today.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="assets/logo-white.svg" alt="Dola Foundation" />
+          <p>Transforming lives and building futures through education, healthcare, and sustainable development across Bangladesh.</p>
+          <div class="footer-socials">
+            <a href="#" class="footer-social-link" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#" class="footer-social-link" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="footer-social-link" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" class="footer-social-link" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#" class="footer-social-link" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <nav class="footer-links">
+            <a href="index.html"><i class="fa-solid fa-chevron-right"></i> Home</a>
+            <a href="about.html"><i class="fa-solid fa-chevron-right"></i> About Us</a>
+            <a href="programs.html"><i class="fa-solid fa-chevron-right"></i> Our Programs</a>
+            <a href="volunteer.html"><i class="fa-solid fa-chevron-right"></i> Volunteer</a>
+            <a href="donate.html"><i class="fa-solid fa-chevron-right"></i> Donate</a>
+            <a href="contact.html"><i class="fa-solid fa-chevron-right"></i> Contact</a>
+          </nav>
+        </div>
+        <div class="footer-col">
+          <h4>Programs</h4>
+          <nav class="footer-links">
+            <a href="programs.html#education"><i class="fa-solid fa-chevron-right"></i> Education</a>
+            <a href="programs.html#healthcare"><i class="fa-solid fa-chevron-right"></i> Healthcare</a>
+            <a href="programs.html#charity"><i class="fa-solid fa-chevron-right"></i> Charity &amp; Relief</a>
+            <a href="programs.html#environment"><i class="fa-solid fa-chevron-right"></i> Environment</a>
+            <a href="programs.html#youth"><i class="fa-solid fa-chevron-right"></i> Youth Development</a>
+            <a href="programs.html#orphan"><i class="fa-solid fa-chevron-right"></i> Orphan Care</a>
+          </nav>
+        </div>
+        <div class="footer-col">
+          <h4>Contact Us</h4>
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>123 Welfare Road, Dhaka-1205, Bangladesh</span>
+          </div>
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-phone"></i>
+            <span>+880 1700-000000</span>
+          </div>
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-envelope"></i>
+            <span>info@dolafoundation.org</span>
+          </div>
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-clock"></i>
+            <span>Sun–Thu: 9:00 AM – 5:00 PM</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2024 Dola Foundation. All rights reserved.</span>
+        <div style="display:flex;gap:1.5rem">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Scroll to top"><i class="fa-solid fa-chevron-up"></i></button>
+  <script src="js/main.js"></script>
+</body>
+</html>

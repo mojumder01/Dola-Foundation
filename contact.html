@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Contact Dola Foundation. Reach out for partnerships, donations, volunteering, or general inquiries. We are here to help." />
+  <meta name="keywords" content="contact Dola Foundation, NGO Bangladesh contact, foundation address Dhaka" />
+  <meta property="og:title" content="Contact Us — Dola Foundation" />
+  <meta property="og:description" content="Get in touch with Dola Foundation for partnerships, donations, or any inquiries." />
+  <title>Contact Us — Dola Foundation</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" aria-label="Main navigation">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
+          <img src="assets/logo-white.svg" alt="Dola Foundation" class="logo-white" />
+          <img src="assets/logo.svg" alt="Dola Foundation" class="logo-dark" />
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="programs.html">Programs</a>
+          <a href="volunteer.html">Volunteer</a>
+          <a href="contact.html" class="active">Contact</a>
+        </div>
+        <div class="nav-cta">
+          <a href="donate.html" class="btn btn-primary"><i class="fa-solid fa-heart"></i> Donate Now</a>
+        </div>
+        <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-nav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About Us</a>
+    <a href="programs.html">Our Programs</a>
+    <a href="volunteer.html">Volunteer</a>
+    <a href="contact.html">Contact</a>
+    <a href="donate.html" class="btn btn-primary"><i class="fa-solid fa-heart"></i> Donate Now</a>
+  </div>
+
+  <!-- ===== PAGE HERO ===== -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="sep"><i class="fa-solid fa-chevron-right"></i></span>
+        <span class="current">Contact</span>
+      </div>
+      <h1>Get in Touch</h1>
+      <p>We would love to hear from you — whether you have a question, want to partner with us, or simply want to know more about our work.</p>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT INFO CARDS ===== -->
+  <section class="section">
+    <div class="container">
+      <div class="contact-cards animate-on-scroll">
+        <div class="contact-card">
+          <div class="contact-card-icon icon-blue">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+          <h4>Our Address</h4>
+          <p>123 Welfare Road, Motijheel</p>
+          <p>Dhaka-1205, Bangladesh</p>
+          <p style="margin-top:0.5rem"><a href="#">Get Directions <i class="fa-solid fa-arrow-right"></i></a></p>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-icon icon-green">
+            <i class="fa-solid fa-phone"></i>
+          </div>
+          <h4>Call or WhatsApp</h4>
+          <p><a href="tel:+8801700000000">+880 1700-000000</a></p>
+          <p><a href="tel:+8801800000000">+880 1800-000000</a></p>
+          <p style="font-size:0.85rem;color:var(--gray-500);margin-top:0.25rem">Sun–Thu: 9:00 AM – 5:00 PM</p>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-icon icon-gold">
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <h4>Email Us</h4>
+          <p><a href="mailto:info@dolafoundation.org">info@dolafoundation.org</a></p>
+          <p><a href="mailto:volunteer@dolafoundation.org">volunteer@dolafoundation.org</a></p>
+          <p><a href="mailto:donate@dolafoundation.org">donate@dolafoundation.org</a></p>
+        </div>
+      </div>
+
+      <!-- Form + Map -->
+      <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:3rem;align-items:start">
+        <!-- Contact Form -->
+        <div class="animate-on-scroll">
+          <span class="section-tag">Send a Message</span>
+          <h2>How Can We Help?</h2>
+          <div class="divider-gold"></div>
+          <form data-validate id="contact-form" novalidate style="margin-top:1.5rem">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="contact-name">Full Name <span class="required">*</span></label>
+                <input type="text" id="contact-name" class="form-control" placeholder="Your name" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="contact-email">Email Address <span class="required">*</span></label>
+                <input type="email" id="contact-email" class="form-control" placeholder="your@email.com" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="contact-phone">Phone Number</label>
+                <input type="tel" id="contact-phone" class="form-control" placeholder="+880 1700-000000" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="contact-subject">Subject <span class="required">*</span></label>
+                <select id="contact-subject" class="form-control" required>
+                  <option value="">Select a topic</option>
+                  <option>General Inquiry</option>
+                  <option>Donation</option>
+                  <option>Volunteering</option>
+                  <option>Partnership &amp; Corporate</option>
+                  <option>Media &amp; Press</option>
+                  <option>Program Information</option>
+                  <option>Complaint / Feedback</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-org">Organization (if applicable)</label>
+              <input type="text" id="contact-org" class="form-control" placeholder="Your organization or company name" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-message">Message <span class="required">*</span></label>
+              <textarea id="contact-message" class="form-control" rows="6" placeholder="Tell us how we can help or what you would like to know..." required></textarea>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-item" style="align-items:flex-start;gap:0.75rem">
+                <input type="checkbox" style="margin-top:3px;width:18px;height:18px;accent-color:var(--blue)" />
+                <span style="font-size:0.88rem;color:var(--gray-700)">I consent to Dola Foundation storing my submitted information in order to respond to my inquiry.</span>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-secondary btn-lg" style="width:100%">
+              <i class="fa-solid fa-paper-plane"></i> Send Message
+            </button>
+            <div class="form-success" style="display:none;margin-top:1rem;padding:1rem 1.5rem;background:rgba(46,139,87,0.1);border-radius:var(--radius-sm);border-left:4px solid var(--green)">
+              <strong style="color:var(--green)"><i class="fa-solid fa-circle-check"></i> Message Sent!</strong>
+              <p style="margin:0.25rem 0 0;font-size:0.9rem">Thank you for reaching out. We will respond to your message within 1–2 business days.</p>
+            </div>
+          </form>
+        </div>
+
+        <!-- Map + Social -->
+        <div class="animate-on-scroll delay-2">
+          <div class="map-placeholder" style="margin-bottom:1.5rem">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <h3>Our Location</h3>
+            <p>123 Welfare Road, Motijheel, Dhaka-1205, Bangladesh</p>
+            <a href="https://maps.google.com" target="_blank" rel="noopener" class="btn btn-outline-white btn-sm">
+              <i class="fa-solid fa-map-pin"></i> Open in Google Maps
+            </a>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <h4 style="margin-bottom:1rem">Follow Us</h4>
+              <p style="font-size:0.9rem;color:var(--gray-500);margin-bottom:1.25rem">Stay updated on our programs and impact stories through our social channels.</p>
+              <div style="display:flex;flex-direction:column;gap:0.75rem">
+                <a href="#" style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;border-radius:var(--radius-sm);background:rgba(24,119,242,0.08);color:var(--dark);font-weight:500;font-size:0.9rem;transition:var(--transition)" onmouseover="this.style.background='rgba(24,119,242,0.15)'" onmouseout="this.style.background='rgba(24,119,242,0.08)'">
+                  <i class="fa-brands fa-facebook-f" style="color:#1877F2;width:20px;text-align:center"></i> Facebook — /dolafoundation
+                </a>
+                <a href="#" style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;border-radius:var(--radius-sm);background:rgba(225,48,108,0.08);color:var(--dark);font-weight:500;font-size:0.9rem;transition:var(--transition)" onmouseover="this.style.background='rgba(225,48,108,0.15)'" onmouseout="this.style.background='rgba(225,48,108,0.08)'">
+                  <i class="fa-brands fa-instagram" style="color:#E1306C;width:20px;text-align:center"></i> Instagram — @dolafoundation
+                </a>
+                <a href="#" style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;border-radius:var(--radius-sm);background:rgba(0,0,0,0.05);color:var(--dark);font-weight:500;font-size:0.9rem;transition:var(--transition)" onmouseover="this.style.background='rgba(0,0,0,0.1)'" onmouseout="this.style.background='rgba(0,0,0,0.05)'">
+                  <i class="fa-brands fa-x-twitter" style="color:#000;width:20px;text-align:center"></i> X / Twitter — @dolafoundation
+                </a>
+                <a href="#" style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;border-radius:var(--radius-sm);background:rgba(10,102,194,0.08);color:var(--dark);font-weight:500;font-size:0.9rem;transition:var(--transition)" onmouseover="this.style.background='rgba(10,102,194,0.15)'" onmouseout="this.style.background='rgba(10,102,194,0.08)'">
+                  <i class="fa-brands fa-linkedin-in" style="color:#0A66C2;width:20px;text-align:center"></i> LinkedIn — Dola Foundation
+                </a>
+                <a href="#" style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;border-radius:var(--radius-sm);background:rgba(255,0,0,0.06);color:var(--dark);font-weight:500;font-size:0.9rem;transition:var(--transition)" onmouseover="this.style.background='rgba(255,0,0,0.12)'" onmouseout="this.style.background='rgba(255,0,0,0.06)'">
+                  <i class="fa-brands fa-youtube" style="color:#FF0000;width:20px;text-align:center"></i> YouTube — Dola Foundation BD
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ACCORDION ===== -->
+  <section class="section bg-blue-light" id="faq">
+    <div class="container" style="max-width:800px">
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag blue">FAQ</span>
+        <h2>Frequently Asked Questions</h2>
+        <p>Find quick answers to the most common questions about Dola Foundation, donations, and volunteering.</p>
+      </div>
+      <div class="accordion animate-on-scroll">
+        <div class="accordion-item">
+          <button class="accordion-trigger" type="button">
+            How can I be sure my donation is used properly?
+            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              <p>Dola Foundation publishes annual financial reports and impact summaries that are publicly available on our website and submitted to the NGO Affairs Bureau of Bangladesh. We are committed to full transparency. 100% of program donations go directly to our six programs — our administrative costs are covered by a separate operational fund and institutional grants.</p>
+              <p>All major donations receive a printed or digital receipt, and donors can visit our programs in person to see the impact firsthand. We also share regular photo and video updates from the field on our social media channels.</p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger" type="button">
+            Do I need any qualifications to volunteer?
+            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              <p>Most of our volunteer roles do not require formal qualifications — just enthusiasm, reliability, and a genuine desire to help. We welcome students, professionals, retirees, and anyone with time to give. However, certain specialized roles (such as healthcare volunteers or IT trainers) may require relevant qualifications or experience.</p>
+              <p>All volunteers receive orientation training before starting, and ongoing support from our coordination team throughout their service. The minimum age for field volunteers is 16 years old (with parental consent for those under 18).</p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger" type="button">
+            Can organizations or companies partner with Dola Foundation?
+            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              <p>Absolutely. We actively seek partnerships with businesses, educational institutions, and other organizations through our Corporate Social Responsibility (CSR) program. Partnership opportunities include event sponsorships, employee volunteer days, cause-marketing campaigns, in-kind donations, and joint program delivery.</p>
+              <p>Please contact us at partnerships@dolafoundation.org or call +880 1700-000000 to discuss how your organization can make a difference. We tailor every partnership to align with both our mission and your organization's values and goals.</p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger" type="button">
+            How do I apply for assistance from Dola Foundation?
+            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              <p>If you or someone you know needs assistance through one of our programs (scholarship, medical camp, relief, etc.), you can reach out to us directly by phone (+880 1700-000000), email (info@dolafoundation.org), or by visiting our office in Dhaka. We also work through community leaders and local partner organizations who can refer cases to us.</p>
+              <p>Our team will assess eligibility based on program-specific criteria (primarily financial need and community vulnerability). We strive to respond to all inquiries within 5 business days and to begin assistance as quickly as possible for urgent cases.</p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger" type="button">
+            Where does Dola Foundation operate?
+            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              <p>Dola Foundation currently operates in eight districts of Bangladesh: Dhaka, Narayanganj, Gazipur, Manikganj, Munshiganj, Faridpur, Rajbari, and Madaripur. Our headquarters is in Dhaka, with field offices and partner organizations in each district.</p>
+              <p>We are actively working to expand our reach to additional districts over the next three years, with a particular focus on the coastal and flood-prone areas of southern Bangladesh. If you are from a district not currently covered and believe your community could benefit from our programs, please contact us — we value every connection.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="assets/logo-white.svg" alt="Dola Foundation" />
+          <p>Transforming lives and building futures through education, healthcare, and sustainable development across Bangladesh.</p>
+          <div class="footer-socials">
+            <a href="#" class="footer-social-link" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#" class="footer-social-link" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="footer-social-link" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" class="footer-social-link" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#" class="footer-social-link" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <nav class="footer-links">
+            <a href="index.html"><i class="fa-solid fa-chevron-right"></i> Home</a>
+            <a href="about.html"><i class="fa-solid fa-chevron-right"></i> About Us</a>
+            <a href="programs.html"><i class="fa-solid fa-chevron-right"></i> Our Programs</a>
+            <a href="volunteer.html"><i class="fa-solid fa-chevron-right"></i> Volunteer</a>
+            <a href="donate.html"><i class="fa-solid fa-chevron-right"></i> Donate</a>
+            <a href="contact.html"><i class="fa-solid fa-chevron-right"></i> Contact</a>
+          </nav>
+        </div>
+        <div class="footer-col">
+          <h4>Programs</h4>
+          <nav class="footer-links">
+            <a href="programs.html#education"><i class="fa-solid fa-chevron-right"></i> Education</a>
+            <a href="programs.html#healthcare"><i class="fa-solid fa-chevron-right"></i> Healthcare</a>
+            <a href="programs.html#charity"><i class="fa-solid fa-chevron-right"></i> Charity &amp; Relief</a>
+            <a href="programs.html#environment"><i class="fa-solid fa-chevron-right"></i> Environment</a>
+            <a href="programs.html#youth"><i class="fa-solid fa-chevron-right"></i> Youth Development</a>
+            <a href="programs.html#orphan"><i class="fa-solid fa-chevron-right"></i> Orphan Care</a>
+          </nav>
+        </div>
+        <div class="footer-col">
+          <h4>Contact Us</h4>
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>123 Welfare Road, Dhaka-1205, Bangladesh</span>
+          </div>
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-phone"></i>
+            <span>+880 1700-000000</span>
+          </div>
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-envelope"></i>
+            <span>info@dolafoundation.org</span>
+          </div>
+          <div class="footer-contact-item">
+            <i class="fa-solid fa-clock"></i>
+            <span>Sun–Thu: 9:00 AM – 5:00 PM</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2024 Dola Foundation. All rights reserved.</span>
+        <div style="display:flex;gap:1.5rem">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Scroll to top"><i class="fa-solid fa-chevron-up"></i></button>
+  <script src="js/main.js"></script>
+</body>
+</html>
