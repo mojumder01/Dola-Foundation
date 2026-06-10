@@ -1,0 +1,190 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { MapPin, Calendar } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { formatDateShort } from "@/lib/utils";
+
+export const metadata: Metadata = {
+  title: "Our Projects",
+  description:
+    "Explore Dola Foundation's ongoing, completed, and upcoming projects transforming lives across Bangladesh.",
+};
+
+const projects = [
+  {
+    id: "1",
+    title: "School Construction in Sylhet",
+    slug: "school-construction-sylhet",
+    description:
+      "Building a fully equipped primary school for 500+ children in a remote area of Sylhet, providing quality education infrastructure with 8 classrooms, library, and playground.",
+    status: "ONGOING" as const,
+    location: "Sylhet, Bangladesh",
+    startDate: new Date("2024-01-01"),
+    budget: 2500000,
+    gallery: [],
+  },
+  {
+    id: "2",
+    title: "Mobile Health Clinic Program",
+    slug: "mobile-health-clinic",
+    description:
+      "A fleet of mobile health units bringing medical care directly to remote villages without access to healthcare facilities across 6 districts.",
+    status: "ONGOING" as const,
+    location: "Multiple Districts",
+    startDate: new Date("2023-06-01"),
+    budget: 1800000,
+    gallery: [],
+  },
+  {
+    id: "3",
+    title: "Clean Water Wells Initiative",
+    slug: "clean-water-wells",
+    description:
+      "Installed 50 deep tube wells across drought-prone areas to provide clean drinking water to 10,000+ people in Rajshahi Division.",
+    status: "COMPLETED" as const,
+    location: "Rajshahi Division",
+    startDate: new Date("2023-01-01"),
+    budget: 750000,
+    gallery: [],
+  },
+  {
+    id: "4",
+    title: "Youth Skills Training Center",
+    slug: "youth-skills-training",
+    description:
+      "Establishing a permanent vocational training center in Dhaka offering courses in sewing, electrical work, digital skills, and entrepreneurship.",
+    status: "UPCOMING" as const,
+    location: "Dhaka, Bangladesh",
+    startDate: new Date("2025-06-01"),
+    budget: 3000000,
+    gallery: [],
+  },
+  {
+    id: "5",
+    title: "Tree Planting Drive 2024",
+    slug: "tree-planting-2024",
+    description:
+      "Planting 25,000 trees across coastal and inland areas of Chittagong Division in collaboration with local communities and schools.",
+    status: "COMPLETED" as const,
+    location: "Chittagong Division",
+    startDate: new Date("2024-03-01"),
+    budget: 400000,
+    gallery: [],
+  },
+  {
+    id: "6",
+    title: "Flood Relief 2024",
+    slug: "flood-relief-2024",
+    description:
+      "Emergency relief distribution to 3,000 flood-affected families in Sylhet and Sunamganj with food, clean water, and shelter materials.",
+    status: "COMPLETED" as const,
+    location: "Sylhet & Sunamganj",
+    startDate: new Date("2024-08-01"),
+    budget: 1200000,
+    gallery: [],
+  },
+];
+
+const statusConfig = {
+  ONGOING: { label: "Ongoing", variant: "ongoing" as const },
+  COMPLETED: { label: "Completed", variant: "completed" as const },
+  UPCOMING: { label: "Upcoming", variant: "upcoming" as const },
+};
+
+export default function ProjectsPage() {
+  return (
+    <div className="pt-20">
+      {/* Hero */}
+      <section className="bg-gradient-to-br from-[#0F3D8C] to-[#1a4da0] py-20 md:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+            Our Work
+          </span>
+          <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
+            Our Projects
+          </h1>
+          <p className="text-white/80 text-lg max-w-2xl mx-auto">
+            Concrete, impactful projects delivering real change in communities across Bangladesh.
+          </p>
+          <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-white">Projects</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Filters */}
+      <section className="py-8 bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm font-medium text-gray-500">Filter:</span>
+            {["All", "Ongoing", "Completed", "Upcoming"].map((filter) => (
+              <button
+                key={filter}
+                className="px-4 py-1.5 rounded-full text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-[#0F3D8C] hover:text-white"
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Projects Grid */}
+      <section className="py-16 md:py-24 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((project) => {
+              const { label, variant } = statusConfig[project.status];
+              return (
+                <div
+                  key={project.id}
+                  className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden hover:-translate-y-1"
+                >
+                  <div className="relative h-48 bg-gradient-to-br from-[#0F3D8C]/10 to-[#1F9D55]/10 flex items-center justify-center">
+                    <div className="w-16 h-16 bg-[#0F3D8C]/20 rounded-full flex items-center justify-center">
+                      <span className="text-2xl">🏗️</span>
+                    </div>
+                    <div className="absolute top-3 right-3">
+                      <Badge variant={variant}>{label}</Badge>
+                    </div>
+                  </div>
+
+                  <div className="p-5">
+                    <h3 className="font-poppins font-bold text-lg text-[#1A1A2E] mb-2 group-hover:text-[#0F3D8C] transition-colors">
+                      {project.title}
+                    </h3>
+                    <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
+                      {project.description}
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-gray-400 mb-4">
+                      {project.location && (
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3.5 h-3.5" />
+                          {project.location}
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {formatDateShort(project.startDate)}
+                      </span>
+                    </div>
+
+                    <Link
+                      href={`/projects/${project.slug}`}
+                      className="inline-flex items-center gap-1.5 text-[#0F3D8C] font-medium text-sm hover:text-[#F4B400] transition-colors"
+                    >
+                      View Details →
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
