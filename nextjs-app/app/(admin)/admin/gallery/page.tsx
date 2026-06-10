@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Images, Plus, Trash2, Upload } from "lucide-react";
+import { ImageIcon, Plus, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 async function getImages() {

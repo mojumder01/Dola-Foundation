@@ -11,7 +11,7 @@ import {
   Award,
   Lightbulb,
   Shield,
-  Handshake,
+  HeartHandshake,
 } from "lucide-react";
 import SectionHeader from "@/components/shared/SectionHeader";
 
@@ -58,7 +58,7 @@ const values = [
     bg: "bg-teal-50",
   },
   {
-    icon: Handshake,
+    icon: HeartHandshake,
     title: "Partnership",
     description: "We work collaboratively with communities, governments, and organizations.",
     color: "text-purple-500",

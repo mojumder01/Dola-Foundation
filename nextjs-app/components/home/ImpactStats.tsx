@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Users, Heart, MapPin, Handshake } from "lucide-react";
+import { Users, Heart, MapPin, HeartHandshake } from "lucide-react";
 import AnimatedCounter from "@/components/shared/AnimatedCounter";
 
 const stats = [
@@ -33,7 +33,7 @@ const stats = [
     bgColor: "bg-blue-300/20",
   },
   {
-    icon: Handshake,
+    icon: HeartHandshake,
     value: 500,
     suffix: "+",
     label: "Volunteers",

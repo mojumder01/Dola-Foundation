@@ -85,12 +85,13 @@ This project was funded through a combination of individual donations, corporate
   },
 };
 
-interface PageProps {
-  params: { slug: string };
+type PageProps = {
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const project = projectsData[params.slug];
+  const { slug } = await params;
+  const project = projectsData[slug];
   if (!project) return { title: "Project Not Found" };
   return { title: project.title, description: project.description };
 }
@@ -105,8 +106,9 @@ const statusConfig: Record<string, { label: string; variant: any; color: string 
   UPCOMING: { label: "Upcoming", variant: "upcoming", color: "#f59e0b" },
 };
 
-export default function ProjectDetailPage({ params }: PageProps) {
-  const project = projectsData[params.slug];
+export default async function ProjectDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const project = projectsData[slug];
   if (!project) notFound();
 
   const status = statusConfig[project.status];

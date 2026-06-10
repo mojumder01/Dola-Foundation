@@ -4,7 +4,7 @@ import {
   Heart,
   Users,
   FileText,
-  Images,
+  ImageIcon,
   MessageSquare,
   TrendingUp,
   Clock,

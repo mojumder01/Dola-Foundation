@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   BookOpen,
-  Images,
+  ImageIcon,
   FileText,
   Users,
   Heart,
@@ -23,7 +23,7 @@ const navItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Programs", href: "/admin/programs", icon: Layers },
   { label: "Projects", href: "/admin/projects", icon: Globe },
-  { label: "Gallery", href: "/admin/gallery", icon: Images },
+  { label: "Gallery", href: "/admin/gallery", icon: ImageIcon },
   { label: "Blog", href: "/admin/blog", icon: FileText },
   { label: "Volunteers", href: "/admin/volunteers", icon: Users },
   { label: "Donations", href: "/admin/donations", icon: Heart },

@@ -199,12 +199,13 @@ As children in our program grow older, we transition them into our Youth Develop
   },
 };
 
-interface PageProps {
-  params: { slug: string };
+type PageProps = {
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const program = programsData[params.slug];
+  const { slug } = await params;
+  const program = programsData[slug];
   if (!program) return { title: "Program Not Found" };
   return {
     title: program.title,
@@ -216,8 +217,9 @@ export function generateStaticParams() {
   return Object.keys(programsData).map((slug) => ({ slug }));
 }
 
-export default function ProgramDetailPage({ params }: PageProps) {
-  const program = programsData[params.slug];
+export default async function ProgramDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const program = programsData[slug];
   if (!program) notFound();
 
   return (

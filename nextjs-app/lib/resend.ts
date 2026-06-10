@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => new Resend(process.env.RESEND_API_KEY || "re_placeholder");
+export const resend = getResend();
 
 const FROM_EMAIL = process.env.FROM_EMAIL || "noreply@dolafoundation.org";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "info@dolafoundation.org";
