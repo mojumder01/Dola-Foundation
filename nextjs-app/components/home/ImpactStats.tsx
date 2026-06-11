@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Users, Heart, MapPin, HeartHandshake } from "lucide-react";
 import AnimatedCounter from "@/components/shared/AnimatedCounter";
 
-const stats = [
+const defaultStats = [
   {
     icon: Users,
     value: 5000,
@@ -43,7 +43,31 @@ const stats = [
   },
 ];
 
-export default function ImpactStats() {
+interface ImpactStatsProps {
+  stats?: { label?: string | null; value?: string | null }[];
+}
+
+export default function ImpactStats({ stats: statsProp }: ImpactStatsProps) {
+  const stats = defaultStats.map((defaultStat, index) => {
+    const override = statsProp?.[index];
+    if (!override) return defaultStat;
+    const parsedValue = parseInt(
+      (override.value || "").replace(/[^0-9]/g, ""),
+      10
+    );
+    return {
+      ...defaultStat,
+      label: override.label || defaultStat.label,
+      value: Number.isNaN(parsedValue) ? defaultStat.value : parsedValue,
+      suffix:
+        override.value && !Number.isNaN(parsedValue)
+          ? override.value.trim().endsWith("+")
+            ? "+"
+            : ""
+          : defaultStat.suffix,
+    };
+  });
+
   return (
     <section className="bg-[#0F3D8C] py-16 md:py-20 relative overflow-hidden">
       {/* Background pattern */}

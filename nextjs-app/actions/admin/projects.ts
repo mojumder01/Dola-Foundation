@@ -31,6 +31,7 @@ export async function createProject(formData: FormData) {
       },
     });
     revalidatePath('/admin/projects');
+    revalidatePath("/", "layout");
     return { success: true, project };
   } catch (error) {
     return { success: false, error: "Failed to create project" };
@@ -51,6 +52,7 @@ export async function updateProject(id: string, formData: FormData) {
       },
     });
     revalidatePath('/admin/projects');
+    revalidatePath("/", "layout");
     return { success: true, project };
   } catch (error) {
     return { success: false, error: "Failed to update project" };
@@ -61,6 +63,7 @@ export async function deleteProject(id: string) {
   try {
     await prisma.project.delete({ where: { id } });
     revalidatePath('/admin/projects');
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     return { success: false };

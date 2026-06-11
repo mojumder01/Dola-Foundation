@@ -9,6 +9,9 @@ import {
 } from "@/components/ui/accordion";
 import ContactForm from "./ContactForm";
 import { FAQS } from "@/lib/utils";
+import { prisma } from "@/lib/prisma";
+
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -16,38 +19,50 @@ export const metadata: Metadata = {
     "Get in touch with Dola Foundation. We'd love to hear from you.",
 };
 
-const contactInfo = [
-  {
-    icon: MapPin,
-    title: "Our Office",
-    content: "House 12, Road 5, Dhanmondi\nDhaka 1209, Bangladesh",
-    color: "text-[#0F3D8C]",
-    bg: "bg-blue-50",
-  },
-  {
-    icon: Phone,
-    title: "Phone",
-    content: "+880 1700-000000\n+880 1800-000000",
-    color: "text-[#1F9D55]",
-    bg: "bg-green-50",
-  },
-  {
-    icon: Mail,
-    title: "Email",
-    content: "info@dolafoundation.org\ndonate@dolafoundation.org",
-    color: "text-[#F4B400]",
-    bg: "bg-yellow-50",
-  },
-  {
-    icon: Clock,
-    title: "Office Hours",
-    content: "Saturday – Thursday\n9:00 AM – 5:00 PM",
-    color: "text-purple-500",
-    bg: "bg-purple-50",
-  },
-];
+async function getSettings() {
+  try {
+    return await prisma.siteSettings.findFirst();
+  } catch {
+    return null;
+  }
+}
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const settings = await getSettings();
+
+  const contactInfo = [
+    {
+      icon: MapPin,
+      title: "Our Office",
+      content:
+        settings?.address || "House 12, Road 5, Dhanmondi\nDhaka 1209, Bangladesh",
+      color: "text-[#0F3D8C]",
+      bg: "bg-blue-50",
+    },
+    {
+      icon: Phone,
+      title: "Phone",
+      content: settings?.phone || "+880 1700-000000\n+880 1800-000000",
+      color: "text-[#1F9D55]",
+      bg: "bg-green-50",
+    },
+    {
+      icon: Mail,
+      title: "Email",
+      content:
+        settings?.email || "info@dolafoundation.org\ndonate@dolafoundation.org",
+      color: "text-[#F4B400]",
+      bg: "bg-yellow-50",
+    },
+    {
+      icon: Clock,
+      title: "Office Hours",
+      content: "Saturday – Thursday\n9:00 AM – 5:00 PM",
+      color: "text-purple-500",
+      bg: "bg-purple-50",
+    },
+  ];
+
   return (
     <div className="pt-20">
       {/* Hero */}
@@ -118,7 +133,9 @@ export default function ContactPage() {
                 <div className="text-center text-gray-400">
                   <MapPin className="w-12 h-12 mx-auto mb-3" />
                   <p className="font-medium">Dola Foundation Office</p>
-                  <p className="text-sm">Dhanmondi, Dhaka, Bangladesh</p>
+                  <p className="text-sm">
+                    {settings?.address || "Dhanmondi, Dhaka, Bangladesh"}
+                  </p>
                   <a
                     href="https://maps.google.com"
                     target="_blank"

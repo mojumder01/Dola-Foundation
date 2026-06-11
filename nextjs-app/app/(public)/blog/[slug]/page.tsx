@@ -3,6 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Calendar, User, Tag, ArrowLeft, Share2, Facebook, Twitter } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 const posts: Record<string, any> = {
   "education-transforming-rural-communities": {
@@ -41,20 +44,39 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 }
 
+async function getPost(slug: string) {
+  // DB posts take priority; fall back to the built-in demo post, then a
+  // coming-soon placeholder so the page never crashes.
+  try {
+    const dbPost = await prisma.blogPost.findUnique({ where: { slug } });
+    if (dbPost && dbPost.published) {
+      return {
+        title: dbPost.title,
+        excerpt: dbPost.excerpt || "",
+        coverImage: dbPost.coverImage,
+        category: dbPost.category,
+        author: dbPost.author,
+        publishedAt: dbPost.publishedAt ?? dbPost.createdAt,
+        tags: dbPost.tags,
+        content: dbPost.content,
+      };
+    }
+  } catch {
+    // DB unreachable — fall through to hardcoded content
+  }
+  return posts[slug] || null;
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = posts[slug];
+  const post = await getPost(slug);
   if (!post) return { title: "Post Not Found" };
   return { title: post.title, description: post.excerpt };
 }
 
-export function generateStaticParams() {
-  return Object.keys(posts).map((slug) => ({ slug }));
-}
-
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = posts[slug] || {
+  const post = (await getPost(slug)) || {
     title: "Blog Post Not Found",
     excerpt: "",
     coverImage: null,
@@ -64,10 +86,6 @@ export default async function BlogPostPage({ params }: PageProps) {
     tags: [],
     content: "<p>This post is coming soon. Please check back later.</p>",
   };
-
-  if (!posts[slug]) {
-    // Show a coming-soon page rather than 404 for this demo
-  }
 
   return (
     <div className="pt-20">

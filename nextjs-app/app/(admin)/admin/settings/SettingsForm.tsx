@@ -56,6 +56,29 @@ export default function SettingsForm({ settings }: { settings: any }) {
         </div>
       )}
 
+      {/* Branding */}
+      <div className="bg-white rounded-2xl shadow-card p-6">
+        <h2 className="font-poppins font-semibold text-lg text-[#1A1A2E] mb-4 pb-3 border-b border-gray-100">
+          Branding
+        </h2>
+        <div className="space-y-4">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label className="label-base" htmlFor="siteName">Site Name</Label>
+              <Input id="siteName" name="siteName" defaultValue={settings?.siteName || ""} placeholder="Dola Foundation" />
+            </div>
+            <div>
+              <Label className="label-base" htmlFor="tagline">Tagline</Label>
+              <Input id="tagline" name="tagline" defaultValue={settings?.tagline || ""} placeholder="Empowering Lives" />
+            </div>
+          </div>
+          <div>
+            <Label className="label-base" htmlFor="logoUrl">Logo URL</Label>
+            <Input id="logoUrl" name="logoUrl" defaultValue={settings?.logoUrl || ""} placeholder="https://..." />
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div className="bg-white rounded-2xl shadow-card p-6">
         <h2 className="font-poppins font-semibold text-lg text-[#1A1A2E] mb-4 pb-3 border-b border-gray-100">

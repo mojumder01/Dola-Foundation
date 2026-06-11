@@ -26,6 +26,7 @@ export async function createTeamMember(formData: FormData) {
       },
     });
     revalidatePath('/admin/team');
+    revalidatePath("/", "layout");
     return { success: true, member };
   } catch (error) {
     return { success: false, error: "Failed to create team member" };
@@ -45,6 +46,7 @@ export async function updateTeamMember(id: string, formData: FormData) {
       },
     });
     revalidatePath('/admin/team');
+    revalidatePath("/", "layout");
     return { success: true, member };
   } catch (error) {
     return { success: false, error: "Failed to update team member" };
@@ -55,6 +57,7 @@ export async function deleteTeamMember(id: string) {
   try {
     await prisma.teamMember.delete({ where: { id } });
     revalidatePath('/admin/team');
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete team member" };
@@ -65,6 +68,7 @@ export async function toggleTeamMemberActive(id: string, active: boolean) {
   try {
     await prisma.teamMember.update({ where: { id }, data: { active } });
     revalidatePath('/admin/team');
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     return { success: false };

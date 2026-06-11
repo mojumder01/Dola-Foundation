@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { motion } from "framer-motion";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 import {
   Target,
   Eye,
@@ -14,6 +14,8 @@ import {
   HeartHandshake,
 } from "lucide-react";
 import SectionHeader from "@/components/shared/SectionHeader";
+
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -97,7 +99,19 @@ const teamMembers = [
   },
 ];
 
-export default function AboutPage() {
+async function getSettings() {
+  try {
+    return await prisma.siteSettings.findFirst();
+  } catch {
+    return null;
+  }
+}
+
+export default async function AboutPage() {
+  const settings = await getSettings();
+
+  const founderName = settings?.founderName || "Dr. Ahmed Rahman";
+
   return (
     <div className="pt-20">
       {/* Hero */}
@@ -144,26 +158,35 @@ export default function AboutPage() {
                 A Decade of Changing Lives
               </h2>
               <div className="space-y-4 text-gray-600 leading-relaxed">
-                <p>
-                  Founded in 2015 by Dr. Ahmed Rahman, Dola Foundation began as
-                  a small initiative to provide education support to 20 children
-                  in a rural village in Sylhet. What started as a passion project
-                  has grown into a fully operational NGO serving thousands of
-                  people across 8 districts.
-                </p>
-                <p>
-                  The name "Dola" represents the Bangla concept of a swing — a
-                  symbol of the gentle, uplifting motion of lives being elevated
-                  from poverty and despair to dignity and hope. We believe every
-                  person deserves the opportunity to swing upward.
-                </p>
-                <p>
-                  Over the years, we've built schools, operated health camps,
-                  distributed relief supplies during floods and other disasters,
-                  trained thousands of youth, and provided care to hundreds of
-                  orphaned children. Our work continues to expand because the
-                  need is great and our community of supporters grows every day.
-                </p>
+                {settings?.aboutText ? (
+                  settings.aboutText
+                    .split(/\n+/)
+                    .filter((paragraph) => paragraph.trim().length > 0)
+                    .map((paragraph, i) => <p key={i}>{paragraph}</p>)
+                ) : (
+                  <>
+                    <p>
+                      Founded in 2015 by Dr. Ahmed Rahman, Dola Foundation began as
+                      a small initiative to provide education support to 20 children
+                      in a rural village in Sylhet. What started as a passion project
+                      has grown into a fully operational NGO serving thousands of
+                      people across 8 districts.
+                    </p>
+                    <p>
+                      The name "Dola" represents the Bangla concept of a swing — a
+                      symbol of the gentle, uplifting motion of lives being elevated
+                      from poverty and despair to dignity and hope. We believe every
+                      person deserves the opportunity to swing upward.
+                    </p>
+                    <p>
+                      Over the years, we've built schools, operated health camps,
+                      distributed relief supplies during floods and other disasters,
+                      trained thousands of youth, and provided care to hundreds of
+                      orphaned children. Our work continues to expand because the
+                      need is great and our community of supporters grows every day.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -201,11 +224,8 @@ export default function AboutPage() {
                 Our Mission
               </h3>
               <p className="text-white/80 leading-relaxed">
-                To empower vulnerable communities in Bangladesh through
-                sustainable programs in education, healthcare, livelihood, and
-                environmental conservation — ensuring that every individual has
-                access to their fundamental rights and the opportunity to live
-                with dignity.
+                {settings?.missionText ||
+                  "To empower vulnerable communities in Bangladesh through sustainable programs in education, healthcare, livelihood, and environmental conservation — ensuring that every individual has access to their fundamental rights and the opportunity to live with dignity."}
               </p>
             </div>
             <div className="bg-[#1F9D55] rounded-3xl p-8 md:p-10">
@@ -216,10 +236,8 @@ export default function AboutPage() {
                 Our Vision
               </h3>
               <p className="text-white/80 leading-relaxed">
-                A Bangladesh where no child goes without education, no family
-                suffers from preventable illness, no community is left behind in
-                development, and where every person — regardless of their
-                background — can live a life full of potential and hope.
+                {settings?.visionText ||
+                  "A Bangladesh where no child goes without education, no family suffers from preventable illness, no community is left behind in development, and where every person — regardless of their background — can live a life full of potential and hope."}
               </p>
             </div>
           </div>
@@ -270,28 +288,28 @@ export default function AboutPage() {
               </svg>
             </div>
             <div className="flex flex-col md:flex-row items-start gap-8">
-              <div className="w-20 h-20 md:w-24 md:h-24 bg-[#0F3D8C] rounded-2xl flex items-center justify-center text-white font-bold text-3xl flex-shrink-0">
-                A
-              </div>
+              {settings?.founderImage ? (
+                <img
+                  src={settings.founderImage}
+                  alt={founderName}
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-2xl object-cover flex-shrink-0"
+                />
+              ) : (
+                <div className="w-20 h-20 md:w-24 md:h-24 bg-[#0F3D8C] rounded-2xl flex items-center justify-center text-white font-bold text-3xl flex-shrink-0">
+                  {founderName.charAt(0).toUpperCase()}
+                </div>
+              )}
               <div>
                 <span className="inline-block bg-[#F4B400]/15 text-[#F4B400] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
                   Founder's Message
                 </span>
                 <blockquote className="text-gray-600 text-base leading-relaxed mb-6 italic">
-                  "When I started Dola Foundation in 2015, I had one dream: that
-                  no child in Bangladesh would miss out on education simply
-                  because of poverty. A decade later, that dream has grown into
-                  something far greater. We now serve thousands of families,
-                  operating programs that span education, health, environment,
-                  and youth empowerment. But we have not yet finished our work.
-                  As long as there are children without schools, families without
-                  healthcare, and communities without clean water, Dola
-                  Foundation will continue to act. I invite you to join us on
-                  this journey of hope."
+                  "{settings?.founderMessage ||
+                    "When I started Dola Foundation in 2015, I had one dream: that no child in Bangladesh would miss out on education simply because of poverty. A decade later, that dream has grown into something far greater. We now serve thousands of families, operating programs that span education, health, environment, and youth empowerment. But we have not yet finished our work. As long as there are children without schools, families without healthcare, and communities without clean water, Dola Foundation will continue to act. I invite you to join us on this journey of hope."}"
                 </blockquote>
                 <div>
                   <div className="font-poppins font-bold text-[#1A1A2E]">
-                    Dr. Ahmed Rahman
+                    {founderName}
                   </div>
                   <div className="text-gray-500 text-sm">
                     Founder & Executive Director, Dola Foundation

@@ -30,7 +30,15 @@ const navLinks = [
   { label: "Contact", href: "/contact" },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  logoUrl?: string | null;
+  siteName?: string | null;
+  tagline?: string | null;
+}
+
+export default function Navbar({ logoUrl, siteName, tagline }: NavbarProps) {
+  const brandName = siteName || "Dola Foundation";
+  const brandTagline = tagline || "Empowering Lives";
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -80,9 +88,17 @@ export default function Navbar() {
           <nav className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 flex-shrink-0">
-              <div className="w-10 h-10 bg-[#0F3D8C] rounded-xl flex items-center justify-center">
-                <Heart className="w-5 h-5 text-[#F4B400]" />
-              </div>
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={brandName}
+                  className="h-10 w-10 object-contain rounded-xl"
+                />
+              ) : (
+                <div className="w-10 h-10 bg-[#0F3D8C] rounded-xl flex items-center justify-center">
+                  <Heart className="w-5 h-5 text-[#F4B400]" />
+                </div>
+              )}
               <div>
                 <span
                   className={cn(
@@ -90,7 +106,7 @@ export default function Navbar() {
                     isScrolled ? "text-[#1A1A2E]" : "text-white"
                   )}
                 >
-                  Dola Foundation
+                  {brandName}
                 </span>
                 <span
                   className={cn(
@@ -98,7 +114,7 @@ export default function Navbar() {
                     isScrolled ? "text-gray-500" : "text-white/70"
                   )}
                 >
-                  Empowering Lives
+                  {brandTagline}
                 </span>
               </div>
             </Link>
@@ -216,11 +232,19 @@ export default function Navbar() {
             >
               <div className="flex items-center justify-between p-6 border-b">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-[#0F3D8C] rounded-xl flex items-center justify-center">
-                    <Heart className="w-4 h-4 text-[#F4B400]" />
-                  </div>
+                  {logoUrl ? (
+                    <img
+                      src={logoUrl}
+                      alt={brandName}
+                      className="h-9 w-9 object-contain rounded-xl"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 bg-[#0F3D8C] rounded-xl flex items-center justify-center">
+                      <Heart className="w-4 h-4 text-[#F4B400]" />
+                    </div>
+                  )}
                   <span className="font-poppins font-bold text-[#1A1A2E]">
-                    Dola Foundation
+                    {brandName}
                   </span>
                 </div>
                 <button

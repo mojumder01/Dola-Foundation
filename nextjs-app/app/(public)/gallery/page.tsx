@@ -3,6 +3,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import GalleryGrid from "./GalleryGrid";
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Gallery",
   description:

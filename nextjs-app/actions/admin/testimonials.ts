@@ -26,6 +26,7 @@ export async function createTestimonial(formData: FormData) {
       },
     });
     revalidatePath('/admin/testimonials');
+    revalidatePath("/", "layout");
     return { success: true, testimonial };
   } catch (error) {
     return { success: false, error: "Failed to create testimonial" };
@@ -45,6 +46,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
       },
     });
     revalidatePath('/admin/testimonials');
+    revalidatePath("/", "layout");
     return { success: true, testimonial };
   } catch (error) {
     return { success: false, error: "Failed to update testimonial" };
@@ -55,6 +57,7 @@ export async function deleteTestimonial(id: string) {
   try {
     await prisma.testimonial.delete({ where: { id } });
     revalidatePath('/admin/testimonials');
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete testimonial" };
@@ -65,6 +68,7 @@ export async function toggleTestimonialActive(id: string, active: boolean) {
   try {
     await prisma.testimonial.update({ where: { id }, data: { active } });
     revalidatePath('/admin/testimonials');
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     return { success: false };

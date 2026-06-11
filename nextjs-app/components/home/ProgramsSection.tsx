@@ -7,7 +7,16 @@ import ProgramCard from "@/components/shared/ProgramCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
-const programs = [
+const gradients = [
+  "from-blue-500 to-blue-700",
+  "from-green-500 to-green-700",
+  "from-yellow-500 to-orange-600",
+  "from-emerald-500 to-teal-700",
+  "from-purple-500 to-purple-700",
+  "from-pink-500 to-rose-600",
+];
+
+const fallbackPrograms = [
   {
     id: "1",
     title: "Education",
@@ -64,7 +73,31 @@ const programs = [
   },
 ];
 
-export default function ProgramsSection() {
+interface ProgramsSectionProps {
+  programs?: {
+    id: string;
+    title: string;
+    description: string;
+    icon?: string | null;
+    slug: string;
+  }[];
+}
+
+export default function ProgramsSection({
+  programs: programsProp,
+}: ProgramsSectionProps) {
+  const programs =
+    programsProp && programsProp.length > 0
+      ? programsProp.map((program, index) => ({
+          id: program.id,
+          title: program.title,
+          description: program.description,
+          icon: program.icon || "❤️",
+          slug: program.slug,
+          gradient: gradients[index % gradients.length],
+        }))
+      : fallbackPrograms;
+
   return (
     <section className="py-16 md:py-24 bg-[#F8FAFC]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

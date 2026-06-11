@@ -26,6 +26,9 @@ enum Role {
 
 model SiteSettings {
   id             String   @id @default(cuid())
+  siteName       String   @default("Dola Foundation")
+  tagline        String   @default("Empowering Lives")
+  logoUrl        String?
   heroTitle      String   @default("Empowering Lives, Inspiring Hope")
   heroSubtitle   String   @default("We work to uplift communities through education, healthcare, and sustainable development across Bangladesh.")
   heroImage      String?

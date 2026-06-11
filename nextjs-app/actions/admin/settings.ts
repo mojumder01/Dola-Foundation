@@ -22,6 +22,9 @@ export async function updateSiteSettings(formData: FormData) {
     const existing = await prisma.siteSettings.findFirst();
 
     const data = {
+      siteName: (formData.get("siteName") as string) || undefined,
+      tagline: (formData.get("tagline") as string) || undefined,
+      logoUrl: (formData.get("logoUrl") as string) || undefined,
       heroTitle: formData.get("heroTitle") as string,
       heroSubtitle: formData.get("heroSubtitle") as string,
       heroImage: (formData.get("heroImage") as string) || undefined,
@@ -53,6 +56,7 @@ export async function updateSiteSettings(formData: FormData) {
       : await prisma.siteSettings.create({ data });
 
     revalidatePath('/admin/settings');
+    revalidatePath("/", "layout");
     return { success: true, settings };
   } catch (error: any) {
     console.error("[updateSiteSettings]", error);

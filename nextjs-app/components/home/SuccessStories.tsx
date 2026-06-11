@@ -4,7 +4,9 @@ import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
 import SectionHeader from "@/components/shared/SectionHeader";
 
-const testimonials = [
+const avatarColors = ["bg-[#0F3D8C]", "bg-[#1F9D55]", "bg-[#F4B400]"];
+
+const fallbackTestimonials = [
   {
     id: 1,
     name: "Fatima Begum",
@@ -37,7 +39,38 @@ const testimonials = [
   },
 ];
 
-export default function SuccessStories() {
+interface SuccessStoriesProps {
+  testimonials?: {
+    id: string;
+    name: string;
+    quote: string;
+    program?: string | null;
+    image?: string | null;
+  }[];
+}
+
+export default function SuccessStories({
+  testimonials: testimonialsProp,
+}: SuccessStoriesProps) {
+  const testimonials =
+    testimonialsProp && testimonialsProp.length > 0
+      ? testimonialsProp.map((testimonial, index) => ({
+          id: testimonial.id,
+          name: testimonial.name,
+          quote: testimonial.quote,
+          program: testimonial.program || "Dola Foundation",
+          location: null as string | null,
+          image: testimonial.image || null,
+          initial: testimonial.name.charAt(0).toUpperCase(),
+          color: avatarColors[index % avatarColors.length],
+        }))
+      : fallbackTestimonials.map((testimonial) => ({
+          ...testimonial,
+          id: String(testimonial.id),
+          location: testimonial.location as string | null,
+          image: null as string | null,
+        }));
+
   return (
     <section className="py-16 md:py-24 bg-[#F8FAFC] relative overflow-hidden">
       {/* Background decoration */}
@@ -82,17 +115,26 @@ export default function SuccessStories() {
 
               {/* Person */}
               <div className="flex items-center gap-3 border-t border-gray-100 pt-4">
-                <div
-                  className={`w-10 h-10 ${testimonial.color} rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}
-                >
-                  {testimonial.initial}
-                </div>
+                {testimonial.image ? (
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                  />
+                ) : (
+                  <div
+                    className={`w-10 h-10 ${testimonial.color} rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}
+                  >
+                    {testimonial.initial}
+                  </div>
+                )}
                 <div>
                   <div className="font-semibold text-[#1A1A2E] text-sm">
                     {testimonial.name}
                   </div>
                   <div className="text-xs text-gray-400">
-                    {testimonial.program} • {testimonial.location}
+                    {testimonial.program}
+                    {testimonial.location ? ` • ${testimonial.location}` : ""}
                   </div>
                 </div>
               </div>

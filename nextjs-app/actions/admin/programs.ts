@@ -47,6 +47,7 @@ export async function createProgram(formData: FormData) {
 
     const program = await prisma.program.create({ data });
     revalidatePath('/admin/programs');
+    revalidatePath("/", "layout");
     return { success: true, program };
   } catch (error) {
     return { success: false, error: "Failed to create program" };
@@ -65,6 +66,7 @@ export async function updateProgram(id: string, formData: FormData) {
       },
     });
     revalidatePath('/admin/programs');
+    revalidatePath("/", "layout");
     return { success: true, program };
   } catch (error) {
     return { success: false, error: "Failed to update program" };
@@ -75,6 +77,7 @@ export async function deleteProgram(id: string) {
   try {
     await prisma.program.delete({ where: { id } });
     revalidatePath('/admin/programs');
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete program" };
@@ -85,6 +88,7 @@ export async function toggleProgramPublished(id: string, published: boolean) {
   try {
     await prisma.program.update({ where: { id }, data: { published } });
     revalidatePath('/admin/programs');
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     return { success: false };

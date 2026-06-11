@@ -36,9 +36,44 @@ const programs = [
   { label: "Orphan Care", href: "/programs/orphan-care" },
 ];
 
-export default function Footer() {
+interface FooterSettings {
+  siteName?: string | null;
+  tagline?: string | null;
+  logoUrl?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  facebookUrl?: string | null;
+  instagramUrl?: string | null;
+  twitterUrl?: string | null;
+  youtubeUrl?: string | null;
+}
+
+export default function Footer({
+  settings,
+}: {
+  settings?: FooterSettings | null;
+}) {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+
+  const siteName = settings?.siteName || "Dola Foundation";
+  const tagline = settings?.tagline || "Empowering Lives";
+  const contactAddress = settings?.address || "Dhaka, Bangladesh";
+  const contactPhone = settings?.phone || "+880 1700-000000";
+  const contactEmail = settings?.email || "info@dolafoundation.org";
+
+  const configuredSocials = [
+    { icon: Facebook, href: settings?.facebookUrl, label: "Facebook" },
+    { icon: Instagram, href: settings?.instagramUrl, label: "Instagram" },
+    { icon: Twitter, href: settings?.twitterUrl, label: "Twitter" },
+    { icon: Youtube, href: settings?.youtubeUrl, label: "YouTube" },
+  ];
+  const socialLinks = configuredSocials.some((social) => social.href)
+    ? configuredSocials
+        .filter((social) => social.href)
+        .map((social) => ({ ...social, href: social.href as string }))
+    : configuredSocials.map((social) => ({ ...social, href: "#" }));
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,14 +100,22 @@ export default function Footer() {
           {/* Column 1: Logo + About */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 bg-[#0F3D8C] rounded-xl flex items-center justify-center flex-shrink-0">
-                <Heart className="w-5 h-5 text-[#F4B400]" />
-              </div>
+              {settings?.logoUrl ? (
+                <img
+                  src={settings.logoUrl}
+                  alt={siteName}
+                  className="h-10 w-10 object-contain rounded-xl flex-shrink-0"
+                />
+              ) : (
+                <div className="w-10 h-10 bg-[#0F3D8C] rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Heart className="w-5 h-5 text-[#F4B400]" />
+                </div>
+              )}
               <div>
                 <span className="font-poppins font-bold text-lg leading-none block text-white">
-                  Dola Foundation
+                  {siteName}
                 </span>
-                <span className="text-xs text-gray-400">Empowering Lives</span>
+                <span className="text-xs text-gray-400">{tagline}</span>
               </div>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
@@ -83,12 +126,7 @@ export default function Footer() {
 
             {/* Social Links */}
             <div className="flex items-center gap-3">
-              {[
-                { icon: Facebook, href: "#", label: "Facebook" },
-                { icon: Instagram, href: "#", label: "Instagram" },
-                { icon: Twitter, href: "#", label: "Twitter" },
-                { icon: Youtube, href: "#", label: "YouTube" },
-              ].map(({ icon: Icon, href, label }) => (
+              {socialLinks.map(({ icon: Icon, href, label }) => (
                 <a
                   key={label}
                   href={href}
@@ -154,18 +192,18 @@ export default function Footer() {
             <ul className="space-y-3 mt-4 mb-6">
               <li className="flex items-start gap-3 text-gray-400 text-sm">
                 <MapPin className="w-4 h-4 text-[#F4B400] mt-0.5 flex-shrink-0" />
-                <span>Dhaka, Bangladesh</span>
+                <span>{contactAddress}</span>
               </li>
               <li className="flex items-center gap-3 text-gray-400 text-sm">
                 <Phone className="w-4 h-4 text-[#F4B400] flex-shrink-0" />
-                <a href="tel:+8801700000000" className="hover:text-[#F4B400] transition-colors">
-                  +880 1700-000000
+                <a href={`tel:${contactPhone.replace(/[^+0-9]/g, "")}`} className="hover:text-[#F4B400] transition-colors">
+                  {contactPhone}
                 </a>
               </li>
               <li className="flex items-center gap-3 text-gray-400 text-sm">
                 <Mail className="w-4 h-4 text-[#F4B400] flex-shrink-0" />
-                <a href="mailto:info@dolafoundation.org" className="hover:text-[#F4B400] transition-colors">
-                  info@dolafoundation.org
+                <a href={`mailto:${contactEmail}`} className="hover:text-[#F4B400] transition-colors">
+                  {contactEmail}
                 </a>
               </li>
             </ul>
@@ -203,7 +241,7 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm text-center sm:text-left">
-              © {new Date().getFullYear()} Dola Foundation. All rights reserved.
+              © {new Date().getFullYear()} {siteName}. All rights reserved.
               Built with ❤️ for a better world.
             </p>
             <div className="flex items-center gap-4 text-sm">

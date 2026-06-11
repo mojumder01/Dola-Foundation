@@ -6,7 +6,7 @@ import { ArrowRight, Camera } from "lucide-react";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { Button } from "@/components/ui/button";
 
-const galleryImages = [
+const fallbackImages = [
   {
     id: 1,
     src: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600&q=80",
@@ -51,7 +51,26 @@ const galleryImages = [
   },
 ];
 
-export default function GalleryPreview() {
+interface GalleryPreviewProps {
+  images?: {
+    id: string;
+    url: string;
+    title?: string | null;
+    category?: string | null;
+  }[];
+}
+
+export default function GalleryPreview({ images }: GalleryPreviewProps) {
+  const galleryImages =
+    images && images.length > 0
+      ? images.map((image) => ({
+          id: image.id,
+          src: image.url,
+          alt: image.title || "Gallery image",
+          category: image.category || "",
+        }))
+      : fallbackImages;
+
   return (
     <section className="py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

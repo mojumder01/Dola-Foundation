@@ -25,6 +25,7 @@ export async function addGalleryImage(data: {
   try {
     const image = await prisma.galleryImage.create({ data });
     revalidatePath('/admin/gallery');
+    revalidatePath("/", "layout");
     return { success: true, image };
   } catch (error) {
     return { success: false, error: "Failed to add image" };
@@ -35,6 +36,7 @@ export async function deleteGalleryImage(id: string) {
   try {
     await prisma.galleryImage.delete({ where: { id } });
     revalidatePath('/admin/gallery');
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete image" };
@@ -53,6 +55,7 @@ export async function updateGalleryImageOrder(
         })
       )
     );
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     return { success: false };

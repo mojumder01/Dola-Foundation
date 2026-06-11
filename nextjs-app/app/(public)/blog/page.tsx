@@ -4,6 +4,8 @@ import { FileText } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import BlogCard from "@/components/shared/BlogCard";
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Blog",
   description: "Read the latest news, stories, and insights from Dola Foundation.",

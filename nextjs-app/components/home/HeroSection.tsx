@@ -5,11 +5,34 @@ import { motion } from "framer-motion";
 import { Heart, Users, ChevronDown, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  title?: string | null;
+  subtitle?: string | null;
+  image?: string | null;
+}
+
+export default function HeroSection({ title, subtitle, image }: HeroSectionProps) {
+  const heading = title || "Empowering Lives, Inspiring Hope";
+  const commaIndex = heading.indexOf(",");
+  const headingStart =
+    commaIndex > -1 ? heading.slice(0, commaIndex + 1) : null;
+  const headingEnd =
+    commaIndex > -1 ? heading.slice(commaIndex + 1).trim() : heading;
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0F3D8C] via-[#0d3578] to-[#1F9D55]" />
+      {/* Background */}
+      {image ? (
+        <>
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${image})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0F3D8C] via-[#0d3578] to-[#1F9D55] opacity-70" />
+        </>
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0F3D8C] via-[#0d3578] to-[#1F9D55]" />
+      )}
 
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
@@ -60,9 +83,15 @@ export default function HeroSection() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="font-poppins font-black text-5xl md:text-6xl lg:text-7xl text-white leading-[1.1] mb-6"
           >
-            Empowering Lives,
-            <br />
-            <span className="text-[#F4B400]">Inspiring Hope</span>
+            {headingStart ? (
+              <>
+                {headingStart}
+                <br />
+                <span className="text-[#F4B400]">{headingEnd}</span>
+              </>
+            ) : (
+              heading
+            )}
           </motion.h1>
 
           {/* Subheadline */}
@@ -72,9 +101,8 @@ export default function HeroSection() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-white/85 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10"
           >
-            We work tirelessly to uplift underprivileged communities through
-            education, healthcare, environmental protection, and sustainable
-            development programs across Bangladesh.
+            {subtitle ||
+              "We work tirelessly to uplift underprivileged communities through education, healthcare, environmental protection, and sustainable development programs across Bangladesh."}
           </motion.p>
 
           {/* CTAs */}
