@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 import { slugify } from "@/lib/utils";
 
 export async function getProjects(status?: string) {
@@ -29,6 +30,7 @@ export async function createProject(formData: FormData) {
         impact: (formData.get("impact") as string) || undefined,
       },
     });
+    revalidatePath('/admin/projects');
     return { success: true, project };
   } catch (error) {
     return { success: false, error: "Failed to create project" };
@@ -48,6 +50,7 @@ export async function updateProject(id: string, formData: FormData) {
         impact: (formData.get("impact") as string) || undefined,
       },
     });
+    revalidatePath('/admin/projects');
     return { success: true, project };
   } catch (error) {
     return { success: false, error: "Failed to update project" };
@@ -57,6 +60,7 @@ export async function updateProject(id: string, formData: FormData) {
 export async function deleteProject(id: string) {
   try {
     await prisma.project.delete({ where: { id } });
+    revalidatePath('/admin/projects');
     return { success: true };
   } catch (error) {
     return { success: false };

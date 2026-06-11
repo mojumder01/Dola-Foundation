@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 import { slugify } from "@/lib/utils";
 
 export async function getBlogPosts(publishedOnly = false) {
@@ -42,6 +43,7 @@ export async function createBlogPost(formData: FormData) {
           formData.get("published") === "true" ? new Date() : undefined,
       },
     });
+    revalidatePath('/admin/blog');
     return { success: true, post };
   } catch (error) {
     return { success: false, error: "Failed to create post" };
@@ -64,6 +66,7 @@ export async function updateBlogPost(id: string, formData: FormData) {
         publishedAt: published ? new Date() : undefined,
       },
     });
+    revalidatePath('/admin/blog');
     return { success: true, post };
   } catch (error) {
     return { success: false, error: "Failed to update post" };
@@ -73,6 +76,7 @@ export async function updateBlogPost(id: string, formData: FormData) {
 export async function deleteBlogPost(id: string) {
   try {
     await prisma.blogPost.delete({ where: { id } });
+    revalidatePath('/admin/blog');
     return { success: true };
   } catch (error) {
     return { success: false };
@@ -85,6 +89,7 @@ export async function toggleBlogPublished(id: string, published: boolean) {
       where: { id },
       data: { published, publishedAt: published ? new Date() : null },
     });
+    revalidatePath('/admin/blog');
     return { success: true };
   } catch (error) {
     return { success: false };

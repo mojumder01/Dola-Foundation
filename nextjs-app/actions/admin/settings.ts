@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export async function getSiteSettings() {
   try {
@@ -51,6 +52,7 @@ export async function updateSiteSettings(formData: FormData) {
       ? await prisma.siteSettings.update({ where: { id: existing.id }, data })
       : await prisma.siteSettings.create({ data });
 
+    revalidatePath('/admin/settings');
     return { success: true, settings };
   } catch (error) {
     console.error("Settings update error:", error);

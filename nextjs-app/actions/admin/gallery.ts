@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export async function getGalleryImages(category?: string) {
   try {
@@ -23,6 +24,7 @@ export async function addGalleryImage(data: {
 }) {
   try {
     const image = await prisma.galleryImage.create({ data });
+    revalidatePath('/admin/gallery');
     return { success: true, image };
   } catch (error) {
     return { success: false, error: "Failed to add image" };
@@ -32,6 +34,7 @@ export async function addGalleryImage(data: {
 export async function deleteGalleryImage(id: string) {
   try {
     await prisma.galleryImage.delete({ where: { id } });
+    revalidatePath('/admin/gallery');
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete image" };

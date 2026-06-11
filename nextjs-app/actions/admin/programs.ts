@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 import { slugify } from "@/lib/utils";
 import { z } from "zod";
 
@@ -45,6 +46,7 @@ export async function createProgram(formData: FormData) {
     };
 
     const program = await prisma.program.create({ data });
+    revalidatePath('/admin/programs');
     return { success: true, program };
   } catch (error) {
     return { success: false, error: "Failed to create program" };
@@ -62,6 +64,7 @@ export async function updateProgram(id: string, formData: FormData) {
         published: formData.get("published") === "true",
       },
     });
+    revalidatePath('/admin/programs');
     return { success: true, program };
   } catch (error) {
     return { success: false, error: "Failed to update program" };
@@ -71,6 +74,7 @@ export async function updateProgram(id: string, formData: FormData) {
 export async function deleteProgram(id: string) {
   try {
     await prisma.program.delete({ where: { id } });
+    revalidatePath('/admin/programs');
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete program" };
@@ -80,6 +84,7 @@ export async function deleteProgram(id: string) {
 export async function toggleProgramPublished(id: string, published: boolean) {
   try {
     await prisma.program.update({ where: { id }, data: { published } });
+    revalidatePath('/admin/programs');
     return { success: true };
   } catch (error) {
     return { success: false };
