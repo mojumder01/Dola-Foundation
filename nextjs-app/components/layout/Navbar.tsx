@@ -36,16 +36,21 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const pathname = usePathname();
 
+  const isHome = pathname === "/";
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
+    // force solid navbar immediately on non-home pages
+    if (!isHome) setIsScrolled(true);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isHome]);
 
   useEffect(() => {
     setMobileOpen(false);
     setActiveDropdown(null);
-  }, [pathname]);
+    if (!isHome) setIsScrolled(true);
+  }, [pathname, isHome]);
 
   useEffect(() => {
     if (mobileOpen) {
