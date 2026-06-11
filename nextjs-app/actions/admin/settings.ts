@@ -54,8 +54,8 @@ export async function updateSiteSettings(formData: FormData) {
 
     revalidatePath('/admin/settings');
     return { success: true, settings };
-  } catch (error) {
-    console.error("Settings update error:", error);
-    return { success: false, error: "Failed to update settings" };
+  } catch (error: any) {
+    console.error("[updateSiteSettings]", error);
+    return { success: false, error: error?.message || "Failed to update settings" };
   }
 }

@@ -38,7 +38,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } else {
-      setError(result?.error || "Failed to save");
+      setError(result?.error || "Failed to save — is the database connected? Check /api/health");
     }
   }
 

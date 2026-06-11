@@ -37,16 +37,19 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
   const [showModal, setShowModal] = useState(false);
   const [editingProgram, setEditingProgram] = useState<Program | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [formError, setFormError] = useState<string | null>(null);
   const router = useRouter();
   const publishedRef = useRef<HTMLInputElement>(null);
 
   function openNew() {
     setEditingProgram(null);
+    setFormError(null);
     setShowModal(true);
   }
 
   function openEdit(program: Program) {
     setEditingProgram(program);
+    setFormError(null);
     setShowModal(true);
   }
 
@@ -58,7 +61,11 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
     )
       return;
     startTransition(async () => {
-      await deleteProgram(program.id);
+      const result = await deleteProgram(program.id);
+      if (!result.success) {
+        alert("Failed to delete program. Check if the database is connected.");
+        return;
+      }
       router.refresh();
     });
   }
@@ -69,11 +76,17 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
     const fd = new FormData(form);
     fd.set("published", publishedRef.current?.checked ? "true" : "false");
     fd.set("objectives", "[]");
+    setFormError(null);
     startTransition(async () => {
+      let result;
       if (editingProgram) {
-        await updateProgram(editingProgram.id, fd);
+        result = await updateProgram(editingProgram.id, fd);
       } else {
-        await createProgram(fd);
+        result = await createProgram(fd);
+      }
+      if (!result.success) {
+        setFormError((result as any).error || "Failed to save. Is the database connected?");
+        return;
       }
       router.refresh();
       setShowModal(false);
@@ -200,6 +213,11 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {formError && (
+              <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm">
+                {formError}
+              </div>
+            )}
             <div>
               <Label htmlFor="title">Title *</Label>
               <Input

@@ -61,9 +61,11 @@ async function getDashboardData() {
 export default async function AdminDashboardPage() {
   const session = await auth();
   let data;
+  let dbError: string | null = null;
   try {
     data = await getDashboardData();
-  } catch {
+  } catch (err: any) {
+    dbError = err?.message ?? "Unknown database error";
     data = {
       totalDonations: 0,
       donationCount: 0,
@@ -88,6 +90,17 @@ export default async function AdminDashboardPage() {
           Here's what's happening at Dola Foundation today.
         </p>
       </div>
+
+      {dbError && (
+        <div className="mb-6 bg-red-50 border border-red-200 text-red-700 rounded-xl p-4">
+          <p className="font-semibold text-sm mb-1">Database connection failed — CRUD operations will not work.</p>
+          <p className="text-xs font-mono break-all">{dbError}</p>
+          <p className="text-xs mt-2">
+            Go to Vercel → Settings → Environment Variables and verify <code className="bg-red-100 px-1 rounded">DATABASE_URL</code> is set correctly.{" "}
+            <a href="/api/health" target="_blank" className="underline">Run health check</a>
+          </p>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">

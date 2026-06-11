@@ -35,16 +35,19 @@ export default function TeamManager({ members }: { members: Member[] }) {
   const [showModal, setShowModal] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [formError, setFormError] = useState<string | null>(null);
   const router = useRouter();
   const activeRef = useRef<HTMLInputElement>(null);
 
   function openNew() {
     setEditingMember(null);
+    setFormError(null);
     setShowModal(true);
   }
 
   function openEdit(member: Member) {
     setEditingMember(member);
+    setFormError(null);
     setShowModal(true);
   }
 
@@ -56,7 +59,11 @@ export default function TeamManager({ members }: { members: Member[] }) {
     )
       return;
     startTransition(async () => {
-      await deleteTeamMember(member.id);
+      const result = await deleteTeamMember(member.id);
+      if (!result.success) {
+        alert("Failed to delete member. Check if the database is connected.");
+        return;
+      }
       router.refresh();
     });
   }
@@ -66,11 +73,17 @@ export default function TeamManager({ members }: { members: Member[] }) {
     const form = e.currentTarget;
     const fd = new FormData(form);
     fd.set("active", activeRef.current?.checked ? "true" : "false");
+    setFormError(null);
     startTransition(async () => {
+      let result;
       if (editingMember) {
-        await updateTeamMember(editingMember.id, fd);
+        result = await updateTeamMember(editingMember.id, fd);
       } else {
-        await createTeamMember(fd);
+        result = await createTeamMember(fd);
+      }
+      if (!result.success) {
+        setFormError((result as any).error || "Failed to save. Is the database connected?");
+        return;
       }
       router.refresh();
       setShowModal(false);
@@ -163,6 +176,11 @@ export default function TeamManager({ members }: { members: Member[] }) {
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {formError && (
+              <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm">
+                {formError}
+              </div>
+            )}
             <div>
               <Label htmlFor="name">Name *</Label>
               <Input

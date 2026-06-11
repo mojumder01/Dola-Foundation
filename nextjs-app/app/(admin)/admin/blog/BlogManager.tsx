@@ -38,17 +38,21 @@ export default function BlogManager({ posts }: { posts: Post[] }) {
   const [showModal, setShowModal] = useState(false);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [formError, setFormError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const publishedRef = useRef<HTMLInputElement>(null);
 
   function openNew() {
     setEditingPost(null);
+    setFormError(null);
     setShowModal(true);
   }
 
   function openEdit(post: Post) {
     setEditingPost(post);
+    setFormError(null);
     setShowModal(true);
   }
 
@@ -59,8 +63,13 @@ export default function BlogManager({ posts }: { posts: Post[] }) {
       )
     )
       return;
+    setDeleteError(null);
     startTransition(async () => {
-      await deleteBlogPost(post.id);
+      const result = await deleteBlogPost(post.id);
+      if (!result.success) {
+        setDeleteError("Failed to delete post. Check browser console for details.");
+        return;
+      }
       router.refresh();
     });
   }
@@ -70,11 +79,17 @@ export default function BlogManager({ posts }: { posts: Post[] }) {
     const form = e.currentTarget;
     const fd = new FormData(form);
     fd.set("published", publishedRef.current?.checked ? "true" : "false");
+    setFormError(null);
     startTransition(async () => {
+      let result;
       if (editingPost) {
-        await updateBlogPost(editingPost.id, fd);
+        result = await updateBlogPost(editingPost.id, fd);
       } else {
-        await createBlogPost(fd);
+        result = await createBlogPost(fd);
+      }
+      if (!result.success) {
+        setFormError((result as any).error || "Failed to save. Is the database connected?");
+        return;
       }
       router.refresh();
       setShowModal(false);
@@ -98,6 +113,12 @@ export default function BlogManager({ posts }: { posts: Post[] }) {
           New Post
         </Button>
       </div>
+
+      {deleteError && (
+        <div className="mb-4 bg-red-50 border border-red-200 text-red-600 rounded-xl p-4 text-sm">
+          {deleteError}
+        </div>
+      )}
 
       <div className="bg-white rounded-2xl shadow-card overflow-hidden">
         <div className="p-5 border-b border-gray-100 flex items-center gap-3">
@@ -196,6 +217,11 @@ export default function BlogManager({ posts }: { posts: Post[] }) {
             </DialogTitle>
           </DialogHeader>
           <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+            {formError && (
+              <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm">
+                {formError}
+              </div>
+            )}
             <div>
               <Label htmlFor="title">Title *</Label>
               <Input

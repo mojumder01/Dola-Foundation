@@ -45,8 +45,9 @@ export async function createBlogPost(formData: FormData) {
     });
     revalidatePath('/admin/blog');
     return { success: true, post };
-  } catch (error) {
-    return { success: false, error: "Failed to create post" };
+  } catch (error: any) {
+    console.error("[createBlogPost]", error);
+    return { success: false, error: error?.message || "Failed to create post" };
   }
 }
 
@@ -68,8 +69,9 @@ export async function updateBlogPost(id: string, formData: FormData) {
     });
     revalidatePath('/admin/blog');
     return { success: true, post };
-  } catch (error) {
-    return { success: false, error: "Failed to update post" };
+  } catch (error: any) {
+    console.error("[updateBlogPost]", error);
+    return { success: false, error: error?.message || "Failed to update post" };
   }
 }
 
@@ -78,8 +80,9 @@ export async function deleteBlogPost(id: string) {
     await prisma.blogPost.delete({ where: { id } });
     revalidatePath('/admin/blog');
     return { success: true };
-  } catch (error) {
-    return { success: false };
+  } catch (error: any) {
+    console.error("[deleteBlogPost]", error);
+    return { success: false, error: error?.message || "Failed to delete post" };
   }
 }
 

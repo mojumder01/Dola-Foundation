@@ -38,16 +38,19 @@ export default function TestimonialsManager({
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState<Testimonial | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [formError, setFormError] = useState<string | null>(null);
   const router = useRouter();
   const activeRef = useRef<HTMLInputElement>(null);
 
   function openNew() {
     setEditingItem(null);
+    setFormError(null);
     setShowModal(true);
   }
 
   function openEdit(item: Testimonial) {
     setEditingItem(item);
+    setFormError(null);
     setShowModal(true);
   }
 
@@ -59,7 +62,11 @@ export default function TestimonialsManager({
     )
       return;
     startTransition(async () => {
-      await deleteTestimonial(item.id);
+      const result = await deleteTestimonial(item.id);
+      if (!result.success) {
+        alert("Failed to delete testimonial. Check if the database is connected.");
+        return;
+      }
       router.refresh();
     });
   }
@@ -69,11 +76,17 @@ export default function TestimonialsManager({
     const form = e.currentTarget;
     const fd = new FormData(form);
     fd.set("active", activeRef.current?.checked ? "true" : "false");
+    setFormError(null);
     startTransition(async () => {
+      let result;
       if (editingItem) {
-        await updateTestimonial(editingItem.id, fd);
+        result = await updateTestimonial(editingItem.id, fd);
       } else {
-        await createTestimonial(fd);
+        result = await createTestimonial(fd);
+      }
+      if (!result.success) {
+        setFormError((result as any).error || "Failed to save. Is the database connected?");
+        return;
       }
       router.refresh();
       setShowModal(false);
@@ -172,6 +185,11 @@ export default function TestimonialsManager({
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {formError && (
+              <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm">
+                {formError}
+              </div>
+            )}
             <div>
               <Label htmlFor="name">Name *</Label>
               <Input

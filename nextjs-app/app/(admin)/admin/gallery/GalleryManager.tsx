@@ -41,6 +41,7 @@ export default function GalleryManager({
   const [showModal, setShowModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [isPending, startTransition] = useTransition();
+  const [formError, setFormError] = useState<string | null>(null);
   const router = useRouter();
 
   const filteredImages =
@@ -56,7 +57,11 @@ export default function GalleryManager({
     )
       return;
     startTransition(async () => {
-      await deleteGalleryImage(image.id);
+      const result = await deleteGalleryImage(image.id);
+      if (!result.success) {
+        alert("Failed to delete image. Check if the database is connected.");
+        return;
+      }
       router.refresh();
     });
   }
@@ -68,12 +73,17 @@ export default function GalleryManager({
     const url = fd.get("url") as string;
     const title = fd.get("title") as string;
     const category = fd.get("category") as string;
+    setFormError(null);
     startTransition(async () => {
-      await addGalleryImage({
+      const result = await addGalleryImage({
         url,
         title: title || undefined,
         category: category || undefined,
       });
+      if (!result.success) {
+        setFormError((result as any).error || "Failed to save. Is the database connected?");
+        return;
+      }
       router.refresh();
       setShowModal(false);
       form.reset();
@@ -172,6 +182,11 @@ export default function GalleryManager({
             <DialogTitle>Add Image</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {formError && (
+              <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm">
+                {formError}
+              </div>
+            )}
             <div>
               <Label htmlFor="url">Image URL *</Label>
               <Input

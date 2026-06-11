@@ -47,16 +47,19 @@ export default function ProjectsManager({
   const [showModal, setShowModal] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [formError, setFormError] = useState<string | null>(null);
   const router = useRouter();
   const publishedRef = useRef<HTMLInputElement>(null);
 
   function openNew() {
     setEditingProject(null);
+    setFormError(null);
     setShowModal(true);
   }
 
   function openEdit(project: Project) {
     setEditingProject(project);
+    setFormError(null);
     setShowModal(true);
   }
 
@@ -68,7 +71,11 @@ export default function ProjectsManager({
     )
       return;
     startTransition(async () => {
-      await deleteProject(project.id);
+      const result = await deleteProject(project.id);
+      if (!result.success) {
+        alert("Failed to delete project. Check if the database is connected.");
+        return;
+      }
       router.refresh();
     });
   }
@@ -78,11 +85,17 @@ export default function ProjectsManager({
     const form = e.currentTarget;
     const fd = new FormData(form);
     fd.set("published", publishedRef.current?.checked ? "true" : "false");
+    setFormError(null);
     startTransition(async () => {
+      let result;
       if (editingProject) {
-        await updateProject(editingProject.id, fd);
+        result = await updateProject(editingProject.id, fd);
       } else {
-        await createProject(fd);
+        result = await createProject(fd);
+      }
+      if (!result.success) {
+        setFormError((result as any).error || "Failed to save. Is the database connected?");
+        return;
       }
       router.refresh();
       setShowModal(false);
@@ -210,6 +223,11 @@ export default function ProjectsManager({
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {formError && (
+              <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm">
+                {formError}
+              </div>
+            )}
             <div>
               <Label htmlFor="title">Title *</Label>
               <Input
