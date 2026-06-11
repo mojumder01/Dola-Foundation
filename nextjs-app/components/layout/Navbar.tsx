@@ -95,15 +95,15 @@ export default function Navbar({ logoUrl, siteName, tagline }: NavbarProps) {
                   className="h-10 w-10 object-contain rounded-xl"
                 />
               ) : (
-                <div className="w-10 h-10 bg-[#0F3D8C] rounded-xl flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-[#F4B400]" />
+                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                  <Heart className="w-5 h-5 text-gold" />
                 </div>
               )}
               <div>
                 <span
                   className={cn(
                     "font-poppins font-bold text-lg leading-none block transition-colors",
-                    isScrolled ? "text-[#1A1A2E]" : "text-white"
+                    isScrolled ? "text-dark" : "text-white"
                   )}
                 >
                   {brandName}
@@ -128,11 +128,11 @@ export default function Navbar({ logoUrl, siteName, tagline }: NavbarProps) {
                       className={cn(
                         "flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                         isScrolled
-                          ? "text-gray-700 hover:text-[#0F3D8C] hover:bg-blue-50"
+                          ? "text-gray-700 hover:text-primary hover:bg-blue-50"
                           : "text-white/90 hover:text-white hover:bg-white/10",
                         pathname.startsWith(link.href) &&
                           (isScrolled
-                            ? "text-[#0F3D8C] bg-blue-50"
+                            ? "text-primary bg-blue-50"
                             : "text-white bg-white/10")
                       )}
                       onMouseEnter={() => setActiveDropdown(link.label)}
@@ -147,11 +147,11 @@ export default function Navbar({ logoUrl, siteName, tagline }: NavbarProps) {
                       className={cn(
                         "flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                         isScrolled
-                          ? "text-gray-700 hover:text-[#0F3D8C] hover:bg-blue-50"
+                          ? "text-gray-700 hover:text-primary hover:bg-blue-50"
                           : "text-white/90 hover:text-white hover:bg-white/10",
                         pathname === link.href &&
                           (isScrolled
-                            ? "text-[#0F3D8C] bg-blue-50"
+                            ? "text-primary bg-blue-50"
                             : "text-white bg-white/10")
                       )}
                     >
@@ -171,7 +171,7 @@ export default function Navbar({ logoUrl, siteName, tagline }: NavbarProps) {
                           <Link
                             key={child.href}
                             href={child.href}
-                            className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-[#0F3D8C] transition-colors"
+                            className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-primary transition-colors"
                           >
                             {child.label}
                           </Link>
@@ -239,11 +239,11 @@ export default function Navbar({ logoUrl, siteName, tagline }: NavbarProps) {
                       className="h-9 w-9 object-contain rounded-xl"
                     />
                   ) : (
-                    <div className="w-9 h-9 bg-[#0F3D8C] rounded-xl flex items-center justify-center">
-                      <Heart className="w-4 h-4 text-[#F4B400]" />
+                    <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
+                      <Heart className="w-4 h-4 text-gold" />
                     </div>
                   )}
-                  <span className="font-poppins font-bold text-[#1A1A2E]">
+                  <span className="font-poppins font-bold text-dark">
                     {brandName}
                   </span>
                 </div>
@@ -273,7 +273,7 @@ export default function Navbar({ logoUrl, siteName, tagline }: NavbarProps) {
                             <Link
                               key={child.href}
                               href={child.href}
-                              className="flex items-center px-4 py-2 text-sm text-gray-600 hover:text-[#0F3D8C] hover:bg-blue-50 rounded-xl transition-colors"
+                              className="flex items-center px-4 py-2 text-sm text-gray-600 hover:text-primary hover:bg-blue-50 rounded-xl transition-colors"
                             >
                               {child.label}
                             </Link>
@@ -286,8 +286,8 @@ export default function Navbar({ logoUrl, siteName, tagline }: NavbarProps) {
                         className={cn(
                           "flex items-center px-4 py-3 rounded-xl font-medium transition-colors mb-1",
                           pathname === link.href
-                            ? "bg-blue-50 text-[#0F3D8C]"
-                            : "text-gray-700 hover:bg-gray-50 hover:text-[#0F3D8C]"
+                            ? "bg-blue-50 text-primary"
+                            : "text-gray-700 hover:bg-gray-50 hover:text-primary"
                         )}
                       >
                         {link.label}
@@ -296,7 +296,7 @@ export default function Navbar({ logoUrl, siteName, tagline }: NavbarProps) {
                   </motion.div>
                 ))}
 
-                <div className="mt-6 p-4 bg-gradient-to-br from-[#0F3D8C] to-[#1F9D55] rounded-2xl text-white">
+                <div className="mt-6 p-4 bg-gradient-to-br from-primary to-green rounded-2xl text-white">
                   <p className="font-poppins font-semibold text-lg mb-1">
                     Make a Difference
                   </p>

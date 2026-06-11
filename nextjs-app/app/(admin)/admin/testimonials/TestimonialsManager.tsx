@@ -98,7 +98,7 @@ export default function TestimonialsManager({
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-poppins font-bold text-2xl text-[#1A1A2E]">
+          <h1 className="font-poppins font-bold text-2xl text-dark">
             Testimonials
           </h1>
           <p className="text-gray-500 text-sm mt-1">Manage success stories</p>
@@ -134,7 +134,7 @@ export default function TestimonialsManager({
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
-                    className="w-4 h-4 text-[#F4B400] fill-current"
+                    className="w-4 h-4 text-gold fill-current"
                   />
                 ))}
               </div>
@@ -143,7 +143,7 @@ export default function TestimonialsManager({
               </p>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-[#1A1A2E] text-sm">
+                  <p className="font-semibold text-dark text-sm">
                     {t.name}
                   </p>
                   {t.program && (
@@ -159,7 +159,7 @@ export default function TestimonialsManager({
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => openEdit(t)}
-                    className="p-1.5 text-gray-400 hover:text-[#0F3D8C] hover:bg-blue-50 rounded-lg"
+                    className="p-1.5 text-gray-400 hover:text-primary hover:bg-blue-50 rounded-lg"
                   >
                     <Edit className="w-4 h-4" />
                   </button>

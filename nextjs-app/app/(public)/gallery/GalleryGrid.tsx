@@ -31,8 +31,8 @@ export default function GalleryGrid({ images }: { images: GalleryImage[] }) {
                 onClick={() => setActive(cat)}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${
                   active === cat
-                    ? "bg-[#0F3D8C] text-white border-[#0F3D8C]"
-                    : "bg-white border-gray-200 text-gray-600 hover:border-[#0F3D8C] hover:text-[#0F3D8C]"
+                    ? "bg-primary text-white border-primary"
+                    : "bg-white border-gray-200 text-gray-600 hover:border-primary hover:text-primary"
                 }`}
               >
                 {cat}
@@ -75,7 +75,7 @@ export default function GalleryGrid({ images }: { images: GalleryImage[] }) {
                         <span className="text-white text-sm font-semibold block">{image.title}</span>
                       )}
                       {image.category && (
-                        <span className="bg-[#F4B400] text-[#1A1A2E] text-xs font-semibold px-2 py-0.5 rounded-full mt-1 inline-block">
+                        <span className="bg-gold text-dark text-xs font-semibold px-2 py-0.5 rounded-full mt-1 inline-block">
                           {image.category}
                         </span>
                       )}

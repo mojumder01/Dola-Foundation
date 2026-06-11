@@ -28,10 +28,10 @@ export default function HeroSection({ title, subtitle, image }: HeroSectionProps
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${image})` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0F3D8C] via-[#0d3578] to-[#1F9D55] opacity-70" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#0d3578] to-green opacity-70" />
         </>
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0F3D8C] via-[#0d3578] to-[#1F9D55]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#0d3578] to-green" />
       )}
 
       {/* Background pattern */}
@@ -56,7 +56,7 @@ export default function HeroSection({ title, subtitle, image }: HeroSectionProps
       <motion.div
         animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-[#F4B400]/10 rounded-full blur-3xl"
+        className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-gold/10 rounded-full blur-3xl"
       />
 
       {/* Content */}
@@ -71,7 +71,7 @@ export default function HeroSection({ title, subtitle, image }: HeroSectionProps
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="inline-block bg-[#F4B400]/20 border border-[#F4B400]/30 text-[#F4B400] text-sm font-semibold px-6 py-2 rounded-full mb-8"
+            className="inline-block bg-gold/20 border border-gold/30 text-gold text-sm font-semibold px-6 py-2 rounded-full mb-8"
           >
             ✨ Empowering Communities Since 2015
           </motion.span>
@@ -87,7 +87,7 @@ export default function HeroSection({ title, subtitle, image }: HeroSectionProps
               <>
                 {headingStart}
                 <br />
-                <span className="text-[#F4B400]">{headingEnd}</span>
+                <span className="text-gold">{headingEnd}</span>
               </>
             ) : (
               heading
@@ -140,7 +140,7 @@ export default function HeroSection({ title, subtitle, image }: HeroSectionProps
               { value: "500+", label: "Volunteers" },
             ].map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="font-poppins font-black text-2xl text-[#F4B400]">
+                <div className="font-poppins font-black text-2xl text-gold">
                   {stat.value}
                 </div>
                 <div className="text-white/70 text-xs mt-0.5">{stat.label}</div>

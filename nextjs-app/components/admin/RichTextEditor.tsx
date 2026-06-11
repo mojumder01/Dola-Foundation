@@ -70,7 +70,7 @@ export default function RichTextEditor({
       className={cn(
         "p-2 rounded-lg transition-colors",
         active
-          ? "bg-[#0F3D8C] text-white"
+          ? "bg-primary text-white"
           : "text-gray-600 hover:bg-gray-100"
       )}
     >

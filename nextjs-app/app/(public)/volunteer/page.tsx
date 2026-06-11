@@ -22,14 +22,14 @@ const benefits = [
     icon: Award,
     title: "Develop Your Skills",
     description: "Build leadership, communication, and technical skills through hands-on work.",
-    color: "text-[#0F3D8C]",
+    color: "text-primary",
     bg: "bg-blue-50",
   },
   {
     icon: Users,
     title: "Build Connections",
     description: "Join a community of dedicated changemakers and build lifelong friendships.",
-    color: "text-[#1F9D55]",
+    color: "text-green",
     bg: "bg-green-50",
   },
 ];
@@ -56,7 +56,7 @@ export default function VolunteerPage() {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#1F9D55] to-[#0F3D8C] py-20 md:py-28">
+      <section className="bg-gradient-to-br from-green to-primary py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Get Involved
@@ -80,7 +80,7 @@ export default function VolunteerPage() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="font-poppins font-bold text-3xl text-[#1A1A2E] mb-3">
+            <h2 className="font-poppins font-bold text-3xl text-dark mb-3">
               Why Volunteer With Us?
             </h2>
             <p className="text-gray-500 max-w-xl mx-auto">
@@ -95,7 +95,7 @@ export default function VolunteerPage() {
                   <div className={`w-12 h-12 ${benefit.bg} rounded-xl flex items-center justify-center mb-4`}>
                     <Icon className={`w-6 h-6 ${benefit.color}`} />
                   </div>
-                  <h3 className="font-poppins font-bold text-lg text-[#1A1A2E] mb-2">{benefit.title}</h3>
+                  <h3 className="font-poppins font-bold text-lg text-dark mb-2">{benefit.title}</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">{benefit.description}</p>
                 </div>
               );
@@ -108,19 +108,19 @@ export default function VolunteerPage() {
       <section className="py-16 bg-[#F8FAFC]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="font-poppins font-bold text-3xl text-[#1A1A2E] mb-3">
+            <h2 className="font-poppins font-bold text-3xl text-dark mb-3">
               How It Works
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {steps.map((step, index) => (
               <div key={index} className="text-center">
-                <div className="w-16 h-16 bg-[#0F3D8C] rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <span className="font-poppins font-black text-2xl text-[#F4B400]">
+                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <span className="font-poppins font-black text-2xl text-gold">
                     {step.step}
                   </span>
                 </div>
-                <h3 className="font-poppins font-bold text-lg text-[#1A1A2E] mb-2">
+                <h3 className="font-poppins font-bold text-lg text-dark mb-2">
                   {step.title}
                 </h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{step.description}</p>
@@ -139,7 +139,7 @@ export default function VolunteerPage() {
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="font-poppins font-bold text-3xl text-[#1A1A2E] mb-3">
+            <h2 className="font-poppins font-bold text-3xl text-dark mb-3">
               Apply to Volunteer
             </h2>
             <p className="text-gray-500">

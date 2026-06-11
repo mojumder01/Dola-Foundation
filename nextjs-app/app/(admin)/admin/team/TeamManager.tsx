@@ -95,7 +95,7 @@ export default function TeamManager({ members }: { members: Member[] }) {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-poppins font-bold text-2xl text-[#1A1A2E]">
+          <h1 className="font-poppins font-bold text-2xl text-dark">
             Team Members
           </h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -129,7 +129,7 @@ export default function TeamManager({ members }: { members: Member[] }) {
               key={member.id}
               className="bg-white rounded-2xl shadow-card p-5 text-center group"
             >
-              <div className="w-16 h-16 bg-[#0F3D8C] rounded-2xl flex items-center justify-center text-white font-bold text-xl mx-auto mb-3">
+              <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white font-bold text-xl mx-auto mb-3">
                 {member.image ? (
                   <img
                     src={member.image}
@@ -140,8 +140,8 @@ export default function TeamManager({ members }: { members: Member[] }) {
                   member.name[0]
                 )}
               </div>
-              <p className="font-semibold text-[#1A1A2E]">{member.name}</p>
-              <p className="text-[#0F3D8C] text-xs mt-0.5">{member.role}</p>
+              <p className="font-semibold text-dark">{member.name}</p>
+              <p className="text-primary text-xs mt-0.5">{member.role}</p>
               <Badge
                 variant={member.active ? "approved" : "pending"}
                 className="mt-2"
@@ -151,7 +151,7 @@ export default function TeamManager({ members }: { members: Member[] }) {
               <div className="flex justify-center gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => openEdit(member)}
-                  className="p-1.5 text-gray-400 hover:text-[#0F3D8C] hover:bg-blue-50 rounded-lg"
+                  className="p-1.5 text-gray-400 hover:text-primary hover:bg-blue-50 rounded-lg"
                 >
                   <Edit className="w-4 h-4" />
                 </button>

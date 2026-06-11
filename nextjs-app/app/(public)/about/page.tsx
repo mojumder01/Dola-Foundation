@@ -74,21 +74,21 @@ const teamMembers = [
     role: "Founder & Executive Director",
     bio: "A social entrepreneur with 20+ years of experience in community development.",
     initial: "A",
-    color: "bg-[#0F3D8C]",
+    color: "bg-primary",
   },
   {
     name: "Nasrin Akter",
     role: "Program Director",
     bio: "Expert in education and women empowerment with a passion for sustainable change.",
     initial: "N",
-    color: "bg-[#1F9D55]",
+    color: "bg-green",
   },
   {
     name: "Karim Uddin",
     role: "Healthcare Coordinator",
     bio: "Medical professional dedicated to bringing healthcare to rural communities.",
     initial: "K",
-    color: "bg-[#F4B400]",
+    color: "bg-gold",
   },
   {
     name: "Shirin Islam",
@@ -115,7 +115,7 @@ export default async function AboutPage() {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-[#0F3D8C] via-[#0d3578] to-[#1F9D55] py-20 md:py-28">
+      <section className="relative bg-gradient-to-br from-primary via-[#0d3578] to-green py-20 md:py-28">
         <div className="absolute inset-0 opacity-10">
           <div
             className="absolute inset-0"
@@ -151,10 +151,10 @@ export default async function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <span className="inline-block bg-[#F4B400]/15 text-[#F4B400] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
+              <span className="inline-block bg-gold/15 text-gold text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
                 Our Story
               </span>
-              <h2 className="font-poppins font-bold text-3xl md:text-4xl text-[#1A1A2E] mb-5 leading-tight">
+              <h2 className="font-poppins font-bold text-3xl md:text-4xl text-dark mb-5 leading-tight">
                 A Decade of Changing Lives
               </h2>
               <div className="space-y-4 text-gray-600 leading-relaxed">
@@ -201,7 +201,7 @@ export default async function AboutPage() {
                   className="bg-[#F8FAFC] rounded-2xl p-6 text-center border border-gray-100"
                 >
                   <div className="text-3xl mb-2">{stat.icon}</div>
-                  <div className="font-poppins font-black text-2xl text-[#0F3D8C]">
+                  <div className="font-poppins font-black text-2xl text-primary">
                     {stat.value}
                   </div>
                   <div className="text-gray-500 text-sm mt-1">{stat.label}</div>
@@ -216,7 +216,7 @@ export default async function AboutPage() {
       <section className="py-16 md:py-20 bg-[#F8FAFC]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-[#0F3D8C] rounded-3xl p-8 md:p-10">
+            <div className="bg-primary rounded-3xl p-8 md:p-10">
               <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-5">
                 <Target className="w-7 h-7 text-white" />
               </div>
@@ -228,7 +228,7 @@ export default async function AboutPage() {
                   "To empower vulnerable communities in Bangladesh through sustainable programs in education, healthcare, livelihood, and environmental conservation — ensuring that every individual has access to their fundamental rights and the opportunity to live with dignity."}
               </p>
             </div>
-            <div className="bg-[#1F9D55] rounded-3xl p-8 md:p-10">
+            <div className="bg-green rounded-3xl p-8 md:p-10">
               <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-5">
                 <Eye className="w-7 h-7 text-white" />
               </div>
@@ -265,7 +265,7 @@ export default async function AboutPage() {
                   >
                     <Icon className={`w-6 h-6 ${value.color}`} />
                   </div>
-                  <h3 className="font-poppins font-bold text-lg text-[#1A1A2E] mb-2">
+                  <h3 className="font-poppins font-bold text-lg text-dark mb-2">
                     {value.title}
                   </h3>
                   <p className="text-gray-500 text-sm leading-relaxed">
@@ -282,7 +282,7 @@ export default async function AboutPage() {
       <section className="py-16 md:py-24 bg-[#F8FAFC]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-3xl shadow-card p-8 md:p-12 relative">
-            <div className="absolute top-8 right-8 text-[#0F3D8C]/10">
+            <div className="absolute top-8 right-8 text-primary/10">
               <svg width="80" height="60" viewBox="0 0 80 60" fill="currentColor">
                 <path d="M0 60V36C0 24 4 14.667 12 8L20 0h16L24 12c-4 4-6 8.667-6 14v6h14V60H0zm44 0V36c0-12 4-21.333 12-28L64 0h16L68 12c-4 4-6 8.667-6 14v6h14V60H44z" />
               </svg>
@@ -295,12 +295,12 @@ export default async function AboutPage() {
                   className="w-20 h-20 md:w-24 md:h-24 rounded-2xl object-cover flex-shrink-0"
                 />
               ) : (
-                <div className="w-20 h-20 md:w-24 md:h-24 bg-[#0F3D8C] rounded-2xl flex items-center justify-center text-white font-bold text-3xl flex-shrink-0">
+                <div className="w-20 h-20 md:w-24 md:h-24 bg-primary rounded-2xl flex items-center justify-center text-white font-bold text-3xl flex-shrink-0">
                   {founderName.charAt(0).toUpperCase()}
                 </div>
               )}
               <div>
-                <span className="inline-block bg-[#F4B400]/15 text-[#F4B400] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
+                <span className="inline-block bg-gold/15 text-gold text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
                   Founder's Message
                 </span>
                 <blockquote className="text-gray-600 text-base leading-relaxed mb-6 italic">
@@ -308,7 +308,7 @@ export default async function AboutPage() {
                     "When I started Dola Foundation in 2015, I had one dream: that no child in Bangladesh would miss out on education simply because of poverty. A decade later, that dream has grown into something far greater. We now serve thousands of families, operating programs that span education, health, environment, and youth empowerment. But we have not yet finished our work. As long as there are children without schools, families without healthcare, and communities without clean water, Dola Foundation will continue to act. I invite you to join us on this journey of hope."}"
                 </blockquote>
                 <div>
-                  <div className="font-poppins font-bold text-[#1A1A2E]">
+                  <div className="font-poppins font-bold text-dark">
                     {founderName}
                   </div>
                   <div className="text-gray-500 text-sm">
@@ -340,10 +340,10 @@ export default async function AboutPage() {
                 >
                   {member.initial}
                 </div>
-                <h3 className="font-poppins font-bold text-[#1A1A2E] mb-1">
+                <h3 className="font-poppins font-bold text-dark mb-1">
                   {member.name}
                 </h3>
-                <div className="text-[#0F3D8C] text-xs font-semibold mb-3">
+                <div className="text-primary text-xs font-semibold mb-3">
                   {member.role}
                 </div>
                 <p className="text-gray-500 text-xs leading-relaxed">

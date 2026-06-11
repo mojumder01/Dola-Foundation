@@ -37,7 +37,7 @@ export default async function AdminDonationsPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-poppins font-bold text-2xl text-[#1A1A2E]">Donations</h1>
+          <h1 className="font-poppins font-bold text-2xl text-dark">Donations</h1>
           <p className="text-gray-500 text-sm mt-1">Track all donation records</p>
         </div>
         <Button variant="primary" size="sm">
@@ -48,19 +48,19 @@ export default async function AdminDonationsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-[#F4B400]/10 border border-[#F4B400]/20 rounded-2xl p-5">
+        <div className="bg-gold/10 border border-gold/20 rounded-2xl p-5">
           <p className="text-gray-500 text-sm">Total Raised</p>
-          <p className="font-poppins font-black text-2xl text-[#0F3D8C] mt-1">
+          <p className="font-poppins font-black text-2xl text-primary mt-1">
             {formatCurrency(totalAmount)}
           </p>
         </div>
         <div className="bg-blue-50 rounded-2xl p-5">
           <p className="text-gray-500 text-sm">Total Donations</p>
-          <p className="font-poppins font-black text-2xl text-[#0F3D8C] mt-1">{count}</p>
+          <p className="font-poppins font-black text-2xl text-primary mt-1">{count}</p>
         </div>
         <div className="bg-green-50 rounded-2xl p-5">
           <p className="text-gray-500 text-sm">Average Donation</p>
-          <p className="font-poppins font-black text-2xl text-[#1F9D55] mt-1">
+          <p className="font-poppins font-black text-2xl text-green mt-1">
             {count > 0 ? formatCurrency(Math.round(totalAmount / count)) : "৳0"}
           </p>
         </div>
@@ -69,8 +69,8 @@ export default async function AdminDonationsPage() {
       {/* Table */}
       <div className="bg-white rounded-2xl shadow-card overflow-hidden">
         <div className="p-5 border-b border-gray-100 flex items-center gap-3">
-          <Heart className="w-5 h-5 text-[#F4B400]" />
-          <h2 className="font-semibold text-[#1A1A2E]">All Donations ({donations.length})</h2>
+          <Heart className="w-5 h-5 text-gold" />
+          <h2 className="font-semibold text-dark">All Donations ({donations.length})</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -96,10 +96,10 @@ export default async function AdminDonationsPage() {
                 donations.map((d: any) => (
                   <tr key={d.id} className="hover:bg-gray-50/50">
                     <td className="py-3 px-4">
-                      <p className="font-medium text-[#1A1A2E]">{d.donorName}</p>
+                      <p className="font-medium text-dark">{d.donorName}</p>
                       <p className="text-xs text-gray-400">{d.donorEmail}</p>
                     </td>
-                    <td className="py-3 px-4 font-bold text-[#0F3D8C]">
+                    <td className="py-3 px-4 font-bold text-primary">
                       {formatCurrency(Number(d.amount))}
                       {d.isRecurring && (
                         <span className="block text-xs text-gray-400 font-normal">Monthly</span>

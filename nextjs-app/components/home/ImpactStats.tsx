@@ -11,8 +11,8 @@ const defaultStats = [
     suffix: "+",
     label: "Lives Impacted",
     description: "People whose lives we've touched",
-    color: "text-[#F4B400]",
-    bgColor: "bg-[#F4B400]/20",
+    color: "text-gold",
+    bgColor: "bg-gold/20",
   },
   {
     icon: Heart,
@@ -20,8 +20,8 @@ const defaultStats = [
     suffix: "",
     label: "Active Programs",
     description: "Ongoing development programs",
-    color: "text-[#1F9D55]",
-    bgColor: "bg-[#1F9D55]/20",
+    color: "text-green",
+    bgColor: "bg-green/20",
   },
   {
     icon: MapPin,
@@ -69,7 +69,7 @@ export default function ImpactStats({ stats: statsProp }: ImpactStatsProps) {
   });
 
   return (
-    <section className="bg-[#0F3D8C] py-16 md:py-20 relative overflow-hidden">
+    <section className="bg-primary py-16 md:py-20 relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
         <div
@@ -88,7 +88,7 @@ export default function ImpactStats({ stats: statsProp }: ImpactStatsProps) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-[#F4B400] text-sm font-semibold uppercase tracking-widest mb-3"
+            className="text-gold text-sm font-semibold uppercase tracking-widest mb-3"
           >
             Our Impact
           </motion.p>

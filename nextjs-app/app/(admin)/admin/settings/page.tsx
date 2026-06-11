@@ -7,7 +7,7 @@ export default async function AdminSettingsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="font-poppins font-bold text-2xl text-[#1A1A2E]">Site Settings</h1>
+        <h1 className="font-poppins font-bold text-2xl text-dark">Site Settings</h1>
         <p className="text-gray-500 text-sm mt-1">
           Edit homepage content, contact info, and social links
         </p>

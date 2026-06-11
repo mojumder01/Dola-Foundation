@@ -5,6 +5,9 @@ import { ArrowLeft, MapPin, Calendar, DollarSign, CheckCircle } from "lucide-rea
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 const projectsData: Record<string, any> = {
   "school-construction-sylhet": {
@@ -89,15 +92,34 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const project = projectsData[slug];
-  if (!project) return { title: "Project Not Found" };
-  return { title: project.title, description: project.description };
+async function getProject(slug: string) {
+  try {
+    const db = await prisma.project.findUnique({ where: { slug } });
+    if (db && db.published) {
+      return {
+        title: db.title,
+        description: db.description,
+        fullDescription: db.description,
+        status: db.status,
+        location: db.location,
+        startDate: db.startDate ?? db.createdAt,
+        budget: db.budget ? Number(db.budget) : null,
+        impact: db.impact,
+        gallery: db.gallery ?? [],
+        milestones: [],
+      };
+    }
+  } catch {
+    // fall through to static data
+  }
+  return projectsData[slug] ?? null;
 }
 
-export function generateStaticParams() {
-  return Object.keys(projectsData).map((slug) => ({ slug }));
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await getProject(slug);
+  if (!project) return { title: "Project Not Found" };
+  return { title: project.title, description: project.description };
 }
 
 const statusConfig: Record<string, { label: string; variant: any; color: string }> = {
@@ -108,7 +130,7 @@ const statusConfig: Record<string, { label: string; variant: any; color: string 
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = projectsData[slug];
+  const project = await getProject(slug);
   if (!project) notFound();
 
   const status = statusConfig[project.status];
@@ -116,7 +138,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#0F3D8C] to-[#1a4da0] py-20 md:py-28">
+      <section className="bg-gradient-to-br from-primary to-[#1a4da0] py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             href="/projects"
@@ -165,7 +187,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             {/* Main */}
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-2xl shadow-card p-8">
-                <h2 className="font-poppins font-bold text-2xl text-[#1A1A2E] mb-4">About This Project</h2>
+                <h2 className="font-poppins font-bold text-2xl text-dark mb-4">About This Project</h2>
                 <div>
                   {project.fullDescription.split("\n\n").map((para: string, i: number) => (
                     <p key={i} className="text-gray-600 leading-relaxed mb-4">{para}</p>
@@ -174,13 +196,13 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               </div>
 
               <div className="bg-white rounded-2xl shadow-card p-8">
-                <h2 className="font-poppins font-bold text-2xl text-[#1A1A2E] mb-4">Impact</h2>
+                <h2 className="font-poppins font-bold text-2xl text-dark mb-4">Impact</h2>
                 <p className="text-gray-600 leading-relaxed">{project.impact}</p>
               </div>
 
               {project.gallery && project.gallery.length > 0 && (
                 <div className="bg-white rounded-2xl shadow-card p-8">
-                  <h2 className="font-poppins font-bold text-2xl text-[#1A1A2E] mb-5">Gallery</h2>
+                  <h2 className="font-poppins font-bold text-2xl text-dark mb-5">Gallery</h2>
                   <div className="grid grid-cols-2 gap-4">
                     {project.gallery.map((img: string, i: number) => (
                       <div key={i} className="relative aspect-video overflow-hidden rounded-xl">
@@ -195,25 +217,27 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Milestones */}
-              <div className="bg-white rounded-2xl shadow-card p-6">
-                <h3 className="font-poppins font-bold text-lg text-[#1A1A2E] mb-4">Project Milestones</h3>
-                <div className="space-y-3">
-                  {project.milestones.map((milestone: any, i: number) => (
-                    <div key={i} className="flex items-start gap-2.5">
-                      <CheckCircle
-                        className="w-5 h-5 flex-shrink-0 mt-0.5"
-                        style={{ color: milestone.done ? "#22c55e" : "#d1d5db" }}
-                      />
-                      <span className={`text-sm ${milestone.done ? "text-gray-700" : "text-gray-400"}`}>
-                        {milestone.label}
-                      </span>
-                    </div>
-                  ))}
+              {project.milestones?.length > 0 && (
+                <div className="bg-white rounded-2xl shadow-card p-6">
+                  <h3 className="font-poppins font-bold text-lg text-dark mb-4">Project Milestones</h3>
+                  <div className="space-y-3">
+                    {project.milestones.map((milestone: any, i: number) => (
+                      <div key={i} className="flex items-start gap-2.5">
+                        <CheckCircle
+                          className="w-5 h-5 flex-shrink-0 mt-0.5"
+                          style={{ color: milestone.done ? "#22c55e" : "#d1d5db" }}
+                        />
+                        <span className={`text-sm ${milestone.done ? "text-gray-700" : "text-gray-400"}`}>
+                          {milestone.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Donate */}
-              <div className="bg-gradient-to-br from-[#0F3D8C] to-[#1a4da0] rounded-2xl p-6 text-white">
+              <div className="bg-gradient-to-br from-primary to-[#1a4da0] rounded-2xl p-6 text-white">
                 <h3 className="font-poppins font-bold text-lg mb-2">Support This Project</h3>
                 <p className="text-white/80 text-sm mb-4">
                   Your donation directly funds this project and its impact on the community.

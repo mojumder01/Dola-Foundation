@@ -107,7 +107,7 @@ export default function ProjectsManager({
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-poppins font-bold text-2xl text-[#1A1A2E]">
+          <h1 className="font-poppins font-bold text-2xl text-dark">
             Projects
           </h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -122,8 +122,8 @@ export default function ProjectsManager({
 
       <div className="bg-white rounded-2xl shadow-card overflow-hidden">
         <div className="p-5 border-b border-gray-100 flex items-center gap-3">
-          <Globe className="w-5 h-5 text-[#0F3D8C]" />
-          <h2 className="font-semibold text-[#1A1A2E]">
+          <Globe className="w-5 h-5 text-primary" />
+          <h2 className="font-semibold text-dark">
             All Projects ({projects.length})
           </h2>
         </div>
@@ -165,7 +165,7 @@ export default function ProjectsManager({
                 projects.map((project) => (
                   <tr key={project.id} className="hover:bg-gray-50/50">
                     <td className="py-3 px-4">
-                      <p className="font-medium text-[#1A1A2E]">
+                      <p className="font-medium text-dark">
                         {project.title}
                       </p>
                       <p className="text-xs text-gray-400">
@@ -194,7 +194,7 @@ export default function ProjectsManager({
                       <div className="flex gap-2">
                         <button
                           onClick={() => openEdit(project)}
-                          className="p-1.5 text-gray-400 hover:text-[#0F3D8C] hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-1.5 text-gray-400 hover:text-primary hover:bg-blue-50 rounded-lg transition-colors"
                         >
                           <Edit className="w-4 h-4" />
                         </button>

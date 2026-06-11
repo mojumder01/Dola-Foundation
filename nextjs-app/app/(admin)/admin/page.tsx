@@ -83,7 +83,7 @@ export default async function AdminDashboardPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="font-poppins font-bold text-2xl text-[#1A1A2E]">
+        <h1 className="font-poppins font-bold text-2xl text-dark">
           Welcome back, {session?.user?.name || "Admin"} 👋
         </h1>
         <p className="text-gray-500 mt-1">
@@ -109,7 +109,7 @@ export default async function AdminDashboardPage() {
           value={formatCurrency(data.totalDonations)}
           icon={Heart}
           trend="From all time"
-          color="text-[#F4B400]"
+          color="text-gold"
           bgColor="bg-yellow-50"
         />
         <StatsCard
@@ -118,14 +118,14 @@ export default async function AdminDashboardPage() {
           icon={Users}
           trend={`${data.volunteerCount} registered`}
           trendUp
-          color="text-[#1F9D55]"
+          color="text-green"
           bgColor="bg-green-50"
         />
         <StatsCard
           title="Blog Posts"
           value={data.blogCount}
           icon={FileText}
-          color="text-[#0F3D8C]"
+          color="text-primary"
           bgColor="bg-blue-50"
         />
         <StatsCard
@@ -141,10 +141,10 @@ export default async function AdminDashboardPage() {
         {/* Recent Donations */}
         <div className="bg-white rounded-2xl shadow-card p-6">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-poppins font-semibold text-lg text-[#1A1A2E]">
+            <h2 className="font-poppins font-semibold text-lg text-dark">
               Recent Donations
             </h2>
-            <a href="/admin/donations" className="text-[#0F3D8C] text-sm hover:underline">
+            <a href="/admin/donations" className="text-primary text-sm hover:underline">
               View all →
             </a>
           </div>
@@ -154,15 +154,15 @@ export default async function AdminDashboardPage() {
             <div className="space-y-3">
               {data.recentDonations.map((donation: any) => (
                 <div key={donation.id} className="flex items-center gap-3 py-2.5 border-b border-gray-50 last:border-0">
-                  <div className="w-9 h-9 bg-[#F4B400]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Heart className="w-4 h-4 text-[#F4B400]" />
+                  <div className="w-9 h-9 bg-gold/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Heart className="w-4 h-4 text-gold" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm text-[#1A1A2E] truncate">{donation.donorName}</p>
+                    <p className="font-medium text-sm text-dark truncate">{donation.donorName}</p>
                     <p className="text-xs text-gray-400">{donation.method.replace("_", " ")}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-sm text-[#0F3D8C]">
+                    <p className="font-bold text-sm text-primary">
                       {formatCurrency(Number(donation.amount))}
                     </p>
                     <Badge variant={donation.status.toLowerCase() as any} className="text-xs">
@@ -178,10 +178,10 @@ export default async function AdminDashboardPage() {
         {/* Recent Volunteers */}
         <div className="bg-white rounded-2xl shadow-card p-6">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-poppins font-semibold text-lg text-[#1A1A2E]">
+            <h2 className="font-poppins font-semibold text-lg text-dark">
               New Volunteers
             </h2>
-            <a href="/admin/volunteers" className="text-[#0F3D8C] text-sm hover:underline">
+            <a href="/admin/volunteers" className="text-primary text-sm hover:underline">
               View all →
             </a>
           </div>
@@ -191,11 +191,11 @@ export default async function AdminDashboardPage() {
             <div className="space-y-3">
               {data.recentVolunteers.map((vol: any) => (
                 <div key={vol.id} className="flex items-center gap-3 py-2.5 border-b border-gray-50 last:border-0">
-                  <div className="w-9 h-9 bg-[#1F9D55]/10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm text-[#1F9D55]">
+                  <div className="w-9 h-9 bg-green/10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm text-green">
                     {vol.fullName[0].toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm text-[#1A1A2E] truncate">{vol.fullName}</p>
+                    <p className="font-medium text-sm text-dark truncate">{vol.fullName}</p>
                     <p className="text-xs text-gray-400">{vol.profession || vol.email}</p>
                   </div>
                   <Badge variant={vol.status.toLowerCase() as any}>
@@ -210,10 +210,10 @@ export default async function AdminDashboardPage() {
         {/* Unread Messages */}
         <div className="bg-white rounded-2xl shadow-card p-6 lg:col-span-2">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-poppins font-semibold text-lg text-[#1A1A2E]">
+            <h2 className="font-poppins font-semibold text-lg text-dark">
               Unread Messages
             </h2>
-            <a href="/admin/contacts" className="text-[#0F3D8C] text-sm hover:underline">
+            <a href="/admin/contacts" className="text-primary text-sm hover:underline">
               View all →
             </a>
           </div>
@@ -228,7 +228,7 @@ export default async function AdminDashboardPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="font-medium text-sm text-[#1A1A2E]">{contact.name}</p>
+                      <p className="font-medium text-sm text-dark">{contact.name}</p>
                       <span className="text-xs text-gray-400">{formatDate(contact.createdAt)}</span>
                     </div>
                     <p className="text-xs text-gray-500 font-medium">{contact.subject}</p>

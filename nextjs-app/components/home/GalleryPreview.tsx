@@ -113,7 +113,7 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
                 <span className="text-white text-sm font-semibold">
                   {image.alt}
                 </span>
-                <div className="text-[#F4B400] text-xs mt-0.5">
+                <div className="text-gold text-xs mt-0.5">
                   {image.category}
                 </div>
               </div>

@@ -34,14 +34,14 @@ export default function SectionHeader({
       )}
     >
       {badge && (
-        <span className="inline-block bg-[#F4B400]/15 text-[#F4B400] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
+        <span className="inline-block bg-gold/15 text-gold text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
           {badge}
         </span>
       )}
       <h2
         className={cn(
           "font-poppins font-bold text-3xl md:text-4xl leading-tight",
-          light ? "text-white" : "text-[#1A1A2E]"
+          light ? "text-white" : "text-dark"
         )}
       >
         {title}

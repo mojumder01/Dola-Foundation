@@ -17,7 +17,7 @@ export default function StatsCard({
   icon: Icon,
   trend,
   trendUp,
-  color = "text-[#0F3D8C]",
+  color = "text-primary",
   bgColor = "bg-blue-50",
 }: StatsCardProps) {
   return (
@@ -27,7 +27,7 @@ export default function StatsCard({
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-gray-500 text-sm font-medium">{title}</p>
-        <p className="font-poppins font-black text-2xl text-[#1A1A2E] mt-0.5">
+        <p className="font-poppins font-black text-2xl text-dark mt-0.5">
           {typeof value === "number" ? value.toLocaleString() : value}
         </p>
         {trend && (

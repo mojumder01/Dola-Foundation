@@ -33,7 +33,7 @@ export default async function AdminVolunteersPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-poppins font-bold text-2xl text-[#1A1A2E]">Volunteers</h1>
+          <h1 className="font-poppins font-bold text-2xl text-dark">Volunteers</h1>
           <p className="text-gray-500 text-sm mt-1">Manage volunteer applications</p>
         </div>
         <Button variant="primary" size="sm">
@@ -45,9 +45,9 @@ export default async function AdminVolunteersPage() {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Total", value: stats.total, color: "bg-blue-50 text-[#0F3D8C]" },
+          { label: "Total", value: stats.total, color: "bg-blue-50 text-primary" },
           { label: "Pending", value: stats.pending, color: "bg-yellow-50 text-yellow-700" },
-          { label: "Approved", value: stats.approved, color: "bg-green-50 text-[#1F9D55]" },
+          { label: "Approved", value: stats.approved, color: "bg-green-50 text-green" },
           { label: "Rejected", value: stats.rejected, color: "bg-red-50 text-red-600" },
         ].map((stat) => (
           <div key={stat.label} className={`rounded-xl p-4 ${stat.color}`}>
@@ -60,8 +60,8 @@ export default async function AdminVolunteersPage() {
       {/* Table */}
       <div className="bg-white rounded-2xl shadow-card overflow-hidden">
         <div className="p-5 border-b border-gray-100 flex items-center gap-3">
-          <Users className="w-5 h-5 text-[#0F3D8C]" />
-          <h2 className="font-semibold text-[#1A1A2E]">All Applications ({volunteers.length})</h2>
+          <Users className="w-5 h-5 text-primary" />
+          <h2 className="font-semibold text-dark">All Applications ({volunteers.length})</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -89,10 +89,10 @@ export default async function AdminVolunteersPage() {
                   <tr key={vol.id} className="hover:bg-gray-50/50">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 bg-[#1F9D55]/10 rounded-lg flex items-center justify-center text-[#1F9D55] font-bold text-sm">
+                        <div className="w-8 h-8 bg-green/10 rounded-lg flex items-center justify-center text-green font-bold text-sm">
                           {vol.fullName[0]}
                         </div>
-                        <span className="font-medium text-[#1A1A2E]">{vol.fullName}</span>
+                        <span className="font-medium text-dark">{vol.fullName}</span>
                       </div>
                     </td>
                     <td className="py-3 px-4">

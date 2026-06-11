@@ -17,10 +17,10 @@ export default function DonationCTA() {
   const [selectedAmount, setSelectedAmount] = useState(1000);
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-br from-[#0F3D8C] to-[#1a4da0] relative overflow-hidden">
+    <section className="py-16 md:py-24 bg-gradient-to-br from-primary to-[#1a4da0] relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#F4B400] rounded-full translate-x-48 -translate-y-48 blur-3xl" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gold rounded-full translate-x-48 -translate-y-48 blur-3xl" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-32 translate-y-32 blur-3xl" />
       </div>
 
@@ -33,13 +33,13 @@ export default function DonationCTA() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <span className="inline-block bg-[#F4B400]/20 border border-[#F4B400]/30 text-[#F4B400] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+            <span className="inline-block bg-gold/20 border border-gold/30 text-gold text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
               Support Our Mission
             </span>
             <h2 className="font-poppins font-bold text-3xl md:text-4xl text-white mb-5 leading-tight">
               Your Generosity
               <br />
-              <span className="text-[#F4B400]">Changes Lives</span>
+              <span className="text-gold">Changes Lives</span>
             </h2>
             <p className="text-white/80 text-base leading-relaxed mb-8">
               Every donation, big or small, makes a real difference in the lives
@@ -55,7 +55,7 @@ export default function DonationCTA() {
                 "Dedicated project tracking updates",
               ].map((point, i) => (
                 <div key={i} className="flex items-center gap-3 text-white/85 text-sm">
-                  <CheckCircle className="w-5 h-5 text-[#F4B400] flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-gold flex-shrink-0" />
                   {point}
                 </div>
               ))}
@@ -70,7 +70,7 @@ export default function DonationCTA() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="bg-white rounded-3xl p-8 shadow-2xl"
           >
-            <h3 className="font-poppins font-bold text-xl text-[#1A1A2E] mb-2">
+            <h3 className="font-poppins font-bold text-xl text-dark mb-2">
               Make a Donation
             </h3>
             <p className="text-gray-500 text-sm mb-6">
@@ -85,15 +85,15 @@ export default function DonationCTA() {
                   onClick={() => setSelectedAmount(amount.value)}
                   className={`p-3 rounded-xl border-2 transition-all text-left ${
                     selectedAmount === amount.value
-                      ? "border-[#0F3D8C] bg-[#0F3D8C]/5"
-                      : "border-gray-200 hover:border-[#0F3D8C]/40"
+                      ? "border-primary bg-primary/5"
+                      : "border-gray-200 hover:border-primary/40"
                   }`}
                 >
                   <div
                     className={`font-poppins font-bold text-lg ${
                       selectedAmount === amount.value
-                        ? "text-[#0F3D8C]"
-                        : "text-[#1A1A2E]"
+                        ? "text-primary"
+                        : "text-dark"
                     }`}
                   >
                     {amount.label}
@@ -107,9 +107,9 @@ export default function DonationCTA() {
 
             {/* Selected impact */}
             {selectedAmount && (
-              <div className="bg-[#F4B400]/10 border border-[#F4B400]/20 rounded-xl p-3 mb-5 text-center">
-                <span className="text-[#1A1A2E] text-sm">
-                  <span className="font-bold text-[#0F3D8C]">
+              <div className="bg-gold/10 border border-gold/20 rounded-xl p-3 mb-5 text-center">
+                <span className="text-dark text-sm">
+                  <span className="font-bold text-primary">
                     {amounts.find((a) => a.value === selectedAmount)?.label}
                   </span>{" "}
                   —{" "}

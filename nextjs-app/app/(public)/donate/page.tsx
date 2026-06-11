@@ -22,9 +22,9 @@ export default function DonatePage() {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#0F3D8C] to-[#1a4da0] py-20 md:py-28">
+      <section className="bg-gradient-to-br from-primary to-[#1a4da0] py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="inline-block bg-[#F4B400]/20 border border-[#F4B400]/30 text-[#F4B400] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+          <span className="inline-block bg-gold/20 border border-gold/30 text-gold text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Make a Difference
           </span>
           <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
@@ -62,7 +62,7 @@ export default function DonatePage() {
       {/* Impact Amounts */}
       <section className="py-12 bg-[#F8FAFC]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-poppins font-bold text-2xl text-[#1A1A2E] text-center mb-8">
+          <h2 className="font-poppins font-bold text-2xl text-dark text-center mb-8">
             See Your Impact
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -72,7 +72,7 @@ export default function DonatePage() {
                 className="bg-white rounded-2xl p-4 text-center shadow-card hover:shadow-card-hover transition-all border border-gray-100 hover:-translate-y-1 cursor-pointer"
               >
                 <div className="text-3xl mb-2">{item.icon}</div>
-                <div className="font-poppins font-black text-xl text-[#0F3D8C]">
+                <div className="font-poppins font-black text-xl text-primary">
                   ৳{item.amount.toLocaleString()}
                 </div>
                 <div className="text-xs text-gray-500 mt-1 leading-snug">{item.impact}</div>
@@ -93,7 +93,7 @@ export default function DonatePage() {
             {/* Sidebar */}
             <div className="space-y-5">
               <div className="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
-                <h3 className="font-poppins font-bold text-[#1A1A2E] mb-3">
+                <h3 className="font-poppins font-bold text-dark mb-3">
                   Why Donate?
                 </h3>
                 <ul className="space-y-2.5">
@@ -105,14 +105,14 @@ export default function DonatePage() {
                     "Dedicated donor support team",
                   ].map((point) => (
                     <li key={point} className="flex items-start gap-2 text-sm text-gray-600">
-                      <CheckCircle className="w-4 h-4 text-[#1F9D55] mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-green mt-0.5 flex-shrink-0" />
                       {point}
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="bg-[#0F3D8C] rounded-2xl p-5 text-white">
+              <div className="bg-primary rounded-2xl p-5 text-white">
                 <h3 className="font-poppins font-bold mb-2">Bank Transfer</h3>
                 <div className="text-sm text-white/80 space-y-1">
                   <p><span className="text-white font-medium">Bank:</span> Dutch Bangla Bank</p>
@@ -123,13 +123,13 @@ export default function DonatePage() {
               </div>
 
               <div className="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
-                <h3 className="font-poppins font-bold text-[#1A1A2E] mb-2">
+                <h3 className="font-poppins font-bold text-dark mb-2">
                   Need Help?
                 </h3>
                 <p className="text-gray-500 text-sm mb-3">
                   For donation assistance, contact us:
                 </p>
-                <p className="text-[#0F3D8C] font-medium text-sm">
+                <p className="text-primary font-medium text-sm">
                   info@dolafoundation.org
                 </p>
                 <p className="text-gray-500 text-sm">+880 1700-000000</p>

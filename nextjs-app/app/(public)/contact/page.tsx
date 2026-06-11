@@ -36,14 +36,14 @@ export default async function ContactPage() {
       title: "Our Office",
       content:
         settings?.address || "House 12, Road 5, Dhanmondi\nDhaka 1209, Bangladesh",
-      color: "text-[#0F3D8C]",
+      color: "text-primary",
       bg: "bg-blue-50",
     },
     {
       icon: Phone,
       title: "Phone",
       content: settings?.phone || "+880 1700-000000\n+880 1800-000000",
-      color: "text-[#1F9D55]",
+      color: "text-green",
       bg: "bg-green-50",
     },
     {
@@ -51,7 +51,7 @@ export default async function ContactPage() {
       title: "Email",
       content:
         settings?.email || "info@dolafoundation.org\ndonate@dolafoundation.org",
-      color: "text-[#F4B400]",
+      color: "text-gold",
       bg: "bg-yellow-50",
     },
     {
@@ -66,7 +66,7 @@ export default async function ContactPage() {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#1A1A2E] to-[#0F3D8C] py-20 md:py-28">
+      <section className="bg-gradient-to-br from-dark to-primary py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Contact
@@ -99,7 +99,7 @@ export default async function ContactPage() {
                   <div className={`w-12 h-12 ${info.bg} rounded-xl flex items-center justify-center mx-auto mb-3`}>
                     <Icon className={`w-6 h-6 ${info.color}`} />
                   </div>
-                  <h3 className="font-poppins font-semibold text-[#1A1A2E] mb-2 text-sm">
+                  <h3 className="font-poppins font-semibold text-dark mb-2 text-sm">
                     {info.title}
                   </h3>
                   <p className="text-gray-500 text-xs leading-relaxed whitespace-pre-line">
@@ -118,7 +118,7 @@ export default async function ContactPage() {
           <div className="grid lg:grid-cols-2 gap-10">
             {/* Form */}
             <div>
-              <h2 className="font-poppins font-bold text-2xl text-[#1A1A2E] mb-6">
+              <h2 className="font-poppins font-bold text-2xl text-dark mb-6">
                 Send Us a Message
               </h2>
               <ContactForm />
@@ -126,7 +126,7 @@ export default async function ContactPage() {
 
             {/* Map */}
             <div>
-              <h2 className="font-poppins font-bold text-2xl text-[#1A1A2E] mb-6">
+              <h2 className="font-poppins font-bold text-2xl text-dark mb-6">
                 Find Us
               </h2>
               <div className="bg-[#F8FAFC] rounded-2xl overflow-hidden h-80 border border-gray-200 flex items-center justify-center">
@@ -140,7 +140,7 @@ export default async function ContactPage() {
                     href="https://maps.google.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#0F3D8C] text-sm mt-2 inline-block hover:underline"
+                    className="text-primary text-sm mt-2 inline-block hover:underline"
                   >
                     View on Google Maps →
                   </a>
@@ -149,7 +149,7 @@ export default async function ContactPage() {
 
               {/* Social links */}
               <div className="mt-6 bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
-                <h3 className="font-semibold text-[#1A1A2E] mb-3">Follow Us</h3>
+                <h3 className="font-semibold text-dark mb-3">Follow Us</h3>
                 <div className="flex flex-wrap gap-3">
                   {[
                     { label: "Facebook", href: "#", color: "bg-[#1877f2]" },
@@ -176,7 +176,7 @@ export default async function ContactPage() {
       <section className="py-12 md:py-16 bg-[#F8FAFC]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <h2 className="font-poppins font-bold text-3xl text-[#1A1A2E] mb-3">
+            <h2 className="font-poppins font-bold text-3xl text-dark mb-3">
               Frequently Asked Questions
             </h2>
             <p className="text-gray-500">
@@ -187,7 +187,7 @@ export default async function ContactPage() {
             <Accordion type="single" collapsible className="divide-y divide-gray-100">
               {FAQS.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`} className="px-6">
-                  <AccordionTrigger className="text-left font-semibold text-[#1A1A2E] hover:no-underline">
+                  <AccordionTrigger className="text-left font-semibold text-dark hover:no-underline">
                     {faq.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-gray-500 leading-relaxed">

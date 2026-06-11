@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import SectionHeader from "@/components/shared/SectionHeader";
+import { prisma } from "@/lib/prisma";
+
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Our Programs",
@@ -9,7 +11,16 @@ export const metadata: Metadata = {
     "Explore Dola Foundation's six comprehensive programs: Education, Healthcare, Charity & Relief, Environment, Youth Development, and Orphan Care.",
 };
 
-const programs = [
+const GRADIENTS = [
+  { gradient: "from-blue-500 to-blue-700", color: "#3b82f6" },
+  { gradient: "from-green-500 to-green-700", color: "#22c55e" },
+  { gradient: "from-yellow-500 to-orange-600", color: "#f59e0b" },
+  { gradient: "from-emerald-500 to-teal-700", color: "#10b981" },
+  { gradient: "from-purple-500 to-purple-700", color: "#a855f7" },
+  { gradient: "from-pink-500 to-rose-600", color: "#ec4899" },
+];
+
+const FALLBACK_PROGRAMS = [
   {
     title: "Education",
     slug: "education",
@@ -114,11 +125,38 @@ const programs = [
   },
 ];
 
-export default function ProgramsPage() {
+async function getPrograms() {
+  try {
+    const dbPrograms = await prisma.program.findMany({
+      where: { published: true },
+      orderBy: { order: "asc" },
+    });
+    if (dbPrograms.length === 0) return FALLBACK_PROGRAMS;
+    return dbPrograms.map((p, i) => ({
+      title: p.title,
+      slug: p.slug,
+      icon: p.icon || "🌟",
+      description: p.description,
+      objectives: p.objectives ?? [],
+      stats: [
+        p.stat1Label && p.stat1Value ? { label: p.stat1Label, value: p.stat1Value } : null,
+        p.stat2Label && p.stat2Value ? { label: p.stat2Label, value: p.stat2Value } : null,
+        p.stat3Label && p.stat3Value ? { label: p.stat3Label, value: p.stat3Value } : null,
+      ].filter(Boolean) as { label: string; value: string }[],
+      gradient: GRADIENTS[i % GRADIENTS.length].gradient,
+      color: GRADIENTS[i % GRADIENTS.length].color,
+    }));
+  } catch {
+    return FALLBACK_PROGRAMS;
+  }
+}
+
+export default async function ProgramsPage() {
+  const programs = await getPrograms();
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#0F3D8C] to-[#1F9D55] py-20 md:py-28">
+      <section className="bg-gradient-to-br from-primary to-green py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Our Programs
@@ -154,7 +192,7 @@ export default function ProgramsPage() {
                       {program.icon}
                     </div>
                     <div>
-                      <h2 className="font-poppins font-bold text-xl text-[#1A1A2E] mb-1">
+                      <h2 className="font-poppins font-bold text-xl text-dark mb-1">
                         {program.title}
                       </h2>
                       <div className="flex gap-3">

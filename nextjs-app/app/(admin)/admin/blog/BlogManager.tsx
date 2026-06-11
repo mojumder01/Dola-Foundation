@@ -101,7 +101,7 @@ export default function BlogManager({ posts }: { posts: Post[] }) {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-poppins font-bold text-2xl text-[#1A1A2E]">
+          <h1 className="font-poppins font-bold text-2xl text-dark">
             Blog
           </h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -122,8 +122,8 @@ export default function BlogManager({ posts }: { posts: Post[] }) {
 
       <div className="bg-white rounded-2xl shadow-card overflow-hidden">
         <div className="p-5 border-b border-gray-100 flex items-center gap-3">
-          <FileText className="w-5 h-5 text-[#0F3D8C]" />
-          <h2 className="font-semibold text-[#1A1A2E]">
+          <FileText className="w-5 h-5 text-primary" />
+          <h2 className="font-semibold text-dark">
             All Posts ({posts.length})
           </h2>
         </div>
@@ -165,7 +165,7 @@ export default function BlogManager({ posts }: { posts: Post[] }) {
                 posts.map((post) => (
                   <tr key={post.id} className="hover:bg-gray-50/50">
                     <td className="py-3 px-4">
-                      <p className="font-medium text-[#1A1A2E] max-w-xs truncate">
+                      <p className="font-medium text-dark max-w-xs truncate">
                         {post.title}
                       </p>
                       <p className="text-xs text-gray-400">/blog/{post.slug}</p>
@@ -188,7 +188,7 @@ export default function BlogManager({ posts }: { posts: Post[] }) {
                       <div className="flex gap-2">
                         <button
                           onClick={() => openEdit(post)}
-                          className="p-1.5 text-gray-400 hover:text-[#0F3D8C] hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-1.5 text-gray-400 hover:text-primary hover:bg-blue-50 rounded-lg transition-colors"
                         >
                           <Edit className="w-4 h-4" />
                         </button>

@@ -104,7 +104,7 @@ export default function VolunteerForm() {
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
           <CheckCircle className="w-10 h-10 text-green-500" />
         </div>
-        <h3 className="font-poppins font-bold text-2xl text-[#1A1A2E] mb-3">
+        <h3 className="font-poppins font-bold text-2xl text-dark mb-3">
           Application Submitted!
         </h3>
         <p className="text-gray-500 leading-relaxed mb-6 max-w-md mx-auto">
@@ -120,7 +120,7 @@ export default function VolunteerForm() {
 
   return (
     <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-      <div className="bg-gradient-to-r from-[#1F9D55] to-[#0F3D8C] p-6 text-white">
+      <div className="bg-gradient-to-r from-green to-primary p-6 text-white">
         <h3 className="font-poppins font-bold text-xl">Volunteer Registration Form</h3>
         <p className="text-white/80 text-sm mt-1">All fields marked * are required</p>
       </div>
@@ -134,7 +134,7 @@ export default function VolunteerForm() {
 
         {/* Personal Info */}
         <div>
-          <h4 className="font-poppins font-semibold text-[#1A1A2E] mb-4 pb-2 border-b border-gray-100">
+          <h4 className="font-poppins font-semibold text-dark mb-4 pb-2 border-b border-gray-100">
             Personal Information
           </h4>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -163,7 +163,7 @@ export default function VolunteerForm() {
 
         {/* Skills */}
         <div>
-          <h4 className="font-poppins font-semibold text-[#1A1A2E] mb-4 pb-2 border-b border-gray-100">
+          <h4 className="font-poppins font-semibold text-dark mb-4 pb-2 border-b border-gray-100">
             Skills & Expertise
           </h4>
           <div className="flex flex-wrap gap-2">
@@ -174,8 +174,8 @@ export default function VolunteerForm() {
                 onClick={() => toggleItem(skill, selectedSkills, setSelectedSkills)}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
                   selectedSkills.includes(skill)
-                    ? "bg-[#0F3D8C] text-white border-[#0F3D8C]"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-[#0F3D8C] hover:text-[#0F3D8C]"
+                    ? "bg-primary text-white border-primary"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary"
                 }`}
               >
                 {skill}
@@ -189,7 +189,7 @@ export default function VolunteerForm() {
 
         {/* Areas of Interest */}
         <div>
-          <h4 className="font-poppins font-semibold text-[#1A1A2E] mb-4 pb-2 border-b border-gray-100">
+          <h4 className="font-poppins font-semibold text-dark mb-4 pb-2 border-b border-gray-100">
             Areas of Interest
           </h4>
           <div className="flex flex-wrap gap-2">
@@ -200,8 +200,8 @@ export default function VolunteerForm() {
                 onClick={() => toggleItem(interest, selectedInterests, setSelectedInterests)}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
                   selectedInterests.includes(interest)
-                    ? "bg-[#1F9D55] text-white border-[#1F9D55]"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-[#1F9D55] hover:text-[#1F9D55]"
+                    ? "bg-green text-white border-green"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-green hover:text-green"
                 }`}
               >
                 {interest}
@@ -212,20 +212,20 @@ export default function VolunteerForm() {
 
         {/* Availability */}
         <div>
-          <h4 className="font-poppins font-semibold text-[#1A1A2E] mb-4 pb-2 border-b border-gray-100">
+          <h4 className="font-poppins font-semibold text-dark mb-4 pb-2 border-b border-gray-100">
             Availability
           </h4>
           <div className="grid sm:grid-cols-3 gap-2">
             {availabilityOptions.map((option) => (
               <label
                 key={option}
-                className="flex items-center gap-2 p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-[#0F3D8C] transition-colors"
+                className="flex items-center gap-2 p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-primary transition-colors"
               >
                 <input
                   type="radio"
                   name="availability"
                   value={option}
-                  className="text-[#0F3D8C]"
+                  className="text-primary"
                 />
                 <span className="text-sm text-gray-600">{option}</span>
               </label>

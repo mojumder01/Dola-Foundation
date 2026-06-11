@@ -94,7 +94,7 @@ export default function GalleryManager({
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-poppins font-bold text-2xl text-[#1A1A2E]">
+          <h1 className="font-poppins font-bold text-2xl text-dark">
             Gallery
           </h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -115,8 +115,8 @@ export default function GalleryManager({
             onClick={() => setSelectedCategory(cat)}
             className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
               selectedCategory === cat
-                ? "bg-[#0F3D8C] text-white border-[#0F3D8C]"
-                : "bg-white border-gray-200 text-gray-600 hover:border-[#0F3D8C] hover:text-[#0F3D8C]"
+                ? "bg-primary text-white border-primary"
+                : "bg-white border-gray-200 text-gray-600 hover:border-primary hover:text-primary"
             }`}
           >
             {cat}
@@ -128,10 +128,10 @@ export default function GalleryManager({
         {/* Upload card */}
         <button
           onClick={() => setShowModal(true)}
-          className="relative aspect-square bg-[#F8FAFC] border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-[#0F3D8C] hover:bg-blue-50/50 transition-all group"
+          className="relative aspect-square bg-[#F8FAFC] border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-blue-50/50 transition-all group"
         >
-          <Upload className="w-6 h-6 text-gray-400 group-hover:text-[#0F3D8C] transition-colors" />
-          <span className="text-xs text-gray-400 group-hover:text-[#0F3D8C] mt-1 transition-colors">
+          <Upload className="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors" />
+          <span className="text-xs text-gray-400 group-hover:text-primary mt-1 transition-colors">
             Add Image
           </span>
         </button>

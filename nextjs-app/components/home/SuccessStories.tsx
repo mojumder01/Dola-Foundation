@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
 import SectionHeader from "@/components/shared/SectionHeader";
 
-const avatarColors = ["bg-[#0F3D8C]", "bg-[#1F9D55]", "bg-[#F4B400]"];
+const avatarColors = ["bg-primary", "bg-green", "bg-gold"];
 
 const fallbackTestimonials = [
   {
@@ -15,7 +15,7 @@ const fallbackTestimonials = [
     program: "Education Program",
     location: "Sylhet",
     initial: "F",
-    color: "bg-[#0F3D8C]",
+    color: "bg-primary",
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ const fallbackTestimonials = [
     program: "Healthcare Program",
     location: "Rangpur",
     initial: "M",
-    color: "bg-[#1F9D55]",
+    color: "bg-green",
   },
   {
     id: 3,
@@ -35,7 +35,7 @@ const fallbackTestimonials = [
     program: "Youth Development",
     location: "Khulna",
     initial: "S",
-    color: "bg-[#F4B400]",
+    color: "bg-gold",
   },
 ];
 
@@ -74,8 +74,8 @@ export default function SuccessStories({
   return (
     <section className="py-16 md:py-24 bg-[#F8FAFC] relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-64 h-64 bg-[#0F3D8C]/5 rounded-full -translate-x-32 -translate-y-32" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#1F9D55]/5 rounded-full translate-x-48 translate-y-48" />
+      <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full -translate-x-32 -translate-y-32" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-green/5 rounded-full translate-x-48 translate-y-48" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeader
@@ -95,14 +95,14 @@ export default function SuccessStories({
               className="bg-white rounded-2xl shadow-card hover:shadow-card-hover p-6 transition-all duration-300 relative"
             >
               {/* Quote icon */}
-              <div className="absolute top-6 right-6 text-[#0F3D8C]/10">
+              <div className="absolute top-6 right-6 text-primary/10">
                 <Quote className="w-12 h-12" />
               </div>
 
               {/* Stars */}
               <div className="flex gap-1 mb-4">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} className="text-[#F4B400] text-lg">
+                  <span key={i} className="text-gold text-lg">
                     ★
                   </span>
                 ))}
@@ -129,7 +129,7 @@ export default function SuccessStories({
                   </div>
                 )}
                 <div>
-                  <div className="font-semibold text-[#1A1A2E] text-sm">
+                  <div className="font-semibold text-dark text-sm">
                     {testimonial.name}
                   </div>
                   <div className="text-xs text-gray-400">

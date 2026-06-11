@@ -98,7 +98,7 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-poppins font-bold text-2xl text-[#1A1A2E]">
+          <h1 className="font-poppins font-bold text-2xl text-dark">
             Programs
           </h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -113,8 +113,8 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
 
       <div className="bg-white rounded-2xl shadow-card overflow-hidden">
         <div className="p-5 border-b border-gray-100 flex items-center gap-3">
-          <Layers className="w-5 h-5 text-[#0F3D8C]" />
-          <h2 className="font-semibold text-[#1A1A2E]">
+          <Layers className="w-5 h-5 text-primary" />
+          <h2 className="font-semibold text-dark">
             All Programs ({programs.length})
           </h2>
         </div>
@@ -162,7 +162,7 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
                     <td className="py-3 px-4 text-xl">
                       {program.icon || "—"}
                     </td>
-                    <td className="py-3 px-4 font-medium text-[#1A1A2E]">
+                    <td className="py-3 px-4 font-medium text-dark">
                       {program.title}
                     </td>
                     <td className="py-3 px-4 text-gray-400 font-mono text-xs">
@@ -182,7 +182,7 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
                       <div className="flex gap-2">
                         <button
                           onClick={() => openEdit(program)}
-                          className="p-1.5 text-gray-400 hover:text-[#0F3D8C] hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-1.5 text-gray-400 hover:text-primary hover:bg-blue-50 rounded-lg transition-colors"
                           title="Edit"
                         >
                           <Edit className="w-4 h-4" />

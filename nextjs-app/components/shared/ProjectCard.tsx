@@ -48,7 +48,7 @@ export default function ProjectCard({
       className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden hover:-translate-y-1"
     >
       {/* Image */}
-      <div className="relative h-48 bg-gradient-to-br from-[#0F3D8C]/10 to-[#1F9D55]/10 overflow-hidden">
+      <div className="relative h-48 bg-gradient-to-br from-primary/10 to-green/10 overflow-hidden">
         {coverImage ? (
           <Image
             src={coverImage}
@@ -58,7 +58,7 @@ export default function ProjectCard({
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-16 h-16 bg-[#0F3D8C]/20 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
               <span className="text-2xl">🏗️</span>
             </div>
           </div>
@@ -69,7 +69,7 @@ export default function ProjectCard({
       </div>
 
       <div className="p-5">
-        <h3 className="font-poppins font-bold text-lg text-[#1A1A2E] mb-2 line-clamp-1">
+        <h3 className="font-poppins font-bold text-lg text-dark mb-2 line-clamp-1">
           {title}
         </h3>
         <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
@@ -93,7 +93,7 @@ export default function ProjectCard({
 
         <Link
           href={`/projects/${slug}`}
-          className="inline-flex items-center gap-1.5 text-[#0F3D8C] font-medium text-sm hover:gap-2.5 transition-all group-hover:text-[#F4B400]"
+          className="inline-flex items-center gap-1.5 text-primary font-medium text-sm hover:gap-2.5 transition-all group-hover:text-gold"
         >
           View Details
           <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

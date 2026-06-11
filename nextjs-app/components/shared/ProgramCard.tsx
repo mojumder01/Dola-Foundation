@@ -41,7 +41,7 @@ export default function ProgramCard({
         >
           <span className="text-2xl">{icon}</span>
         </div>
-        <h3 className="font-poppins font-bold text-lg text-[#1A1A2E] mb-2">
+        <h3 className="font-poppins font-bold text-lg text-dark mb-2">
           {title}
         </h3>
         <p className="text-gray-500 text-sm leading-relaxed mb-4">
@@ -49,7 +49,7 @@ export default function ProgramCard({
         </p>
         <Link
           href={`/programs/${slug}`}
-          className="inline-flex items-center gap-1.5 text-[#0F3D8C] font-medium text-sm hover:gap-2.5 transition-all group-hover:text-[#F4B400]"
+          className="inline-flex items-center gap-1.5 text-primary font-medium text-sm hover:gap-2.5 transition-all group-hover:text-gold"
         >
           Learn More
           <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

@@ -58,7 +58,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
 
       {/* Branding */}
       <div className="bg-white rounded-2xl shadow-card p-6">
-        <h2 className="font-poppins font-semibold text-lg text-[#1A1A2E] mb-4 pb-3 border-b border-gray-100">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
           Branding
         </h2>
         <div className="space-y-4">
@@ -79,9 +79,66 @@ export default function SettingsForm({ settings }: { settings: any }) {
         </div>
       </div>
 
+      {/* Theme Colors */}
+      <div className="bg-white rounded-2xl shadow-card p-6">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
+          Theme Colors
+        </h2>
+        <p className="text-sm text-gray-500 mb-4">
+          Pick your brand colors — changes apply to the live website immediately after saving.
+        </p>
+        <div className="grid sm:grid-cols-3 gap-4">
+          <div>
+            <Label className="label-base" htmlFor="primaryColor">Primary Color</Label>
+            <div className="flex items-center gap-2 mt-1">
+              <input
+                type="color"
+                id="primaryColor"
+                name="primaryColor"
+                defaultValue={settings?.primaryColor || "#0F3D8C"}
+                className="h-10 w-16 rounded-lg cursor-pointer border border-gray-200"
+              />
+              <span className="text-xs text-gray-500 font-mono">
+                {settings?.primaryColor || "#0F3D8C"}
+              </span>
+            </div>
+          </div>
+          <div>
+            <Label className="label-base" htmlFor="accentColor">Accent Color</Label>
+            <div className="flex items-center gap-2 mt-1">
+              <input
+                type="color"
+                id="accentColor"
+                name="accentColor"
+                defaultValue={settings?.accentColor || "#F4B400"}
+                className="h-10 w-16 rounded-lg cursor-pointer border border-gray-200"
+              />
+              <span className="text-xs text-gray-500 font-mono">
+                {settings?.accentColor || "#F4B400"}
+              </span>
+            </div>
+          </div>
+          <div>
+            <Label className="label-base" htmlFor="secondaryColor">Secondary Color</Label>
+            <div className="flex items-center gap-2 mt-1">
+              <input
+                type="color"
+                id="secondaryColor"
+                name="secondaryColor"
+                defaultValue={settings?.secondaryColor || "#1F9D55"}
+                className="h-10 w-16 rounded-lg cursor-pointer border border-gray-200"
+              />
+              <span className="text-xs text-gray-500 font-mono">
+                {settings?.secondaryColor || "#1F9D55"}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div className="bg-white rounded-2xl shadow-card p-6">
-        <h2 className="font-poppins font-semibold text-lg text-[#1A1A2E] mb-4 pb-3 border-b border-gray-100">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
           Hero Section
         </h2>
         <div className="space-y-4">
@@ -102,7 +159,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
 
       {/* Statistics */}
       <div className="bg-white rounded-2xl shadow-card p-6">
-        <h2 className="font-poppins font-semibold text-lg text-[#1A1A2E] mb-4 pb-3 border-b border-gray-100">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
           Impact Statistics
         </h2>
         <div className="grid grid-cols-2 gap-4">
@@ -126,7 +183,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
 
       {/* About */}
       <div className="bg-white rounded-2xl shadow-card p-6">
-        <h2 className="font-poppins font-semibold text-lg text-[#1A1A2E] mb-4 pb-3 border-b border-gray-100">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
           About Section
         </h2>
         <div className="space-y-4">
@@ -147,7 +204,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
 
       {/* Founder */}
       <div className="bg-white rounded-2xl shadow-card p-6">
-        <h2 className="font-poppins font-semibold text-lg text-[#1A1A2E] mb-4 pb-3 border-b border-gray-100">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
           Founder's Message
         </h2>
         <div className="space-y-4">
@@ -168,7 +225,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
 
       {/* Contact Info */}
       <div className="bg-white rounded-2xl shadow-card p-6">
-        <h2 className="font-poppins font-semibold text-lg text-[#1A1A2E] mb-4 pb-3 border-b border-gray-100">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
           Contact Information
         </h2>
         <div className="grid sm:grid-cols-2 gap-4">
@@ -189,7 +246,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
 
       {/* Social Media */}
       <div className="bg-white rounded-2xl shadow-card p-6">
-        <h2 className="font-poppins font-semibold text-lg text-[#1A1A2E] mb-4 pb-3 border-b border-gray-100">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
           Social Media Links
         </h2>
         <div className="grid sm:grid-cols-2 gap-4">

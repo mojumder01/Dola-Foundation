@@ -36,14 +36,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0F3D8C] via-[#0d3578] to-[#1F9D55] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary via-[#0d3578] to-green flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Card */}
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-[#0F3D8C] to-[#1a4da0] p-8 text-center">
+          <div className="bg-gradient-to-r from-primary to-[#1a4da0] p-8 text-center">
             <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Heart className="w-8 h-8 text-[#F4B400]" />
+              <Heart className="w-8 h-8 text-gold" />
             </div>
             <h1 className="font-poppins font-bold text-2xl text-white">
               Admin Login

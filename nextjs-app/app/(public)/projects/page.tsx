@@ -3,6 +3,9 @@ import Link from "next/link";
 import { MapPin, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDateShort } from "@/lib/utils";
+import { prisma } from "@/lib/prisma";
+
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Our Projects",
@@ -10,7 +13,7 @@ export const metadata: Metadata = {
     "Explore Dola Foundation's ongoing, completed, and upcoming projects transforming lives across Bangladesh.",
 };
 
-const projects = [
+const FALLBACK_PROJECTS = [
   {
     id: "1",
     title: "School Construction in Sylhet",
@@ -91,11 +94,34 @@ const statusConfig = {
   UPCOMING: { label: "Upcoming", variant: "upcoming" as const },
 };
 
-export default function ProjectsPage() {
+async function getProjects() {
+  try {
+    const dbProjects = await prisma.project.findMany({
+      where: { published: true },
+      orderBy: { createdAt: "desc" },
+    });
+    if (dbProjects.length === 0) return FALLBACK_PROJECTS;
+    return dbProjects.map((p) => ({
+      id: p.id,
+      title: p.title,
+      slug: p.slug,
+      description: p.description,
+      status: p.status,
+      location: p.location,
+      startDate: p.startDate ?? p.createdAt,
+      gallery: p.gallery ?? [],
+    }));
+  } catch {
+    return FALLBACK_PROJECTS;
+  }
+}
+
+export default async function ProjectsPage() {
+  const projects = await getProjects();
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#0F3D8C] to-[#1a4da0] py-20 md:py-28">
+      <section className="bg-gradient-to-br from-primary to-[#1a4da0] py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Our Work
@@ -122,7 +148,7 @@ export default function ProjectsPage() {
             {["All", "Ongoing", "Completed", "Upcoming"].map((filter) => (
               <button
                 key={filter}
-                className="px-4 py-1.5 rounded-full text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-[#0F3D8C] hover:text-white"
+                className="px-4 py-1.5 rounded-full text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-primary hover:text-white"
               >
                 {filter}
               </button>
@@ -142,8 +168,8 @@ export default function ProjectsPage() {
                   key={project.id}
                   className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden hover:-translate-y-1"
                 >
-                  <div className="relative h-48 bg-gradient-to-br from-[#0F3D8C]/10 to-[#1F9D55]/10 flex items-center justify-center">
-                    <div className="w-16 h-16 bg-[#0F3D8C]/20 rounded-full flex items-center justify-center">
+                  <div className="relative h-48 bg-gradient-to-br from-primary/10 to-green/10 flex items-center justify-center">
+                    <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
                       <span className="text-2xl">🏗️</span>
                     </div>
                     <div className="absolute top-3 right-3">
@@ -152,7 +178,7 @@ export default function ProjectsPage() {
                   </div>
 
                   <div className="p-5">
-                    <h3 className="font-poppins font-bold text-lg text-[#1A1A2E] mb-2 group-hover:text-[#0F3D8C] transition-colors">
+                    <h3 className="font-poppins font-bold text-lg text-dark mb-2 group-hover:text-primary transition-colors">
                       {project.title}
                     </h3>
                     <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
@@ -174,7 +200,7 @@ export default function ProjectsPage() {
 
                     <Link
                       href={`/projects/${project.slug}`}
-                      className="inline-flex items-center gap-1.5 text-[#0F3D8C] font-medium text-sm hover:text-[#F4B400] transition-colors"
+                      className="inline-flex items-center gap-1.5 text-primary font-medium text-sm hover:text-gold transition-colors"
                     >
                       View Details →
                     </Link>

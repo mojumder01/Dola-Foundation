@@ -73,14 +73,14 @@ export default function DonationForm() {
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
           <CheckCircle className="w-10 h-10 text-green-500" />
         </div>
-        <h3 className="font-poppins font-bold text-2xl text-[#1A1A2E] mb-3">
+        <h3 className="font-poppins font-bold text-2xl text-dark mb-3">
           Donation Recorded!
         </h3>
         <p className="text-gray-500 leading-relaxed mb-4 max-w-md mx-auto">
           Thank you for your generous donation of ৳{finalAmount.toLocaleString()} to Dola Foundation.
           We'll send you a confirmation and receipt to your email.
         </p>
-        <p className="text-sm text-[#0F3D8C] font-medium">
+        <p className="text-sm text-primary font-medium">
           Remember to complete your payment via {method.replace("_", " ").toLowerCase()} to confirm the transaction.
         </p>
       </div>
@@ -89,7 +89,7 @@ export default function DonationForm() {
 
   return (
     <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-      <div className="bg-gradient-to-r from-[#0F3D8C] to-[#1a4da0] p-6 text-white">
+      <div className="bg-gradient-to-r from-primary to-[#1a4da0] p-6 text-white">
         <h3 className="font-poppins font-bold text-xl">Make Your Donation</h3>
         <p className="text-white/80 text-sm mt-1">Choose your amount and payment method</p>
       </div>
@@ -112,8 +112,8 @@ export default function DonationForm() {
                 onClick={() => setFrequency(f)}
                 className={`p-3 rounded-xl border-2 font-medium text-sm transition-all capitalize ${
                   frequency === f
-                    ? "border-[#0F3D8C] bg-[#0F3D8C]/5 text-[#0F3D8C]"
-                    : "border-gray-200 text-gray-600 hover:border-[#0F3D8C]/40"
+                    ? "border-primary bg-primary/5 text-primary"
+                    : "border-gray-200 text-gray-600 hover:border-primary/40"
                 }`}
               >
                 {f === "one-time" ? "One-Time" : "Monthly"}
@@ -133,8 +133,8 @@ export default function DonationForm() {
                 onClick={() => { setAmount(a); setCustomAmount(""); }}
                 className={`p-2.5 rounded-xl border-2 font-medium text-sm transition-all ${
                   amount === a && !customAmount
-                    ? "border-[#0F3D8C] bg-[#0F3D8C] text-white"
-                    : "border-gray-200 text-gray-600 hover:border-[#0F3D8C]"
+                    ? "border-primary bg-primary text-white"
+                    : "border-gray-200 text-gray-600 hover:border-primary"
                 }`}
               >
                 ৳{a >= 1000 ? `${a / 1000}k` : a}
@@ -175,7 +175,7 @@ export default function DonationForm() {
 
         {/* Donor Info */}
         <div>
-          <h4 className="font-semibold text-[#1A1A2E] mb-3 text-sm">Your Information</h4>
+          <h4 className="font-semibold text-dark mb-3 text-sm">Your Information</h4>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <Label className="label-base" htmlFor="donorName">Full Name *</Label>
@@ -215,8 +215,8 @@ export default function DonationForm() {
                     onClick={() => setMethod(m.id)}
                     className={`p-3 rounded-xl border-2 font-medium text-sm transition-all ${
                       method === m.id
-                        ? "border-[#0F3D8C] bg-[#0F3D8C] text-white"
-                        : `${m.color} text-gray-700 hover:border-[#0F3D8C]`
+                        ? "border-primary bg-primary text-white"
+                        : `${m.color} text-gray-700 hover:border-primary`
                     }`}
                   >
                     {m.label}
@@ -226,17 +226,17 @@ export default function DonationForm() {
 
               {method !== "BANK_TRANSFER" && (
                 <div className="mt-3 bg-gray-50 rounded-xl p-4 text-sm text-gray-600">
-                  <p className="font-medium text-[#1A1A2E] mb-1">
+                  <p className="font-medium text-dark mb-1">
                     {method} Payment Instructions:
                   </p>
-                  <p>Send to: <strong className="text-[#0F3D8C]">01700-000000</strong></p>
+                  <p>Send to: <strong className="text-primary">01700-000000</strong></p>
                   <p className="mt-1">After sending, enter your transaction ID below.</p>
                 </div>
               )}
 
               {method === "BANK_TRANSFER" && (
                 <div className="mt-3 bg-blue-50 rounded-xl p-4 text-sm text-gray-600">
-                  <p className="font-medium text-[#1A1A2E] mb-2">Bank Transfer Details:</p>
+                  <p className="font-medium text-dark mb-2">Bank Transfer Details:</p>
                   <p>Bank: Dutch Bangla Bank</p>
                   <p>Account: 4601100005678</p>
                   <p>Name: Dola Foundation</p>
@@ -251,13 +251,13 @@ export default function DonationForm() {
 
             <TabsContent value="international">
               <div className="mt-3 bg-gray-50 rounded-xl p-5 text-center">
-                <p className="font-medium text-[#1A1A2E] mb-2">
+                <p className="font-medium text-dark mb-2">
                   International Donations
                 </p>
                 <p className="text-sm text-gray-500">
                   PayPal and Stripe integration coming soon. For now, please
                   contact us at{" "}
-                  <a href="mailto:donate@dolafoundation.org" className="text-[#0F3D8C] hover:underline">
+                  <a href="mailto:donate@dolafoundation.org" className="text-primary hover:underline">
                     donate@dolafoundation.org
                   </a>{" "}
                   for international donation options.
@@ -279,10 +279,10 @@ export default function DonationForm() {
         </div>
 
         {/* Summary */}
-        <div className="bg-[#F4B400]/10 border border-[#F4B400]/20 rounded-xl p-4">
+        <div className="bg-gold/10 border border-gold/20 rounded-xl p-4">
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-600">Donation Amount:</span>
-            <span className="font-bold text-[#0F3D8C] text-lg">
+            <span className="font-bold text-primary text-lg">
               ৳{finalAmount.toLocaleString()}{frequency === "monthly" ? "/month" : ""}
             </span>
           </div>

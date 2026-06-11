@@ -16,6 +16,7 @@ import {
   Star,
   UserCircle,
   Globe,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,7 @@ const navItems = [
   { label: "Donations", href: "/admin/donations", icon: Heart },
   { label: "Team", href: "/admin/team", icon: UserCircle },
   { label: "Testimonials", href: "/admin/testimonials", icon: Star },
+  { label: "Users", href: "/admin/users", icon: ShieldCheck },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
@@ -36,12 +38,12 @@ export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-[#1A1A2E] text-white flex flex-col h-screen sticky top-0">
+    <aside className="w-64 bg-dark text-white flex flex-col h-screen sticky top-0">
       {/* Logo */}
       <div className="p-6 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-[#0F3D8C] rounded-xl flex items-center justify-center">
-            <Heart className="w-4 h-4 text-[#F4B400]" />
+          <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
+            <Heart className="w-4 h-4 text-gold" />
           </div>
           <div>
             <p className="font-poppins font-bold text-sm">Dola Foundation</p>
@@ -67,7 +69,7 @@ export default function AdminSidebar() {
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
                     isActive
-                      ? "bg-[#0F3D8C] text-white shadow-blue"
+                      ? "bg-primary text-white shadow-blue"
                       : "text-gray-400 hover:bg-white/10 hover:text-white"
                   )}
                 >

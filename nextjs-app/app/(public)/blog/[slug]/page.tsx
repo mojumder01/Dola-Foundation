@@ -90,7 +90,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="relative bg-[#1A1A2E] py-20 md:py-32 overflow-hidden">
+      <section className="relative bg-dark py-20 md:py-32 overflow-hidden">
         {post.coverImage && (
           <>
             <img
@@ -98,7 +98,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               alt={post.title}
               className="absolute inset-0 w-full h-full object-cover opacity-30"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A2E] via-[#1A1A2E]/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/80 to-transparent" />
           </>
         )}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -110,7 +110,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             Back to Blog
           </Link>
           {post.category && (
-            <span className="inline-block bg-[#F4B400] text-[#1A1A2E] text-xs font-semibold px-3 py-1 rounded-full mb-4">
+            <span className="inline-block bg-gold text-dark text-xs font-semibold px-3 py-1 rounded-full mb-4">
               {post.category}
             </span>
           )}
@@ -162,7 +162,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               <div className="mt-6 bg-white rounded-2xl shadow-card p-6">
                 <div className="flex items-center gap-3">
                   <Share2 className="w-5 h-5 text-gray-400" />
-                  <span className="font-medium text-[#1A1A2E]">Share this article</span>
+                  <span className="font-medium text-dark">Share this article</span>
                   <div className="flex gap-2 ml-auto">
                     <button className="w-9 h-9 bg-[#1877f2] rounded-lg flex items-center justify-center text-white hover:opacity-90 transition-opacity">
                       <Facebook className="w-4 h-4" />
@@ -177,21 +177,21 @@ export default async function BlogPostPage({ params }: PageProps) {
 
             {/* Sidebar */}
             <div className="space-y-6">
-              <div className="bg-[#0F3D8C] rounded-2xl p-6 text-white">
+              <div className="bg-primary rounded-2xl p-6 text-white">
                 <h3 className="font-poppins font-bold text-lg mb-2">Support Our Work</h3>
                 <p className="text-white/80 text-sm mb-4">
                   Stories like this are made possible by generous donors like you.
                 </p>
                 <Link
                   href="/donate"
-                  className="block w-full bg-[#F4B400] text-[#1A1A2E] font-semibold py-2.5 rounded-xl text-center hover:bg-[#e5a900] transition-colors text-sm"
+                  className="block w-full bg-gold text-dark font-semibold py-2.5 rounded-xl text-center hover:bg-gold-500 transition-colors text-sm"
                 >
                   Donate Now
                 </Link>
               </div>
 
               <div className="bg-white rounded-2xl shadow-card p-6">
-                <h3 className="font-poppins font-bold text-lg text-[#1A1A2E] mb-3">
+                <h3 className="font-poppins font-bold text-lg text-dark mb-3">
                   Related Articles
                 </h3>
                 <div className="space-y-3">
@@ -202,7 +202,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                     <Link
                       key={related.slug}
                       href={`/blog/${related.slug}`}
-                      className="block text-sm text-gray-600 hover:text-[#0F3D8C] transition-colors border-b border-gray-100 pb-3 last:border-0 last:pb-0"
+                      className="block text-sm text-gray-600 hover:text-primary transition-colors border-b border-gray-100 pb-3 last:border-0 last:pb-0"
                     >
                       {related.title}
                     </Link>

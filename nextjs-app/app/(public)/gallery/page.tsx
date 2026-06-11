@@ -27,7 +27,7 @@ export default async function GalleryPage() {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#0F3D8C] to-[#1F9D55] py-20 md:py-28">
+      <section className="bg-gradient-to-br from-primary to-green py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Gallery

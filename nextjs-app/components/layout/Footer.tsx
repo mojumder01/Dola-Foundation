@@ -93,7 +93,7 @@ export default function Footer({
   };
 
   return (
-    <footer className="bg-[#1A1A2E] text-white">
+    <footer className="bg-dark text-white">
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
@@ -107,8 +107,8 @@ export default function Footer({
                   className="h-10 w-10 object-contain rounded-xl flex-shrink-0"
                 />
               ) : (
-                <div className="w-10 h-10 bg-[#0F3D8C] rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Heart className="w-5 h-5 text-[#F4B400]" />
+                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Heart className="w-5 h-5 text-gold" />
                 </div>
               )}
               <div>
@@ -133,7 +133,7 @@ export default function Footer({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center text-gray-400 hover:bg-[#0F3D8C] hover:text-white transition-all duration-300 hover:-translate-y-0.5"
+                  className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition-all duration-300 hover:-translate-y-0.5"
                 >
                   <Icon className="w-4 h-4" />
                 </a>
@@ -145,16 +145,16 @@ export default function Footer({
           <div>
             <h3 className="font-poppins font-semibold text-white mb-5 text-base relative">
               Quick Links
-              <span className="absolute bottom-0 left-0 w-8 h-0.5 bg-[#F4B400] -mb-2"></span>
+              <span className="absolute bottom-0 left-0 w-8 h-0.5 bg-gold -mb-2"></span>
             </h3>
             <ul className="space-y-2.5 mt-4">
               {quickLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-[#F4B400] text-sm transition-colors flex items-center gap-2 group"
+                    className="text-gray-400 hover:text-gold text-sm transition-colors flex items-center gap-2 group"
                   >
-                    <ArrowRight className="w-3.5 h-3.5 text-[#F4B400] opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all" />
+                    <ArrowRight className="w-3.5 h-3.5 text-gold opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all" />
                     {link.label}
                   </Link>
                 </li>
@@ -166,16 +166,16 @@ export default function Footer({
           <div>
             <h3 className="font-poppins font-semibold text-white mb-5 text-base relative">
               Our Programs
-              <span className="absolute bottom-0 left-0 w-8 h-0.5 bg-[#F4B400] -mb-2"></span>
+              <span className="absolute bottom-0 left-0 w-8 h-0.5 bg-gold -mb-2"></span>
             </h3>
             <ul className="space-y-2.5 mt-4">
               {programs.map((program) => (
                 <li key={program.href}>
                   <Link
                     href={program.href}
-                    className="text-gray-400 hover:text-[#F4B400] text-sm transition-colors flex items-center gap-2 group"
+                    className="text-gray-400 hover:text-gold text-sm transition-colors flex items-center gap-2 group"
                   >
-                    <ArrowRight className="w-3.5 h-3.5 text-[#F4B400] opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all" />
+                    <ArrowRight className="w-3.5 h-3.5 text-gold opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all" />
                     {program.label}
                   </Link>
                 </li>
@@ -187,22 +187,22 @@ export default function Footer({
           <div>
             <h3 className="font-poppins font-semibold text-white mb-5 text-base relative">
               Contact Us
-              <span className="absolute bottom-0 left-0 w-8 h-0.5 bg-[#F4B400] -mb-2"></span>
+              <span className="absolute bottom-0 left-0 w-8 h-0.5 bg-gold -mb-2"></span>
             </h3>
             <ul className="space-y-3 mt-4 mb-6">
               <li className="flex items-start gap-3 text-gray-400 text-sm">
-                <MapPin className="w-4 h-4 text-[#F4B400] mt-0.5 flex-shrink-0" />
+                <MapPin className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
                 <span>{contactAddress}</span>
               </li>
               <li className="flex items-center gap-3 text-gray-400 text-sm">
-                <Phone className="w-4 h-4 text-[#F4B400] flex-shrink-0" />
-                <a href={`tel:${contactPhone.replace(/[^+0-9]/g, "")}`} className="hover:text-[#F4B400] transition-colors">
+                <Phone className="w-4 h-4 text-gold flex-shrink-0" />
+                <a href={`tel:${contactPhone.replace(/[^+0-9]/g, "")}`} className="hover:text-gold transition-colors">
                   {contactPhone}
                 </a>
               </li>
               <li className="flex items-center gap-3 text-gray-400 text-sm">
-                <Mail className="w-4 h-4 text-[#F4B400] flex-shrink-0" />
-                <a href={`mailto:${contactEmail}`} className="hover:text-[#F4B400] transition-colors">
+                <Mail className="w-4 h-4 text-gold flex-shrink-0" />
+                <a href={`mailto:${contactEmail}`} className="hover:text-gold transition-colors">
                   {contactEmail}
                 </a>
               </li>
@@ -224,11 +224,11 @@ export default function Footer({
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   required
-                  className="flex-1 bg-white/10 border border-white/20 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#F4B400] transition-colors"
+                  className="flex-1 bg-white/10 border border-white/20 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-gold transition-colors"
                 />
                 <button
                   type="submit"
-                  className="bg-[#F4B400] hover:bg-[#e5a900] text-[#1A1A2E] rounded-xl p-2.5 transition-colors flex-shrink-0"
+                  className="bg-gold hover:bg-gold-500 text-dark rounded-xl p-2.5 transition-colors flex-shrink-0"
                 >
                   <Send className="w-4 h-4" />
                 </button>

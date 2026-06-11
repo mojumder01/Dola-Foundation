@@ -36,7 +36,7 @@ export default function BlogCard({
       className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden hover:-translate-y-1"
     >
       {/* Cover Image */}
-      <div className="relative h-52 bg-gradient-to-br from-[#0F3D8C]/10 to-[#1F9D55]/10 overflow-hidden">
+      <div className="relative h-52 bg-gradient-to-br from-primary/10 to-green/10 overflow-hidden">
         {coverImage ? (
           <Image
             src={coverImage}
@@ -50,7 +50,7 @@ export default function BlogCard({
           </div>
         )}
         {category && (
-          <div className="absolute top-3 left-3 bg-[#F4B400] text-[#1A1A2E] text-xs font-semibold px-3 py-1 rounded-full">
+          <div className="absolute top-3 left-3 bg-gold text-dark text-xs font-semibold px-3 py-1 rounded-full">
             {category}
           </div>
         )}
@@ -71,7 +71,7 @@ export default function BlogCard({
           </span>
         </div>
 
-        <h3 className="font-poppins font-bold text-lg text-[#1A1A2E] mb-2 line-clamp-2 group-hover:text-[#0F3D8C] transition-colors">
+        <h3 className="font-poppins font-bold text-lg text-dark mb-2 line-clamp-2 group-hover:text-primary transition-colors">
           <Link href={`/blog/${slug}`}>{title}</Link>
         </h3>
 
@@ -83,7 +83,7 @@ export default function BlogCard({
 
         <Link
           href={`/blog/${slug}`}
-          className="inline-flex items-center gap-1.5 text-[#0F3D8C] font-medium text-sm hover:gap-2.5 transition-all group-hover:text-[#F4B400]"
+          className="inline-flex items-center gap-1.5 text-primary font-medium text-sm hover:gap-2.5 transition-all group-hover:text-gold"
         >
           Read More
           <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

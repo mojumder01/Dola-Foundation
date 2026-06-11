@@ -27,7 +27,7 @@ export default function VolunteerCTA() {
   return (
     <section className="py-16 md:py-24 bg-[#F8FAFC]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-[#1F9D55] to-[#0F3D8C] rounded-3xl overflow-hidden">
+        <div className="bg-gradient-to-br from-green to-primary rounded-3xl overflow-hidden">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left side */}
             <div className="p-10 md:p-14">
