@@ -1,0 +1,22 @@
+# Flutter/Dart generated files — এগুলো git এ রাখার দরকার নেই
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Android generated files
+android/.gradle/
+android/local.properties
+android/app/google-services.json  # AdMob key — কখনো share করবে না!
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,101 @@
+# GitHub Actions Workflow
+# এই file টা automatically APK বানাবে যখনই main branch এ code push হবে
+# তুমি শুধু Download করবে → Play Store এ Upload করবে
+
+name: Build Math Rush APK
+
+on:
+  # main branch এ push হলে automatic build
+  push:
+    branches: [main]
+
+  # চাইলে manually trigger করা যাবে GitHub Actions page থেকে
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Code download করো
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Java setup — Android build এর জন্য দরকার
+      - name: ☕ Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Step 3: Flutter install করো
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true # পরের বার দ্রুত build হবে
+
+      # Step 4: Flutter নতুন project বানাও (Android boilerplate এর জন্য)
+      - name: 🏗️ Create Flutter project scaffold
+        run: |
+          flutter create \
+            --project-name math_rush \
+            --org com.mathrush.game \
+            --platforms android \
+            /tmp/math_rush
+
+      # Step 5: আমাদের গেমের code copy করো
+      - name: 📋 Copy game source code
+        run: |
+          # আমাদের lib folder copy করো (গেমের আসল code)
+          cp -r lib/ /tmp/math_rush/lib/
+          # আমাদের pubspec.yaml copy করো (dependencies)
+          cp pubspec.yaml /tmp/math_rush/pubspec.yaml
+
+      # Step 6: Dependencies install করো
+      - name: 📦 Install Flutter dependencies
+        working-directory: /tmp/math_rush
+        run: flutter pub get
+
+      # Step 7: Code check করো — কোনো error আছে কিনা
+      - name: 🔍 Analyze code
+        working-directory: /tmp/math_rush
+        run: flutter analyze --no-fatal-infos
+
+      # Step 8: APK build করো (debug — test করার জন্য)
+      - name: 🔨 Build Debug APK
+        working-directory: /tmp/math_rush
+        run: flutter build apk --debug
+
+      # Step 9: APK upload করো যাতে download করা যায়
+      - name: 📤 Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: math-rush-debug-apk
+          # Built APK এর location
+          path: /tmp/math_rush/build/app/outputs/flutter-apk/app-debug.apk
+          # ৩০ দিন রাখবে, তারপর automatically delete হবে
+          retention-days: 30
+
+      # Step 10: Release APK build করো (Play Store এর জন্য)
+      # এটা unsigned — signing এর জন্য আলাদা keystore লাগবে
+      - name: 🚀 Build Release APK
+        working-directory: /tmp/math_rush
+        run: flutter build apk --release
+
+      - name: 📤 Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: math-rush-release-apk
+          path: /tmp/math_rush/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+      # সফলভাবে build হলে summary দেখাও
+      - name: ✅ Build Success Summary
+        run: |
+          echo "🎉 Math Rush APK সফলভাবে তৈরি হয়েছে!"
+          echo "👆 উপরে 'Artifacts' section থেকে APK download করো"
+          echo "📱 Debug APK: সরাসরি phone এ install করে test করো"
+          echo "🏪 Release APK: Play Store এ upload করার জন্য"
