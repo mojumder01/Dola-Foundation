@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Muntasir Mamun | Frontend Developer</title>
+  <meta name="description" content="Md Muntasir Mamun Mojumder — Frontend Web Developer & Flutter App Developer from Bangladesh." />
+
+  <!-- Google Fonts: Space Grotesk for body, JetBrains Mono for code feel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Custom cursor — desktop only, hidden on touch devices via CSS -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ═══════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+
+      <!-- Logo — initials with accent dot -->
+      <a href="#home" class="nav-logo">
+        <span>MM</span><span class="dot">.</span>
+      </a>
+
+      <!-- Desktop nav links -->
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#skills" class="nav-link">Skills</a></li>
+        <li><a href="#projects" class="nav-link">Projects</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Dark/Light toggle switch -->
+        <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme">
+          <span class="theme-icon" id="themeIcon">🌙</span>
+        </button>
+
+        <!-- Hamburger for mobile -->
+        <button class="hamburger" id="hamburger" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile dropdown menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#about" class="mobile-link">About</a>
+      <a href="#skills" class="mobile-link">Skills</a>
+      <a href="#projects" class="mobile-link">Projects</a>
+      <a href="#contact" class="mobile-link">Contact</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════
+       HERO SECTION
+  ═══════════════════════════════════════ -->
+  <section class="hero" id="home">
+
+    <!-- Animated particle background — canvas draws dots in dark mode -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Glowing blobs in background -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="hero-content">
+      <p class="hero-tag">👋 Hello, I'm</p>
+
+      <!-- Name with gradient -->
+      <h1 class="hero-name">
+        Muntasir<br />
+        <span class="name-accent">Mamun</span>
+      </h1>
+
+      <!-- Typing animation — roles cycle automatically -->
+      <div class="hero-role">
+        <span>I build </span>
+        <span class="typed" id="typed"></span>
+        <span class="type-cursor">|</span>
+      </div>
+
+      <p class="hero-desc">
+        Crafting clean, beautiful digital experiences from 🇧🇩 Bangladesh.
+      </p>
+
+      <!-- CTA buttons -->
+      <div class="hero-btns">
+        <a href="#projects" class="btn btn-glow">View My Work</a>
+        <a href="#contact" class="btn btn-ghost">Hire Me</a>
+      </div>
+
+      <!-- Social links row -->
+      <div class="hero-socials">
+        <a href="https://github.com/mojumder01" target="_blank" rel="noopener" class="social-pill">
+          <span>⌨</span> GitHub
+        </a>
+        <a href="https://facebook.com/muntasir077" target="_blank" rel="noopener" class="social-pill">
+          <span>👤</span> Facebook
+        </a>
+        <a href="mailto:muntasir077@gmail.com" class="social-pill">
+          <span>✉</span> Email
+        </a>
+      </div>
+    </div>
+
+    <!-- Scroll indicator at bottom -->
+    <div class="scroll-hint">
+      <div class="scroll-mouse">
+        <div class="scroll-wheel"></div>
+      </div>
+      <span>Scroll down</span>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       ABOUT SECTION
+  ═══════════════════════════════════════ -->
+  <section class="section" id="about">
+    <div class="container">
+
+      <div class="section-head reveal">
+        <span class="section-tag">Who am I?</span>
+        <h2 class="section-title">About Me</h2>
+      </div>
+
+      <div class="about-grid">
+
+        <!-- Left: avatar + badge -->
+        <div class="about-left reveal">
+          <div class="avatar-box">
+            <!-- Initials avatar — replace with real photo later -->
+            <div class="avatar-initials">MM</div>
+            <div class="avatar-ring"></div>
+          </div>
+
+          <!-- Floating available badge -->
+          <div class="available-badge">
+            <span class="pulse-dot"></span>
+            <div>
+              <strong>Available</strong>
+              <small>for freelance work</small>
+            </div>
+          </div>
+
+          <!-- Quick stats -->
+          <div class="stats-row">
+            <div class="stat">
+              <strong>1+</strong>
+              <small>Years Learning</small>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+              <strong>5+</strong>
+              <small>Projects Built</small>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+              <strong>∞</strong>
+              <small>Ideas</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: bio text -->
+        <div class="about-right reveal">
+          <h3 class="about-subtitle">Frontend Developer & App Builder</h3>
+
+          <p>I'm <strong>Muntasir Mamun Mojumder</strong>, a passionate self-taught Frontend Developer from Bangladesh. I love turning ideas into reality through clean code and thoughtful design.</p>
+
+          <p>I specialize in building responsive, high-performance websites and Android apps. Currently expanding my skills in <strong>Flutter</strong> and modern JavaScript frameworks — because good developers never stop learning.</p>
+
+          <p>My goal? To create digital products that are not just functional, but genuinely enjoyable to use. Every pixel and every line of code should serve a purpose.</p>
+
+          <!-- Contact info chips -->
+          <div class="info-chips">
+            <span class="chip">📧 muntasir077@gmail.com</span>
+            <span class="chip">📍 Bangladesh</span>
+            <span class="chip">🌐 Open to Remote</span>
+          </div>
+
+          <a href="mailto:muntasir077@gmail.com" class="btn btn-glow">Let's Work Together</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SKILLS SECTION
+  ═══════════════════════════════════════ -->
+  <section class="section skills-section" id="skills">
+    <div class="container">
+
+      <div class="section-head reveal">
+        <span class="section-tag">What I know</span>
+        <h2 class="section-title">My Skills</h2>
+      </div>
+
+      <!-- Skill cards grid -->
+      <div class="skills-grid">
+
+        <div class="skill-card reveal" style="--delay: 0s">
+          <div class="skill-icon">🌐</div>
+          <h4>HTML5</h4>
+          <p>Semantic markup, accessibility, SEO-friendly structure</p>
+          <div class="skill-level">
+            <div class="skill-bar" style="--w: 90%"></div>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" style="--delay: 0.1s">
+          <div class="skill-icon">🎨</div>
+          <h4>CSS3</h4>
+          <p>Flexbox, Grid, animations, responsive design, dark/light themes</p>
+          <div class="skill-level">
+            <div class="skill-bar" style="--w: 85%"></div>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" style="--delay: 0.2s">
+          <div class="skill-icon">⚡</div>
+          <h4>JavaScript</h4>
+          <p>DOM manipulation, ES6+, async/await, APIs</p>
+          <div class="skill-level">
+            <div class="skill-bar" style="--w: 75%"></div>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" style="--delay: 0.3s">
+          <div class="skill-icon">📱</div>
+          <h4>Flutter</h4>
+          <p>Cross-platform Android & iOS apps with Dart</p>
+          <div class="skill-level">
+            <div class="skill-bar" style="--w: 60%"></div>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" style="--delay: 0.4s">
+          <div class="skill-icon">⚛️</div>
+          <h4>React</h4>
+          <p>Component-based UI, hooks, state management</p>
+          <div class="skill-level">
+            <div class="skill-bar" style="--w: 55%"></div>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" style="--delay: 0.5s">
+          <div class="skill-icon">🔧</div>
+          <h4>Git & GitHub</h4>
+          <p>Version control, branching, collaboration, CI/CD</p>
+          <div class="skill-level">
+            <div class="skill-bar" style="--w: 80%"></div>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" style="--delay: 0.6s">
+          <div class="skill-icon">📐</div>
+          <h4>Responsive Design</h4>
+          <p>Mobile-first approach, cross-browser compatibility</p>
+          <div class="skill-level">
+            <div class="skill-bar" style="--w: 88%"></div>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" style="--delay: 0.7s">
+          <div class="skill-icon">🎯</div>
+          <h4>UI/UX Design</h4>
+          <p>User-centered design, wireframing, prototyping</p>
+          <div class="skill-level">
+            <div class="skill-bar" style="--w: 65%"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       PROJECTS SECTION
+  ═══════════════════════════════════════ -->
+  <section class="section" id="projects">
+    <div class="container">
+
+      <div class="section-head reveal">
+        <span class="section-tag">What I've built</span>
+        <h2 class="section-title">Projects</h2>
+      </div>
+
+      <div class="projects-grid">
+
+        <!-- Project 1: Math Rush -->
+        <div class="project-card reveal" style="--delay: 0s">
+          <div class="project-header">
+            <span class="project-emoji">🧮</span>
+            <div class="project-links">
+              <a href="https://github.com/mojumder01/math-rush-game" target="_blank" rel="noopener" class="project-link" title="View Code">⌨ Code</a>
+            </div>
+          </div>
+          <h3 class="project-title">Math Rush</h3>
+          <p class="project-desc">A fast-paced math quiz game for Android. Features 3 difficulty levels, a 10-second countdown timer, score with time bonus, and local high score storage.</p>
+          <div class="project-tags">
+            <span class="tag">Flutter</span>
+            <span class="tag">Dart</span>
+            <span class="tag">Android</span>
+            <span class="tag">Google Play</span>
+          </div>
+        </div>
+
+        <!-- Project 2: Dola Foundation Website -->
+        <div class="project-card reveal" style="--delay: 0.15s">
+          <div class="project-header">
+            <span class="project-emoji">🌱</span>
+            <div class="project-links">
+              <a href="https://github.com/mojumder01/Dola-Foundation" target="_blank" rel="noopener" class="project-link" title="View Code">⌨ Code</a>
+            </div>
+          </div>
+          <h3 class="project-title">Dola Foundation</h3>
+          <p class="project-desc">Full website for a non-profit foundation. Dynamic admin panel, program management, volunteer registration, and a modern responsive public-facing site.</p>
+          <div class="project-tags">
+            <span class="tag">Next.js</span>
+            <span class="tag">React</span>
+            <span class="tag">PostgreSQL</span>
+            <span class="tag">Admin Panel</span>
+          </div>
+        </div>
+
+        <!-- Project 3: This portfolio -->
+        <div class="project-card reveal" style="--delay: 0.3s">
+          <div class="project-header">
+            <span class="project-emoji">💼</span>
+            <div class="project-links">
+              <a href="https://github.com/mojumder01/portfolio-website" target="_blank" rel="noopener" class="project-link" title="View Code">⌨ Code</a>
+            </div>
+          </div>
+          <h3 class="project-title">Portfolio Website</h3>
+          <p class="project-desc">This portfolio! Built with pure HTML, CSS, and JavaScript. Features dark/light theme toggle, particle background, custom cursor, and smooth scroll animations.</p>
+          <div class="project-tags">
+            <span class="tag">HTML5</span>
+            <span class="tag">CSS3</span>
+            <span class="tag">JavaScript</span>
+            <span class="tag">Canvas API</span>
+          </div>
+        </div>
+
+        <!-- Project 4: Coming soon placeholder -->
+        <div class="project-card project-soon reveal" style="--delay: 0.45s">
+          <div class="soon-content">
+            <span class="soon-icon">🚀</span>
+            <h3>Next Project</h3>
+            <p>Something exciting is coming soon. Stay tuned!</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       CONTACT SECTION
+  ═══════════════════════════════════════ -->
+  <section class="section contact-section" id="contact">
+    <div class="container">
+
+      <div class="section-head reveal">
+        <span class="section-tag">Say hi!</span>
+        <h2 class="section-title">Get In Touch</h2>
+      </div>
+
+      <div class="contact-grid">
+
+        <!-- Left: contact info -->
+        <div class="contact-info reveal">
+          <h3>Let's build something together</h3>
+          <p>Whether you have a project in mind, a question, or just want to say hello — my inbox is always open. I'll get back to you within 24 hours.</p>
+
+          <div class="contact-items">
+            <a href="mailto:muntasir077@gmail.com" class="contact-item">
+              <div class="contact-icon">✉</div>
+              <div>
+                <strong>Email</strong>
+                <span>muntasir077@gmail.com</span>
+              </div>
+            </a>
+
+            <a href="https://facebook.com/muntasir077" target="_blank" rel="noopener" class="contact-item">
+              <div class="contact-icon">👤</div>
+              <div>
+                <strong>Facebook</strong>
+                <span>facebook.com/muntasir077</span>
+              </div>
+            </a>
+
+            <a href="https://github.com/mojumder01" target="_blank" rel="noopener" class="contact-item">
+              <div class="contact-icon">⌨</div>
+              <div>
+                <strong>GitHub</strong>
+                <span>github.com/mojumder01</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: contact form -->
+        <div class="contact-form-wrapper reveal">
+          <form class="contact-form" id="contactForm">
+            <div class="form-group">
+              <label for="name">Your Name</label>
+              <input type="text" id="name" name="name" placeholder="John Doe" required />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Your Email</label>
+              <input type="email" id="email" name="email" placeholder="john@example.com" required />
+            </div>
+
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="5" placeholder="Tell me about your project..." required></textarea>
+            </div>
+
+            <!-- This form opens Gmail on submit since we have no backend -->
+            <button type="submit" class="btn btn-glow btn-full">
+              Send Message ✉
+            </button>
+
+            <p class="form-note">* This will open your email client to send the message.</p>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">MM<span class="dot">.</span></span>
+        <p>Designed & built by <strong>Muntasir Mamun</strong> © 2025</p>
+        <div class="footer-socials">
+          <a href="https://github.com/mojumder01" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://facebook.com/muntasir077" target="_blank" rel="noopener">Facebook</a>
+          <a href="mailto:muntasir077@gmail.com">Email</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top button -->
+  <button class="back-top" id="backTop" aria-label="Back to top" title="Back to top">↑</button>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
