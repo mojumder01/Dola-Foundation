@@ -6,6 +6,7 @@ import ProgramsSection from "@/components/home/ProgramsSection";
 import ProjectsSection from "@/components/home/ProjectsSection";
 import SuccessStories from "@/components/home/SuccessStories";
 import GalleryPreview from "@/components/home/GalleryPreview";
+import VideoSection from "@/components/home/VideoSection";
 import VolunteerCTA from "@/components/home/VolunteerCTA";
 import DonationCTA from "@/components/home/DonationCTA";
 
@@ -71,13 +72,25 @@ async function getProjects() {
   }
 }
 
+async function getVideos() {
+  try {
+    return await prisma.video.findMany({
+      where: { published: true },
+      orderBy: { order: "asc" },
+    });
+  } catch {
+    return [];
+  }
+}
+
 export default async function HomePage() {
-  const [settings, galleryImages, testimonials, programs, projects] = await Promise.all([
+  const [settings, galleryImages, testimonials, programs, projects, videos] = await Promise.all([
     getSettings(),
     getGalleryImages(),
     getTestimonials(),
     getPrograms(),
     getProjects(),
+    getVideos(),
   ]);
 
   return (
@@ -137,6 +150,7 @@ export default async function HomePage() {
           category: image.category,
         }))}
       />
+      <VideoSection videos={videos.map((v) => ({ id: v.id, title: v.title, youtubeUrl: v.youtubeUrl, description: v.description }))} />
       <VolunteerCTA />
       <DonationCTA />
     </>

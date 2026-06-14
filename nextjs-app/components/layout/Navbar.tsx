@@ -8,21 +8,9 @@ import { Menu, X, ChevronDown, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-const navLinks = [
+const BASE_NAV = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  {
-    label: "Programs",
-    href: "/programs",
-    children: [
-      { label: "Education", href: "/programs/education" },
-      { label: "Healthcare", href: "/programs/healthcare" },
-      { label: "Charity & Relief", href: "/programs/charity-relief" },
-      { label: "Environment", href: "/programs/environment" },
-      { label: "Youth Development", href: "/programs/youth-development" },
-      { label: "Orphan Care", href: "/programs/orphan-care" },
-    ],
-  },
   { label: "Projects", href: "/projects" },
   { label: "Gallery", href: "/gallery" },
   { label: "Blog", href: "/blog" },
@@ -34,15 +22,28 @@ interface NavbarProps {
   logoUrl?: string | null;
   siteName?: string | null;
   tagline?: string | null;
+  programs?: { label: string; href: string }[];
 }
 
-export default function Navbar({ logoUrl, siteName, tagline }: NavbarProps) {
+export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarProps) {
+  const programChildren = programs && programs.length > 0 ? programs : [
+    { label: "Education", href: "/programs/education" },
+    { label: "Healthcare", href: "/programs/healthcare" },
+    { label: "Charity & Relief", href: "/programs/charity-relief" },
+  ];
   const brandName = siteName || "Dola Foundation";
   const brandTagline = tagline || "Empowering Lives";
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const pathname = usePathname();
+
+  const navLinks = [
+    BASE_NAV[0],
+    BASE_NAV[1],
+    { label: "Programs", href: "/programs", children: programChildren },
+    ...BASE_NAV.slice(2),
+  ];
 
   const isHome = pathname === "/";
 

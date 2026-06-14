@@ -10,6 +10,19 @@ async function getSettings() {
   }
 }
 
+async function getNavPrograms() {
+  try {
+    const programs = await prisma.program.findMany({
+      where: { published: true },
+      orderBy: { order: "asc" },
+      select: { title: true, slug: true },
+    });
+    return programs.map((p) => ({ label: p.title, href: `/programs/${p.slug}` }));
+  } catch {
+    return [];
+  }
+}
+
 function hexToRgb(hex: string): string {
   try {
     const clean = hex.replace('#', '');
@@ -27,7 +40,7 @@ export default async function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await getSettings();
+  const [settings, navPrograms] = await Promise.all([getSettings(), getNavPrograms()]);
 
   return (
     <>
@@ -43,6 +56,7 @@ export default async function PublicLayout({
           logoUrl={settings?.logoUrl}
           siteName={settings?.siteName}
           tagline={settings?.tagline}
+          programs={navPrograms}
         />
         <main className="flex-1">{children}</main>
         <Footer

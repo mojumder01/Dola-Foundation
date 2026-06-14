@@ -18,6 +18,7 @@ import {
   Globe,
   ShieldCheck,
   MessageSquare,
+  Youtube,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,7 @@ const navItems = [
   { label: "Programs", href: "/admin/programs", icon: Layers },
   { label: "Projects", href: "/admin/projects", icon: Globe },
   { label: "Gallery", href: "/admin/gallery", icon: ImageIcon },
+  { label: "Videos", href: "/admin/videos", icon: Youtube },
   { label: "Blog", href: "/admin/blog", icon: FileText },
   { label: "Volunteers", href: "/admin/volunteers", icon: Users },
   { label: "Donations", href: "/admin/donations", icon: Heart },

@@ -66,6 +66,16 @@ model SiteSettings {
   updatedAt      DateTime @updatedAt
 }
 
+model Video {
+  id          String   @id @default(cuid())
+  title       String
+  youtubeUrl  String
+  description String?
+  published   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
 model Program {
   id          String     @id @default(cuid())
   title       String
