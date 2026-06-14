@@ -271,7 +271,7 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
                 id="objectives"
                 name="objectives"
                 rows={4}
-                defaultValue={editingProgram?.objectives?.join("\n") || ""}
+                defaultValue={(editingProgram?.objectives ?? []).join("\n")}
                 placeholder={"Establish free learning centers\nProvide school supplies\nTrain local teachers"}
               />
             </div>
