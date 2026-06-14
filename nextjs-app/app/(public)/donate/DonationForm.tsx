@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
-import { CheckCircle, Loader2, CreditCard } from "lucide-react";
+import { CheckCircle, XCircle, Loader2, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,6 +41,20 @@ function SubmitButton() {
   );
 }
 
+function Toast({ message, type, onClose }: { message: string; type: "success" | "error"; onClose: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onClose, 5000);
+    return () => clearTimeout(t);
+  }, [onClose]);
+  return (
+    <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-4 rounded-2xl shadow-2xl text-white text-sm font-medium max-w-sm ${type === "success" ? "bg-green-600" : "bg-red-500"}`}>
+      {type === "success" ? <CheckCircle className="w-5 h-5 flex-shrink-0" /> : <XCircle className="w-5 h-5 flex-shrink-0" />}
+      <span>{message}</span>
+      <button onClick={onClose} className="ml-auto opacity-70 hover:opacity-100">✕</button>
+    </div>
+  );
+}
+
 export default function DonationForm() {
   const [amount, setAmount] = useState(1000);
   const [customAmount, setCustomAmount] = useState("");
@@ -48,6 +62,7 @@ export default function DonationForm() {
   const [program, setProgram] = useState("");
   const [method, setMethod] = useState("BKASH");
   const [success, setSuccess] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const finalAmount = customAmount ? Number(customAmount) : amount;
@@ -62,8 +77,11 @@ export default function DonationForm() {
     const result = await recordDonation(formData);
     if (result?.success) {
       setSuccess(true);
+      setToast({ message: "Donation recorded successfully! Thank you for your generosity.", type: "success" });
     } else {
-      setError(result?.error || "Something went wrong.");
+      const msg = result?.error || "Failed to record donation. Please try again.";
+      setError(msg);
+      setToast({ message: msg, type: "error" });
     }
   }
 
@@ -88,6 +106,8 @@ export default function DonationForm() {
   }
 
   return (
+    <>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     <div className="bg-white rounded-2xl shadow-card overflow-hidden">
       <div className="bg-gradient-to-r from-primary to-[#1a4da0] p-6 text-white">
         <h3 className="font-poppins font-bold text-xl">Make Your Donation</h3>
@@ -95,11 +115,6 @@ export default function DonationForm() {
       </div>
 
       <form action={handleAction} className="p-8 space-y-6">
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-4 text-sm">
-            {error}
-          </div>
-        )}
 
         {/* Frequency */}
         <div>
@@ -303,5 +318,6 @@ export default function DonationForm() {
         </p>
       </form>
     </div>
+    </>
   );
 }

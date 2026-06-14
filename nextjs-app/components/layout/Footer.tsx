@@ -56,6 +56,8 @@ export default function Footer({
 }) {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [subError, setSubError] = useState(false);
+  const [subLoading, setSubLoading] = useState(false);
 
   const siteName = settings?.siteName || "Dola Foundation";
   const tagline = settings?.tagline || "Empowering Lives";
@@ -77,18 +79,26 @@ export default function Footer({
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
-
+    if (!email || subLoading) return;
+    setSubLoading(true);
+    setSubError(false);
     try {
-      await fetch("/api/newsletter", {
+      const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      setSubscribed(true);
-      setEmail("");
-    } catch (error) {
-      setSubscribed(true);
+      const data = await res.json();
+      if (data.success) {
+        setSubscribed(true);
+        setEmail("");
+      } else {
+        setSubError(true);
+      }
+    } catch {
+      setSubError(true);
+    } finally {
+      setSubLoading(false);
     }
   };
 
@@ -213,26 +223,36 @@ export default function Footer({
               Newsletter
             </h4>
             {subscribed ? (
-              <p className="text-green-400 text-sm">
-                ✓ Thank you for subscribing!
+              <p className="text-green-400 text-sm flex items-center gap-1.5">
+                <span>✓</span> Thank you for subscribing!
               </p>
             ) : (
-              <form onSubmit={handleSubscribe} className="flex gap-2">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                  className="flex-1 bg-white/10 border border-white/20 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-gold transition-colors"
-                />
-                <button
-                  type="submit"
-                  className="bg-gold hover:bg-gold-500 text-dark rounded-xl p-2.5 transition-colors flex-shrink-0"
-                >
-                  <Send className="w-4 h-4" />
-                </button>
-              </form>
+              <>
+                <form onSubmit={handleSubscribe} className="flex gap-2">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    required
+                    className="flex-1 bg-white/10 border border-white/20 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-gold transition-colors"
+                  />
+                  <button
+                    type="submit"
+                    disabled={subLoading}
+                    className="bg-gold hover:bg-gold-500 text-dark rounded-xl p-2.5 transition-colors flex-shrink-0 disabled:opacity-60"
+                  >
+                    {subLoading ? (
+                      <span className="w-4 h-4 border-2 border-dark/30 border-t-dark rounded-full animate-spin block" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
+                  </button>
+                </form>
+                {subError && (
+                  <p className="text-red-400 text-xs mt-1.5">Failed to subscribe. Please try again.</p>
+                )}
+              </>
             )}
           </div>
         </div>

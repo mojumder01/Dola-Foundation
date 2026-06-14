@@ -41,6 +41,26 @@ export async function recordDonation(formData: FormData) {
       };
     }
 
+    // Resolve programId from slug to actual DB id
+    let resolvedProgramId: string | null = null;
+    if (validated.data.programId) {
+      try {
+        // Try to find program by slug first, then by id
+        const program = await prisma.program.findFirst({
+          where: {
+            OR: [
+              { slug: validated.data.programId },
+              { id: validated.data.programId },
+            ],
+          },
+          select: { id: true },
+        });
+        resolvedProgramId = program?.id ?? null;
+      } catch {
+        resolvedProgramId = null;
+      }
+    }
+
     // Find or create donor
     let donor = await prisma.donor.findUnique({
       where: { email: validated.data.donorEmail },
@@ -66,11 +86,12 @@ export async function recordDonation(formData: FormData) {
       });
     }
 
+    const { programId: _programId, ...donationData } = validated.data;
     const donation = await prisma.donation.create({
       data: {
-        ...validated.data,
+        ...donationData,
         donorId: donor.id,
-        programId: validated.data.programId || null,
+        programId: resolvedProgramId,
         status: "PENDING",
       },
     });
