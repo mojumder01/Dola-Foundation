@@ -9,8 +9,28 @@ export default async function AdminSettingsPage() {
       <div className="mb-6">
         <h1 className="font-poppins font-bold text-2xl text-dark">Site Settings</h1>
         <p className="text-gray-500 text-sm mt-1">
-          Edit homepage content, contact info, and social links
+          Control every piece of content on the website — branding, colors, homepage sections, contact info, and social links.
         </p>
+      </div>
+
+      {/* Quick navigation */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {[
+          { label: "🎨 Branding & Colors", href: "#branding" },
+          { label: "🏠 Hero Section", href: "#hero" },
+          { label: "📊 Homepage Stats", href: "#stats" },
+          { label: "ℹ️ About & Mission", href: "#about" },
+          { label: "👤 Founder Message", href: "#founder" },
+          { label: "📞 Contact & Social", href: "#contact" },
+        ].map((link) => (
+          <a
+            key={link.href}
+            href={link.href}
+            className="text-xs bg-gray-100 hover:bg-primary hover:text-white text-gray-600 px-3 py-1.5 rounded-full transition-colors"
+          >
+            {link.label}
+          </a>
+        ))}
       </div>
 
       <SettingsForm settings={settings} />

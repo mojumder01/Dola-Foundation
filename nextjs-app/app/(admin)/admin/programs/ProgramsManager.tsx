@@ -264,16 +264,30 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
                 placeholder={"Establish free learning centers\nProvide school supplies\nTrain local teachers"}
               />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="col-span-2 grid grid-cols-2 gap-2">
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Program Stats (shown on program page)</p>
+                <p className="text-xs text-gray-400 mb-3">
+                  These appear as highlight numbers on the program detail page.<br/>
+                  <strong>Value</strong>: the number (e.g. <code className="bg-gray-100 px-1 rounded">2,000+</code>) &nbsp;|&nbsp;
+                  <strong>Label</strong>: the text below it (e.g. <code className="bg-gray-100 px-1 rounded">Students Enrolled</code>)
+                </p>
+              </div>
+              {[
+                { i: 1, valueEx: "2,000+", labelEx: "Students Enrolled" },
+                { i: 2, valueEx: "15", labelEx: "Learning Centers" },
+                { i: 3, valueEx: "5", labelEx: "Districts Covered" },
+              ].map(({ i, valueEx, labelEx }) => (
+                <div key={i} className="grid grid-cols-2 gap-2 bg-[#F8FAFC] rounded-xl p-3">
                   <div>
-                    <Label htmlFor={`stat${i}Value`}>Stat {i} Value</Label>
-                    <Input id={`stat${i}Value`} name={`stat${i}Value`} defaultValue={(editingProgram as any)?.[`stat${i}Value`] || ""} placeholder="2,000+" />
+                    <Label htmlFor={`stat${i}Value`} className="text-xs">Stat {i} — Value</Label>
+                    <Input id={`stat${i}Value`} name={`stat${i}Value`} defaultValue={(editingProgram as any)?.[`stat${i}Value`] || ""} placeholder={valueEx} />
+                    <p className="text-xs text-gray-400 mt-0.5">e.g. {valueEx}</p>
                   </div>
                   <div>
-                    <Label htmlFor={`stat${i}Label`}>Stat {i} Label</Label>
-                    <Input id={`stat${i}Label`} name={`stat${i}Label`} defaultValue={(editingProgram as any)?.[`stat${i}Label`] || ""} placeholder="Students" />
+                    <Label htmlFor={`stat${i}Label`} className="text-xs">Stat {i} — Label</Label>
+                    <Input id={`stat${i}Label`} name={`stat${i}Label`} defaultValue={(editingProgram as any)?.[`stat${i}Label`] || ""} placeholder={labelEx} />
+                    <p className="text-xs text-gray-400 mt-0.5">e.g. {labelEx}</p>
                   </div>
                 </div>
               ))}

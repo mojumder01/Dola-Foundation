@@ -57,7 +57,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
       )}
 
       {/* Branding */}
-      <div className="bg-white rounded-2xl shadow-card p-6">
+      <div id="branding" className="bg-white rounded-2xl shadow-card p-6">
         <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
           Branding
         </h2>
@@ -137,7 +137,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
       </div>
 
       {/* Hero Section */}
-      <div className="bg-white rounded-2xl shadow-card p-6">
+      <div id="hero" className="bg-white rounded-2xl shadow-card p-6">
         <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
           Hero Section
         </h2>
@@ -158,31 +158,61 @@ export default function SettingsForm({ settings }: { settings: any }) {
       </div>
 
       {/* Statistics */}
-      <div className="bg-white rounded-2xl shadow-card p-6">
-        <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
+      <div id="stats" className="bg-white rounded-2xl shadow-card p-6">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-1 pb-3 border-b border-gray-100">
           Impact Statistics
         </h2>
-        <div className="grid grid-cols-2 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-[#F8FAFC] rounded-xl p-4">
-              <h3 className="font-medium text-gray-700 mb-3 text-sm">Stat #{i}</h3>
+        <p className="text-xs text-gray-500 mb-4 mt-2">
+          These 4 numbers appear on the homepage in the <strong>"Creating Real Change"</strong> section and in the hero area.
+          <br />
+          <span className="text-primary font-medium">Value</span> = the number shown (e.g. <code className="bg-gray-100 px-1 rounded">5,000+</code> or <code className="bg-gray-100 px-1 rounded">12</code>).
+          <span className="ml-1 text-primary font-medium">Label</span> = the text below it (e.g. <code className="bg-gray-100 px-1 rounded">Lives Impacted</code>).
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[
+            { i: 1, valueEx: "5,000+", labelEx: "Lives Impacted" },
+            { i: 2, valueEx: "12", labelEx: "Active Programs" },
+            { i: 3, valueEx: "8", labelEx: "Districts Reached" },
+            { i: 4, valueEx: "500+", labelEx: "Volunteers" },
+          ].map(({ i, valueEx, labelEx }) => (
+            <div key={i} className="bg-[#F8FAFC] rounded-xl p-4 border border-gray-100">
+              <h3 className="font-semibold text-gray-700 mb-3 text-sm flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center font-bold">{i}</span>
+                Statistic #{i}
+              </h3>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="label-base" htmlFor={`stat${i}Value`}>Value</Label>
-                  <Input id={`stat${i}Value`} name={`stat${i}Value`} defaultValue={(settings as any)?.[`stat${i}Value`]} placeholder="5000" />
+                  <Label className="label-base" htmlFor={`stat${i}Value`}>Number / Value</Label>
+                  <Input
+                    id={`stat${i}Value`}
+                    name={`stat${i}Value`}
+                    defaultValue={(settings as any)?.[`stat${i}Value`]}
+                    placeholder={valueEx}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">e.g. {valueEx}</p>
                 </div>
                 <div>
-                  <Label className="label-base" htmlFor={`stat${i}Label`}>Label</Label>
-                  <Input id={`stat${i}Label`} name={`stat${i}Label`} defaultValue={(settings as any)?.[`stat${i}Label`]} placeholder="Lives Impacted" />
+                  <Label className="label-base" htmlFor={`stat${i}Label`}>Label / Title</Label>
+                  <Input
+                    id={`stat${i}Label`}
+                    name={`stat${i}Label`}
+                    defaultValue={(settings as any)?.[`stat${i}Label`]}
+                    placeholder={labelEx}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">e.g. {labelEx}</p>
                 </div>
               </div>
             </div>
           ))}
         </div>
+        <div className="mt-4 bg-blue-50 border border-blue-100 rounded-xl p-3 flex gap-2 text-xs text-blue-700">
+          <span>💡</span>
+          <span>Tip: Add <strong>+</strong> at the end of the Value to show a "+" sign (e.g. <code className="bg-blue-100 px-1 rounded">5,000+</code>). Use commas for thousands (e.g. <code className="bg-blue-100 px-1 rounded">10,000+</code>).</span>
+        </div>
       </div>
 
       {/* About */}
-      <div className="bg-white rounded-2xl shadow-card p-6">
+      <div id="about" className="bg-white rounded-2xl shadow-card p-6">
         <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
           About Section
         </h2>
@@ -203,7 +233,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
       </div>
 
       {/* Founder */}
-      <div className="bg-white rounded-2xl shadow-card p-6">
+      <div id="founder" className="bg-white rounded-2xl shadow-card p-6">
         <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
           Founder's Message
         </h2>
@@ -224,7 +254,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
       </div>
 
       {/* Contact Info */}
-      <div className="bg-white rounded-2xl shadow-card p-6">
+      <div id="contact" className="bg-white rounded-2xl shadow-card p-6">
         <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
           Contact Information
         </h2>
