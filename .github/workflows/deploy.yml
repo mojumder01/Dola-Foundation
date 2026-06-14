@@ -39,7 +39,9 @@ jobs:
       - name: Apply database schema
         working-directory: nextjs-app
         run: |
-          export $(grep -v '^#' .vercel/.env.production.local | xargs)
+          set -a
+          source .vercel/.env.production.local
+          set +a
           npx prisma db push --skip-generate
 
       - name: Build project via Vercel CLI
