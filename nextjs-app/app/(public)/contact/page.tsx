@@ -50,7 +50,7 @@ export default async function ContactPage() {
       icon: Mail,
       title: "Email",
       content:
-        settings?.email || "info@dolafoundation.org\ndonate@dolafoundation.org",
+        settings?.email || "info@dolafoundation.com\ndonate@dolafoundation.com",
       color: "text-gold",
       bg: "bg-yellow-50",
     },

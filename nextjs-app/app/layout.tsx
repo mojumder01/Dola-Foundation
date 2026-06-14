@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://dolafoundation.org",
+    url: "https://dolafoundation.com",
     siteName: "Dola Foundation",
     title: "Dola Foundation | Empowering Lives, Inspiring Hope",
     description:

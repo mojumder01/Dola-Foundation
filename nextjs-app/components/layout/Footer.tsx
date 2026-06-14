@@ -63,7 +63,7 @@ export default function Footer({
   const tagline = settings?.tagline || "Empowering Lives";
   const contactAddress = settings?.address || "Dhaka, Bangladesh";
   const contactPhone = settings?.phone || "+880 1700-000000";
-  const contactEmail = settings?.email || "info@dolafoundation.org";
+  const contactEmail = settings?.email || "info@dolafoundation.com";
 
   const configuredSocials = [
     { icon: Facebook, href: settings?.facebookUrl, label: "Facebook" },

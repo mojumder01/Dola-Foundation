@@ -130,7 +130,7 @@ export default function DonatePage() {
                   For donation assistance, contact us:
                 </p>
                 <p className="text-primary font-medium text-sm">
-                  info@dolafoundation.org
+                  info@dolafoundation.com
                 </p>
                 <p className="text-gray-500 text-sm">+880 1700-000000</p>
               </div>

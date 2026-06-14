@@ -66,7 +66,7 @@ export default function LoginPage() {
                 name="email"
                 type="email"
                 required
-                placeholder="admin@dolafoundation.org"
+                placeholder="admin@dolafoundation.com"
                 autoComplete="email"
               />
             </div>

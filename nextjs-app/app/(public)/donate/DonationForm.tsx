@@ -272,8 +272,8 @@ export default function DonationForm() {
                 <p className="text-sm text-gray-500">
                   PayPal and Stripe integration coming soon. For now, please
                   contact us at{" "}
-                  <a href="mailto:donate@dolafoundation.org" className="text-primary hover:underline">
-                    donate@dolafoundation.org
+                  <a href="mailto:donate@dolafoundation.com" className="text-primary hover:underline">
+                    donate@dolafoundation.com
                   </a>{" "}
                   for international donation options.
                 </p>
