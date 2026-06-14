@@ -8,7 +8,10 @@ import { Menu, X, ChevronDown, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-const BASE_NAV = [
+type NavChild = { label: string; href: string };
+type NavLink = { label: string; href: string; children?: NavChild[] };
+
+const BASE_NAV: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Projects", href: "/projects" },

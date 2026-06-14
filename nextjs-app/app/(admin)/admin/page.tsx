@@ -138,6 +138,10 @@ export default async function AdminDashboardPage() {
       recentDonations: [],
       recentVolunteers: [],
       recentContacts: [],
+      donationsByDay: [],
+      donationsByMonth: [],
+      volunteersByStatus: [],
+      topPrograms: [],
     };
   }
 
