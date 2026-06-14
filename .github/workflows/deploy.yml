@@ -29,18 +29,16 @@ jobs:
         working-directory: nextjs-app
         run: npx tsc --noEmit
 
-      - name: Build
-        working-directory: nextjs-app
-        run: npm run build
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
       - name: Pull Vercel environment info
         working-directory: nextjs-app
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build project via Vercel CLI
+        working-directory: nextjs-app
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy to Vercel
         working-directory: nextjs-app
