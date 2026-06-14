@@ -10,10 +10,21 @@ import {
   Clock,
 } from "lucide-react";
 import StatsCard from "@/components/admin/StatsCard";
+import DashboardCharts from "@/components/admin/DashboardCharts";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 async function getDashboardData() {
+  const now = new Date();
+  const sevenDaysAgo = new Date(now);
+  sevenDaysAgo.setDate(now.getDate() - 6);
+  sevenDaysAgo.setHours(0, 0, 0, 0);
+
+  const sixMonthsAgo = new Date(now);
+  sixMonthsAgo.setMonth(now.getMonth() - 5);
+  sixMonthsAgo.setDate(1);
+  sixMonthsAgo.setHours(0, 0, 0, 0);
+
   const [
     donationStats,
     volunteerCount,
@@ -23,27 +34,72 @@ async function getDashboardData() {
     recentDonations,
     recentVolunteers,
     recentContacts,
+    volunteerStatuses,
+    recentDonationsForChart,
+    monthlyDonationsRaw,
+    programDonations,
   ] = await Promise.all([
     prisma.donation.aggregate({ _sum: { amount: true }, _count: true }),
     prisma.volunteer.count(),
     prisma.blogPost.count({ where: { published: true } }),
     prisma.galleryImage.count(),
     prisma.contact.count({ where: { isRead: false } }),
-    prisma.donation.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      include: { program: true },
-    }),
-    prisma.volunteer.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.contact.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      where: { isRead: false },
-    }),
+    prisma.donation.findMany({ take: 5, orderBy: { createdAt: "desc" }, include: { program: true } }),
+    prisma.volunteer.findMany({ take: 5, orderBy: { createdAt: "desc" } }),
+    prisma.contact.findMany({ take: 5, orderBy: { createdAt: "desc" }, where: { isRead: false } }),
+    prisma.volunteer.groupBy({ by: ["status"], _count: { id: true } }),
+    prisma.donation.findMany({ where: { createdAt: { gte: sevenDaysAgo } }, select: { amount: true, createdAt: true } }),
+    prisma.donation.findMany({ where: { createdAt: { gte: sixMonthsAgo } }, select: { amount: true, createdAt: true } }),
+    prisma.donation.groupBy({ by: ["programId"], _sum: { amount: true }, orderBy: { _sum: { amount: "desc" } }, take: 5 }),
   ]);
+
+  // Build last 7 days chart data
+  const donationsByDay = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(sevenDaysAgo);
+    d.setDate(sevenDaysAgo.getDate() + i);
+    const label = d.toLocaleDateString("en-US", { weekday: "short" });
+    const dayDonations = recentDonationsForChart.filter((don) => {
+      const dd = new Date(don.createdAt);
+      return dd.getDate() === d.getDate() && dd.getMonth() === d.getMonth();
+    });
+    return {
+      date: label,
+      amount: dayDonations.reduce((s, dd) => s + Number(dd.amount), 0),
+      count: dayDonations.length,
+    };
+  });
+
+  // Build last 6 months chart data
+  const donationsByMonth = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(sixMonthsAgo);
+    d.setMonth(sixMonthsAgo.getMonth() + i);
+    const label = d.toLocaleDateString("en-US", { month: "short" });
+    const monthDonations = monthlyDonationsRaw.filter((don) => {
+      const dd = new Date(don.createdAt);
+      return dd.getMonth() === d.getMonth() && dd.getFullYear() === d.getFullYear();
+    });
+    return {
+      month: label,
+      amount: monthDonations.reduce((s, dd) => s + Number(dd.amount), 0),
+    };
+  });
+
+  // Volunteers by status
+  const statusLabels = ["PENDING", "APPROVED", "REJECTED"];
+  const volunteersByStatus = statusLabels.map((s) => ({
+    status: s,
+    count: volunteerStatuses.find((v) => v.status === s)?._count.id || 0,
+  }));
+
+  // Top programs (fetch names)
+  const programIds = programDonations.map((p) => p.programId).filter(Boolean) as string[];
+  const programs = programIds.length
+    ? await prisma.program.findMany({ where: { id: { in: programIds } }, select: { id: true, title: true } })
+    : [];
+  const topPrograms = programDonations.map((p) => ({
+    name: programs.find((pr) => pr.id === p.programId)?.title?.slice(0, 12) || "General",
+    amount: Number(p._sum.amount || 0),
+  }));
 
   return {
     totalDonations: Number(donationStats._sum.amount || 0),
@@ -55,6 +111,10 @@ async function getDashboardData() {
     recentDonations,
     recentVolunteers,
     recentContacts,
+    donationsByDay,
+    donationsByMonth,
+    volunteersByStatus,
+    topPrograms,
   };
 }
 
@@ -205,6 +265,16 @@ export default async function AdminDashboardPage() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Charts */}
+        <div className="lg:col-span-2">
+          <DashboardCharts
+            donationsByDay={data.donationsByDay}
+            donationsByMonth={data.donationsByMonth}
+            volunteersByStatus={data.volunteersByStatus}
+            topPrograms={data.topPrograms}
+          />
         </div>
 
         {/* Unread Messages */}
