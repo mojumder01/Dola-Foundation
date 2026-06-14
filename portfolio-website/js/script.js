@@ -20,15 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
   themeBtn.addEventListener('click', () => {
     const current = html.getAttribute('data-theme');
     setTheme(current === 'dark' ? 'light' : 'dark');
+    // canvas is initialized by now, safe to re-render particles
+    resizeParticles();
   });
 
   function setTheme(theme) {
     html.setAttribute('data-theme', theme);
     localStorage.setItem('portfolio-theme', theme);
-    // Icon change করো
     themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
-    // Particle canvas দেখাও/লুকাও
-    resizeParticles();
+    // resizeParticles() NOT called here — canvas hasn't been initialized yet on first load
   }
 
   // ─────────────────────────────────────────
