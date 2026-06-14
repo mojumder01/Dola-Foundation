@@ -76,6 +76,11 @@ export default function SettingsForm({ settings }: { settings: any }) {
             <Label className="label-base" htmlFor="logoUrl">Logo URL</Label>
             <Input id="logoUrl" name="logoUrl" defaultValue={settings?.logoUrl || ""} placeholder="https://..." />
           </div>
+          <div>
+            <Label className="label-base" htmlFor="faviconUrl">Favicon URL (Browser Tab Icon)</Label>
+            <Input id="faviconUrl" name="faviconUrl" defaultValue={(settings as any)?.faviconUrl || ""} placeholder="https://... (square image, 32×32 or 512×512px)" />
+            <p className="text-xs text-gray-400 mt-1">Upload a square PNG/ICO to ImgBB.com → paste URL here. Appears in browser tabs and bookmarks.</p>
+          </div>
         </div>
       </div>
 

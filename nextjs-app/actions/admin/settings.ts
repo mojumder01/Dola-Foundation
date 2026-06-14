@@ -29,6 +29,7 @@ export async function updateSiteSettings(formData: FormData) {
       siteName: (formData.get("siteName") as string) || undefined,
       tagline: (formData.get("tagline") as string) || undefined,
       logoUrl: (formData.get("logoUrl") as string) || undefined,
+      faviconUrl: (formData.get("faviconUrl") as string) || undefined,
       primaryColor: (formData.get("primaryColor") as string) || undefined,
       accentColor: (formData.get("accentColor") as string) || undefined,
       secondaryColor: (formData.get("secondaryColor") as string) || undefined,

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
+import { prisma } from "@/lib/prisma";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -15,6 +16,15 @@ const inter = Inter({
   variable: "--font-inter",
   display: "swap",
 });
+
+async function getFaviconUrl(): Promise<string | null> {
+  try {
+    const settings = await prisma.siteSettings.findFirst({ select: { faviconUrl: true } as any });
+    return (settings as any)?.faviconUrl || null;
+  } catch {
+    return null;
+  }
+}
 
 export const metadata: Metadata = {
   title: {
@@ -80,13 +90,23 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const faviconUrl = await getFaviconUrl();
+
   return (
     <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
+      <head>
+        {faviconUrl && (
+          <>
+            <link rel="icon" href={faviconUrl} />
+            <link rel="apple-touch-icon" href={faviconUrl} />
+          </>
+        )}
+      </head>
       <body className="min-h-screen bg-background antialiased">{children}</body>
     </html>
   );
