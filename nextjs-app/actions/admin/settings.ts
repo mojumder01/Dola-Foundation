@@ -1,10 +1,13 @@
 "use server";
 
+import { requireAdmin } from "@/lib/guard";
+
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function getSiteSettings() {
   try {
+    await requireAdmin();
     let settings = await prisma.siteSettings.findFirst();
     if (!settings) {
       settings = await prisma.siteSettings.create({
@@ -19,6 +22,7 @@ export async function getSiteSettings() {
 
 export async function updateSiteSettings(formData: FormData) {
   try {
+    await requireAdmin();
     const existing = await prisma.siteSettings.findFirst();
 
     const data = {

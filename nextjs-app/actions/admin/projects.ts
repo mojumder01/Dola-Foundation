@@ -1,11 +1,14 @@
 "use server";
 
+import { requireAdmin } from "@/lib/guard";
+
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { slugify } from "@/lib/utils";
 
 export async function getProjects(status?: string) {
   try {
+    await requireAdmin();
     const projects = await prisma.project.findMany({
       where: status && status !== "ALL" ? { status: status as any } : {},
       orderBy: { createdAt: "desc" },
@@ -18,6 +21,7 @@ export async function getProjects(status?: string) {
 
 export async function createProject(formData: FormData) {
   try {
+    await requireAdmin();
     const title = formData.get("title") as string;
     const budgetRaw = formData.get("budget") as string;
     const coverImage = formData.get("coverImage") as string;
@@ -44,6 +48,7 @@ export async function createProject(formData: FormData) {
 
 export async function updateProject(id: string, formData: FormData) {
   try {
+    await requireAdmin();
     const budgetRaw = formData.get("budget") as string;
     const coverImage = formData.get("coverImage") as string;
     const project = await prisma.project.update({
@@ -69,6 +74,7 @@ export async function updateProject(id: string, formData: FormData) {
 
 export async function deleteProject(id: string) {
   try {
+    await requireAdmin();
     await prisma.project.delete({ where: { id } });
     revalidatePath('/admin/projects');
     revalidatePath("/", "layout");

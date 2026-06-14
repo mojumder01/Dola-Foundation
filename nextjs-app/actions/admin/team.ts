@@ -1,10 +1,13 @@
 "use server";
 
+import { requireAdmin } from "@/lib/guard";
+
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function getTeamMembers() {
   try {
+    await requireAdmin();
     const members = await prisma.teamMember.findMany({
       orderBy: { order: "asc" },
     });
@@ -16,6 +19,7 @@ export async function getTeamMembers() {
 
 export async function createTeamMember(formData: FormData) {
   try {
+    await requireAdmin();
     const member = await prisma.teamMember.create({
       data: {
         name: formData.get("name") as string,
@@ -35,6 +39,7 @@ export async function createTeamMember(formData: FormData) {
 
 export async function updateTeamMember(id: string, formData: FormData) {
   try {
+    await requireAdmin();
     const member = await prisma.teamMember.update({
       where: { id },
       data: {
@@ -55,6 +60,7 @@ export async function updateTeamMember(id: string, formData: FormData) {
 
 export async function deleteTeamMember(id: string) {
   try {
+    await requireAdmin();
     await prisma.teamMember.delete({ where: { id } });
     revalidatePath('/admin/team');
     revalidatePath("/", "layout");
@@ -66,6 +72,7 @@ export async function deleteTeamMember(id: string) {
 
 export async function toggleTeamMemberActive(id: string, active: boolean) {
   try {
+    await requireAdmin();
     await prisma.teamMember.update({ where: { id }, data: { active } });
     revalidatePath('/admin/team');
     revalidatePath("/", "layout");

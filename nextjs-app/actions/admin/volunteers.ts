@@ -1,10 +1,13 @@
 "use server";
 
+import { requireAdmin } from "@/lib/guard";
+
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function updateVolunteerStatus(id: string, status: string) {
   try {
+    await requireAdmin();
     await prisma.volunteer.update({
       where: { id },
       data: { status: status as any },
@@ -18,6 +21,7 @@ export async function updateVolunteerStatus(id: string, status: string) {
 
 export async function deleteVolunteer(id: string) {
   try {
+    await requireAdmin();
     await prisma.volunteer.delete({ where: { id } });
     revalidatePath("/admin/volunteers");
     return { success: true };

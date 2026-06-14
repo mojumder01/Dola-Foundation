@@ -1,5 +1,7 @@
 "use server";
 
+import { requireAdmin } from "@/lib/guard";
+
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { slugify } from "@/lib/utils";
@@ -23,6 +25,7 @@ const programSchema = z.object({
 
 export async function getPrograms() {
   try {
+    await requireAdmin();
     const programs = await prisma.program.findMany({
       orderBy: { order: "asc" },
     });
@@ -34,6 +37,7 @@ export async function getPrograms() {
 
 export async function createProgram(formData: FormData) {
   try {
+    await requireAdmin();
     const title = formData.get("title") as string;
     const objectivesRaw = formData.get("objectives") as string;
     const objectives = objectivesRaw
@@ -67,6 +71,7 @@ export async function createProgram(formData: FormData) {
 
 export async function updateProgram(id: string, formData: FormData) {
   try {
+    await requireAdmin();
     const title = formData.get("title") as string;
     const objectivesRaw = formData.get("objectives") as string;
     const objectives = objectivesRaw
@@ -100,6 +105,7 @@ export async function updateProgram(id: string, formData: FormData) {
 
 export async function deleteProgram(id: string) {
   try {
+    await requireAdmin();
     await prisma.program.delete({ where: { id } });
     revalidatePath('/admin/programs');
     revalidatePath("/", "layout");
@@ -111,6 +117,7 @@ export async function deleteProgram(id: string) {
 
 export async function toggleProgramPublished(id: string, published: boolean) {
   try {
+    await requireAdmin();
     await prisma.program.update({ where: { id }, data: { published } });
     revalidatePath('/admin/programs');
     revalidatePath("/", "layout");

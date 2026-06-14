@@ -1,10 +1,13 @@
 "use server";
 
+import { requireAdmin } from "@/lib/guard";
+
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function getTestimonials() {
   try {
+    await requireAdmin();
     const testimonials = await prisma.testimonial.findMany({
       orderBy: { order: "asc" },
     });
@@ -16,6 +19,7 @@ export async function getTestimonials() {
 
 export async function createTestimonial(formData: FormData) {
   try {
+    await requireAdmin();
     const testimonial = await prisma.testimonial.create({
       data: {
         name: formData.get("name") as string,
@@ -35,6 +39,7 @@ export async function createTestimonial(formData: FormData) {
 
 export async function updateTestimonial(id: string, formData: FormData) {
   try {
+    await requireAdmin();
     const testimonial = await prisma.testimonial.update({
       where: { id },
       data: {
@@ -55,6 +60,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
 
 export async function deleteTestimonial(id: string) {
   try {
+    await requireAdmin();
     await prisma.testimonial.delete({ where: { id } });
     revalidatePath('/admin/testimonials');
     revalidatePath("/", "layout");
@@ -66,6 +72,7 @@ export async function deleteTestimonial(id: string) {
 
 export async function toggleTestimonialActive(id: string, active: boolean) {
   try {
+    await requireAdmin();
     await prisma.testimonial.update({ where: { id }, data: { active } });
     revalidatePath('/admin/testimonials');
     revalidatePath("/", "layout");

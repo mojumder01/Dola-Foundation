@@ -1,11 +1,14 @@
 "use server";
 
+import { requireAdmin } from "@/lib/guard";
+
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { slugify } from "@/lib/utils";
 
 export async function getBlogPosts(publishedOnly = false) {
   try {
+    await requireAdmin();
     const posts = await prisma.blogPost.findMany({
       where: publishedOnly ? { published: true } : {},
       orderBy: { createdAt: "desc" },
@@ -18,6 +21,7 @@ export async function getBlogPosts(publishedOnly = false) {
 
 export async function getBlogPost(slug: string) {
   try {
+    await requireAdmin();
     const post = await prisma.blogPost.findUnique({ where: { slug } });
     return { success: true, post };
   } catch (error) {
@@ -27,6 +31,7 @@ export async function getBlogPost(slug: string) {
 
 export async function createBlogPost(formData: FormData) {
   try {
+    await requireAdmin();
     const title = formData.get("title") as string;
     const post = await prisma.blogPost.create({
       data: {
@@ -54,6 +59,7 @@ export async function createBlogPost(formData: FormData) {
 
 export async function updateBlogPost(id: string, formData: FormData) {
   try {
+    await requireAdmin();
     const published = formData.get("published") === "true";
     const post = await prisma.blogPost.update({
       where: { id },
@@ -79,6 +85,7 @@ export async function updateBlogPost(id: string, formData: FormData) {
 
 export async function deleteBlogPost(id: string) {
   try {
+    await requireAdmin();
     await prisma.blogPost.delete({ where: { id } });
     revalidatePath('/admin/blog');
     revalidatePath("/", "layout");
@@ -91,6 +98,7 @@ export async function deleteBlogPost(id: string) {
 
 export async function toggleBlogPublished(id: string, published: boolean) {
   try {
+    await requireAdmin();
     await prisma.blogPost.update({
       where: { id },
       data: { published, publishedAt: published ? new Date() : null },
