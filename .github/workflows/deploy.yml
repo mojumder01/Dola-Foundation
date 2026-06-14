@@ -36,6 +36,12 @@ jobs:
         working-directory: nextjs-app
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
+      - name: Apply database schema
+        working-directory: nextjs-app
+        run: |
+          export $(grep -v '^#' .vercel/.env.production.local | xargs)
+          npx prisma db push --skip-generate
+
       - name: Build project via Vercel CLI
         working-directory: nextjs-app
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
