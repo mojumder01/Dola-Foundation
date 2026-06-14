@@ -59,12 +59,25 @@ async function getPrograms() {
   }
 }
 
+async function getProjects() {
+  try {
+    return await prisma.project.findMany({
+      where: { published: true },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+    });
+  } catch {
+    return [];
+  }
+}
+
 export default async function HomePage() {
-  const [settings, galleryImages, testimonials, programs] = await Promise.all([
+  const [settings, galleryImages, testimonials, programs, projects] = await Promise.all([
     getSettings(),
     getGalleryImages(),
     getTestimonials(),
     getPrograms(),
+    getProjects(),
   ]);
 
   return (
@@ -95,7 +108,16 @@ export default async function HomePage() {
           slug: program.slug,
         }))}
       />
-      <ProjectsSection />
+      <ProjectsSection projects={projects.map((p) => ({
+          id: p.id,
+          title: p.title,
+          slug: p.slug,
+          description: p.description,
+          status: p.status,
+          location: p.location,
+          startDate: p.startDate,
+          gallery: p.gallery,
+        }))} />
       <SuccessStories
         testimonials={testimonials.map((testimonial) => ({
           id: testimonial.id,

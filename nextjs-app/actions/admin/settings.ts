@@ -52,6 +52,10 @@ export async function updateSiteSettings(formData: FormData) {
       stat3Value: formData.get("stat3Value") as string,
       stat4Label: formData.get("stat4Label") as string,
       stat4Value: formData.get("stat4Value") as string,
+      aboutBannerImage: (formData.get("aboutBannerImage") as string) || undefined,
+      programsBannerImage: (formData.get("programsBannerImage") as string) || undefined,
+      projectsBannerImage: (formData.get("projectsBannerImage") as string) || undefined,
+      contactBannerImage: (formData.get("contactBannerImage") as string) || undefined,
     };
 
     const settings = existing

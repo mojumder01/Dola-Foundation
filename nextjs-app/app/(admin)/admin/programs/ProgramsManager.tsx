@@ -28,6 +28,7 @@ type Program = {
   slug: string;
   description: string;
   icon: string | null;
+  bannerImage: string | null;
   objectives: string[];
   stat1Label: string | null;
   stat1Value: string | null;
@@ -253,6 +254,16 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
                 defaultValue={editingProgram?.icon || ""}
                 placeholder="e.g. 📚"
               />
+            </div>
+            <div>
+              <Label htmlFor="bannerImage">Cover / Banner Image URL</Label>
+              <Input
+                id="bannerImage"
+                name="bannerImage"
+                defaultValue={editingProgram?.bannerImage || ""}
+                placeholder="https://... (paste image URL)"
+              />
+              <p className="text-xs text-gray-400 mt-1">Shown at the top of the program page. Free hosts: ImgBB.com, Imgur.com</p>
             </div>
             <div>
               <Label htmlFor="objectives">Objectives (one per line)</Label>

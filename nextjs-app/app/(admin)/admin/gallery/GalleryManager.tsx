@@ -107,6 +107,53 @@ export default function GalleryManager({
         </Button>
       </div>
 
+      {/* Image Tips */}
+      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-6">
+        <h3 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+          <span>💡</span> Image Guidelines & Tips
+        </h3>
+        <div className="grid sm:grid-cols-2 gap-4 text-sm text-blue-700">
+          <div>
+            <p className="font-semibold mb-1">📐 Recommended Sizes</p>
+            <ul className="space-y-1 text-xs">
+              <li>• Gallery images: 800×600px</li>
+              <li>• Project/Program cover: 1200×675px (16:9)</li>
+              <li>• Page banners: 1920×600px</li>
+              <li>• Team photos: 400×400px (square)</li>
+              <li>• Logo: 200×200px (square, transparent PNG)</li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-semibold mb-1">⚡ File Size Rules</p>
+            <ul className="space-y-1 text-xs">
+              <li>• Max file size: <strong>500KB</strong> per image</li>
+              <li>• Preferred format: <strong>WebP</strong> (smallest)</li>
+              <li>• Also fine: JPG (photos), PNG (logos/icons)</li>
+              <li>• Avoid: BMP, TIFF, uncompressed files</li>
+              <li>• Compress at: <strong>squoosh.app</strong> or <strong>tinypng.com</strong></li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-semibold mb-1">🆓 Free Image Hosting</p>
+            <ul className="space-y-1 text-xs">
+              <li>• <strong>ImgBB.com</strong> — upload from device, get URL</li>
+              <li>• <strong>Imgur.com</strong> — drag & drop, instant URL</li>
+              <li>• <strong>Unsplash.com</strong> — free stock photos</li>
+              <li>• Or paste any public image URL directly</li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-semibold mb-1">🔗 How to Add Images</p>
+            <ul className="space-y-1 text-xs">
+              <li>1. Upload to ImgBB.com or Imgur.com</li>
+              <li>2. Copy the "Direct Link" URL</li>
+              <li>3. Paste in any image field here</li>
+              <li>4. Images in Gallery can be used anywhere</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {/* Category filters */}
       <div className="flex flex-wrap gap-2 mb-6">
         {CATEGORIES.map((cat) => (

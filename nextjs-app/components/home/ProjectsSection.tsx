@@ -43,7 +43,22 @@ const featuredProjects = [
   },
 ];
 
-export default function ProjectsSection() {
+interface ProjectsSectionProps {
+  projects?: Array<{
+    id: string;
+    title: string;
+    slug: string;
+    description: string;
+    status: "ONGOING" | "COMPLETED" | "UPCOMING";
+    location: string | null;
+    startDate: Date | null;
+    gallery: string[];
+  }>;
+}
+
+export default function ProjectsSection({ projects }: ProjectsSectionProps) {
+  const displayProjects = projects && projects.length > 0 ? projects : featuredProjects;
+
   return (
     <section className="py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,7 +69,7 @@ export default function ProjectsSection() {
         />
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredProjects.map((project, index) => (
+          {displayProjects.map((project, index) => (
             <ProjectCard
               key={project.id}
               {...project}

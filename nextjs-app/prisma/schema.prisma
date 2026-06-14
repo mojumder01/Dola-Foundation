@@ -48,6 +48,10 @@ model SiteSettings {
   primaryColor   String   @default("#0F3D8C")
   accentColor    String   @default("#F4B400")
   secondaryColor String   @default("#1F9D55")
+  aboutBannerImage     String?
+  programsBannerImage  String?
+  projectsBannerImage  String?
+  contactBannerImage   String?
   stat1Label     String   @default("Lives Impacted")
   stat1Value     String   @default("5000")
   stat2Label     String   @default("Active Programs")

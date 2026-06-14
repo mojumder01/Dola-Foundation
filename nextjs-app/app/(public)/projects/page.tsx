@@ -116,13 +116,29 @@ async function getProjects() {
   }
 }
 
+async function getSettings() {
+  try {
+    return await prisma.siteSettings.findFirst();
+  } catch {
+    return null;
+  }
+}
+
 export default async function ProjectsPage() {
-  const projects = await getProjects();
+  const [projects, settings] = await Promise.all([getProjects(), getSettings()]);
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-primary to-[#1a4da0] py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section
+        className="relative bg-gradient-to-br from-primary to-[#1a4da0] py-20 md:py-28"
+        style={settings?.projectsBannerImage ? {
+          backgroundImage: `url(${settings.projectsBannerImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        } : undefined}
+      >
+        {settings?.projectsBannerImage && <div className="absolute inset-0 bg-primary/70" />}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Our Work
           </span>

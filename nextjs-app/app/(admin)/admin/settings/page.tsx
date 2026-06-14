@@ -18,6 +18,7 @@ export default async function AdminSettingsPage() {
         {[
           { label: "🎨 Branding & Colors", href: "#branding" },
           { label: "🏠 Hero Section", href: "#hero" },
+          { label: "🖼️ Page Banners", href: "#banners" },
           { label: "📊 Homepage Stats", href: "#stats" },
           { label: "ℹ️ About & Mission", href: "#about" },
           { label: "👤 Founder Message", href: "#founder" },

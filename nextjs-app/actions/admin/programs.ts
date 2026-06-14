@@ -79,6 +79,7 @@ export async function updateProgram(id: string, formData: FormData) {
         title,
         description: formData.get("description") as string,
         icon: (formData.get("icon") as string) || undefined,
+        bannerImage: (formData.get("bannerImage") as string) || undefined,
         objectives: objectives ?? [],
         stat1Label: (formData.get("stat1Label") as string) || undefined,
         stat1Value: (formData.get("stat1Value") as string) || undefined,

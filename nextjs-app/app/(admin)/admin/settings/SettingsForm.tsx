@@ -157,6 +157,42 @@ export default function SettingsForm({ settings }: { settings: any }) {
         </div>
       </div>
 
+      {/* Page Banners */}
+      <div id="banners" className="bg-white rounded-2xl shadow-card p-6">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-1 pb-3 border-b border-gray-100">
+          Page Banner Images
+        </h2>
+        <p className="text-xs text-gray-500 mb-4 mt-2">
+          Optional full-width banner image for each page's hero section. If empty, the default color gradient is shown.
+          <br/><span className="text-primary font-medium">Free image hosts: ImgBB.com, Imgur.com · Recommended: 1920×600px, WebP/JPG, max 500KB</span>
+        </p>
+        <div className="space-y-4">
+          {[
+            { name: "aboutBannerImage", label: "About Page Banner", page: "/about" },
+            { name: "programsBannerImage", label: "Programs Page Banner", page: "/programs" },
+            { name: "projectsBannerImage", label: "Projects Page Banner", page: "/projects" },
+            { name: "contactBannerImage", label: "Contact Page Banner", page: "/contact" },
+          ].map(({ name, label, page }) => (
+            <div key={name}>
+              <Label className="label-base" htmlFor={name}>
+                {label} <span className="text-gray-400 font-normal text-xs">({page})</span>
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id={name}
+                  name={name}
+                  defaultValue={(settings as any)?.[name] || ""}
+                  placeholder="https://... leave empty for color gradient"
+                />
+                {(settings as any)?.[name] && (
+                  <img src={(settings as any)[name]} alt="" className="h-10 w-16 object-cover rounded-lg border border-gray-200 flex-shrink-0" />
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Statistics */}
       <div id="stats" className="bg-white rounded-2xl shadow-card p-6">
         <h2 className="font-poppins font-semibold text-lg text-dark mb-1 pb-3 border-b border-gray-100">

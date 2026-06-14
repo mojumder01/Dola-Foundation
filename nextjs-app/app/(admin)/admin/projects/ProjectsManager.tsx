@@ -33,6 +33,7 @@ type Project = {
   budget: any;
   published: boolean;
   createdAt: Date;
+  gallery: string[];
 };
 
 const statusVariant: Record<string, any> = {
@@ -250,6 +251,16 @@ export default function ProjectsManager({
                 defaultValue={editingProject?.description || ""}
                 placeholder="Describe this project..."
               />
+            </div>
+            <div>
+              <Label htmlFor="coverImage">Cover Image URL</Label>
+              <Input
+                id="coverImage"
+                name="coverImage"
+                defaultValue={editingProject?.gallery?.[0] || ""}
+                placeholder="https://... (paste image URL)"
+              />
+              <p className="text-xs text-gray-400 mt-1">This image appears on project cards. Free hosts: ImgBB.com, Imgur.com</p>
             </div>
             <div>
               <Label htmlFor="location">Location</Label>
