@@ -9,9 +9,11 @@ interface HeroSectionProps {
   title?: string | null;
   subtitle?: string | null;
   image?: string | null;
+  announcementText?: string | null;
+  announcementEnabled?: boolean | null;
 }
 
-export default function HeroSection({ title, subtitle, image }: HeroSectionProps) {
+export default function HeroSection({ title, subtitle, image, announcementText, announcementEnabled }: HeroSectionProps) {
   const heading = title || "Empowering Lives, Inspiring Hope";
   const commaIndex = heading.indexOf(",");
   const headingStart =
@@ -67,14 +69,16 @@ export default function HeroSection({ title, subtitle, image }: HeroSectionProps
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           {/* Badge */}
-          <motion.span
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="inline-block bg-gold/20 border border-gold/30 text-gold text-sm font-semibold px-6 py-2 rounded-full mb-8"
-          >
-            ✨ Empowering Communities Since 2015
-          </motion.span>
+          {announcementEnabled !== false && (announcementText || announcementEnabled === null || announcementEnabled === undefined) && (
+            <motion.span
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="inline-block bg-gold/20 border border-gold/30 text-gold text-sm font-semibold px-6 py-2 rounded-full mb-8"
+            >
+              {announcementText || "✨ Empowering Communities Since 2015"}
+            </motion.span>
+          )}
 
           {/* Headline */}
           <motion.h1

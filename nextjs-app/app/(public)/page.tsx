@@ -86,6 +86,8 @@ export default async function HomePage() {
         title={settings?.heroTitle}
         subtitle={settings?.heroSubtitle}
         image={settings?.heroImage}
+        announcementText={(settings as any)?.announcementText}
+        announcementEnabled={(settings as any)?.announcementEnabled ?? true}
       />
       <ImpactStats
         stats={
