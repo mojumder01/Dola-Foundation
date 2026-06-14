@@ -28,6 +28,13 @@ type Program = {
   slug: string;
   description: string;
   icon: string | null;
+  objectives: string[];
+  stat1Label: string | null;
+  stat1Value: string | null;
+  stat2Label: string | null;
+  stat2Value: string | null;
+  stat3Label: string | null;
+  stat3Value: string | null;
   published: boolean;
   order: number;
   createdAt: Date;
@@ -75,7 +82,6 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
     const form = e.currentTarget;
     const fd = new FormData(form);
     fd.set("published", publishedRef.current?.checked ? "true" : "false");
-    fd.set("objectives", "[]");
     setFormError(null);
     startTransition(async () => {
       let result;
@@ -247,6 +253,30 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
                 defaultValue={editingProgram?.icon || ""}
                 placeholder="e.g. 📚"
               />
+            </div>
+            <div>
+              <Label htmlFor="objectives">Objectives (one per line)</Label>
+              <Textarea
+                id="objectives"
+                name="objectives"
+                rows={4}
+                defaultValue={editingProgram?.objectives?.join("\n") || ""}
+                placeholder={"Establish free learning centers\nProvide school supplies\nTrain local teachers"}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="col-span-2 grid grid-cols-2 gap-2">
+                  <div>
+                    <Label htmlFor={`stat${i}Value`}>Stat {i} Value</Label>
+                    <Input id={`stat${i}Value`} name={`stat${i}Value`} defaultValue={(editingProgram as any)?.[`stat${i}Value`] || ""} placeholder="2,000+" />
+                  </div>
+                  <div>
+                    <Label htmlFor={`stat${i}Label`}>Stat {i} Label</Label>
+                    <Input id={`stat${i}Label`} name={`stat${i}Label`} defaultValue={(editingProgram as any)?.[`stat${i}Label`] || ""} placeholder="Students" />
+                  </div>
+                </div>
+              ))}
             </div>
             <div className="flex items-center gap-2">
               <input

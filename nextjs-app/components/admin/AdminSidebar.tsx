@@ -17,6 +17,7 @@ import {
   UserCircle,
   Globe,
   ShieldCheck,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,7 @@ const navItems = [
   { label: "Donations", href: "/admin/donations", icon: Heart },
   { label: "Team", href: "/admin/team", icon: UserCircle },
   { label: "Testimonials", href: "/admin/testimonials", icon: Star },
+  { label: "Contacts", href: "/admin/contacts", icon: MessageSquare },
   { label: "Users", href: "/admin/users", icon: ShieldCheck },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];

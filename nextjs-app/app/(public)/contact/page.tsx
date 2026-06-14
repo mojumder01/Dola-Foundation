@@ -148,25 +148,25 @@ export default async function ContactPage() {
               </div>
 
               {/* Social links */}
-              <div className="mt-6 bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
-                <h3 className="font-semibold text-dark mb-3">Follow Us</h3>
-                <div className="flex flex-wrap gap-3">
-                  {[
-                    { label: "Facebook", href: "#", color: "bg-[#1877f2]" },
-                    { label: "Instagram", href: "#", color: "bg-gradient-to-br from-pink-500 to-orange-400" },
-                    { label: "Twitter", href: "#", color: "bg-[#1da1f2]" },
-                    { label: "YouTube", href: "#", color: "bg-[#ff0000]" },
-                  ].map((social) => (
-                    <a
-                      key={social.label}
-                      href={social.href}
-                      className={`${social.color} text-white text-xs font-medium px-4 py-2 rounded-lg hover:opacity-90 transition-opacity`}
-                    >
-                      {social.label}
-                    </a>
-                  ))}
+              {(settings?.facebookUrl || settings?.instagramUrl || settings?.twitterUrl || settings?.youtubeUrl) && (
+                <div className="mt-6 bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
+                  <h3 className="font-semibold text-dark mb-3">Follow Us</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {settings?.facebookUrl && (
+                      <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="bg-[#1877f2] text-white text-xs font-medium px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">Facebook</a>
+                    )}
+                    {settings?.instagramUrl && (
+                      <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="bg-gradient-to-br from-pink-500 to-orange-400 text-white text-xs font-medium px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">Instagram</a>
+                    )}
+                    {settings?.twitterUrl && (
+                      <a href={settings.twitterUrl} target="_blank" rel="noopener noreferrer" className="bg-[#1da1f2] text-white text-xs font-medium px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">Twitter</a>
+                    )}
+                    {settings?.youtubeUrl && (
+                      <a href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer" className="bg-[#ff0000] text-white text-xs font-medium px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">YouTube</a>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

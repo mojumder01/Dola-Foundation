@@ -29,6 +29,8 @@ type Project = {
   description: string;
   location: string | null;
   status: string;
+  impact: string | null;
+  budget: any;
   published: boolean;
   createdAt: Date;
 };
@@ -255,7 +257,27 @@ export default function ProjectsManager({
                 id="location"
                 name="location"
                 defaultValue={editingProject?.location || ""}
-                placeholder="e.g. Nairobi, Kenya"
+                placeholder="e.g. Sylhet, Bangladesh"
+              />
+            </div>
+            <div>
+              <Label htmlFor="impact">Impact</Label>
+              <Textarea
+                id="impact"
+                name="impact"
+                rows={3}
+                defaultValue={editingProject?.impact || ""}
+                placeholder="Describe the impact of this project..."
+              />
+            </div>
+            <div>
+              <Label htmlFor="budget">Budget (BDT)</Label>
+              <Input
+                id="budget"
+                name="budget"
+                type="number"
+                defaultValue={editingProject?.budget ? String(editingProject.budget) : ""}
+                placeholder="e.g. 2500000"
               />
             </div>
             <div>

@@ -35,13 +35,24 @@ export async function getPrograms() {
 export async function createProgram(formData: FormData) {
   try {
     const title = formData.get("title") as string;
+    const objectivesRaw = formData.get("objectives") as string;
+    const objectives = objectivesRaw
+      ? objectivesRaw.split("\n").map((o) => o.trim()).filter(Boolean)
+      : [];
+
     const data = {
       title,
       slug: slugify(title),
       description: formData.get("description") as string,
-      objectives: JSON.parse((formData.get("objectives") as string) || "[]"),
+      objectives,
       icon: (formData.get("icon") as string) || undefined,
       bannerImage: (formData.get("bannerImage") as string) || undefined,
+      stat1Label: (formData.get("stat1Label") as string) || undefined,
+      stat1Value: (formData.get("stat1Value") as string) || undefined,
+      stat2Label: (formData.get("stat2Label") as string) || undefined,
+      stat2Value: (formData.get("stat2Value") as string) || undefined,
+      stat3Label: (formData.get("stat3Label") as string) || undefined,
+      stat3Value: (formData.get("stat3Value") as string) || undefined,
       published: formData.get("published") === "true",
     };
 
@@ -57,11 +68,24 @@ export async function createProgram(formData: FormData) {
 export async function updateProgram(id: string, formData: FormData) {
   try {
     const title = formData.get("title") as string;
+    const objectivesRaw = formData.get("objectives") as string;
+    const objectives = objectivesRaw
+      ? objectivesRaw.split("\n").map((o) => o.trim()).filter(Boolean)
+      : undefined;
+
     const program = await prisma.program.update({
       where: { id },
       data: {
         title,
         description: formData.get("description") as string,
+        icon: (formData.get("icon") as string) || undefined,
+        objectives: objectives ?? [],
+        stat1Label: (formData.get("stat1Label") as string) || undefined,
+        stat1Value: (formData.get("stat1Value") as string) || undefined,
+        stat2Label: (formData.get("stat2Label") as string) || undefined,
+        stat2Value: (formData.get("stat2Value") as string) || undefined,
+        stat3Label: (formData.get("stat3Label") as string) || undefined,
+        stat3Value: (formData.get("stat3Value") as string) || undefined,
         published: formData.get("published") === "true",
       },
     });

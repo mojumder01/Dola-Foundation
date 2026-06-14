@@ -68,36 +68,14 @@ const values = [
   },
 ];
 
-const teamMembers = [
-  {
-    name: "Dr. Ahmed Rahman",
-    role: "Founder & Executive Director",
-    bio: "A social entrepreneur with 20+ years of experience in community development.",
-    initial: "A",
-    color: "bg-primary",
-  },
-  {
-    name: "Nasrin Akter",
-    role: "Program Director",
-    bio: "Expert in education and women empowerment with a passion for sustainable change.",
-    initial: "N",
-    color: "bg-green",
-  },
-  {
-    name: "Karim Uddin",
-    role: "Healthcare Coordinator",
-    bio: "Medical professional dedicated to bringing healthcare to rural communities.",
-    initial: "K",
-    color: "bg-gold",
-  },
-  {
-    name: "Shirin Islam",
-    role: "Finance & Operations",
-    bio: "Certified accountant ensuring transparency and efficiency in fund management.",
-    initial: "S",
-    color: "bg-purple-600",
-  },
+const FALLBACK_TEAM = [
+  { name: "Dr. Ahmed Rahman", role: "Founder & Executive Director", bio: "A social entrepreneur with 20+ years of experience in community development.", image: null },
+  { name: "Nasrin Akter", role: "Program Director", bio: "Expert in education and women empowerment with a passion for sustainable change.", image: null },
+  { name: "Karim Uddin", role: "Healthcare Coordinator", bio: "Medical professional dedicated to bringing healthcare to rural communities.", image: null },
+  { name: "Shirin Islam", role: "Finance & Operations", bio: "Certified accountant ensuring transparency and efficiency in fund management.", image: null },
 ];
+
+const MEMBER_COLORS = ["bg-primary", "bg-green", "bg-gold", "bg-purple-600", "bg-pink-500", "bg-teal-500"];
 
 async function getSettings() {
   try {
@@ -107,8 +85,21 @@ async function getSettings() {
   }
 }
 
+async function getTeamMembers() {
+  try {
+    const members = await prisma.teamMember.findMany({
+      where: { active: true },
+      orderBy: { order: "asc" },
+    });
+    return members.length > 0 ? members : null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function AboutPage() {
-  const settings = await getSettings();
+  const [settings, dbTeam] = await Promise.all([getSettings(), getTeamMembers()]);
+  const teamMembers = dbTeam ?? FALLBACK_TEAM;
 
   const founderName = settings?.founderName || "Dr. Ahmed Rahman";
 
@@ -335,11 +326,19 @@ export default async function AboutPage() {
                 key={index}
                 className="bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover p-6 text-center transition-all duration-300 hover:-translate-y-1"
               >
-                <div
-                  className={`w-20 h-20 ${member.color} rounded-2xl flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4`}
-                >
-                  {member.initial}
-                </div>
+                {member.image ? (
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-20 h-20 rounded-2xl object-cover mx-auto mb-4"
+                  />
+                ) : (
+                  <div
+                    className={`w-20 h-20 ${MEMBER_COLORS[index % MEMBER_COLORS.length]} rounded-2xl flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4`}
+                  >
+                    {member.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <h3 className="font-poppins font-bold text-dark mb-1">
                   {member.name}
                 </h3>
