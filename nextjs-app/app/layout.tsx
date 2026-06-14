@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
 import { prisma } from "@/lib/prisma";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -107,7 +109,11 @@ export default async function RootLayout({
           </>
         )}
       </head>
-      <body className="min-h-screen bg-background antialiased">{children}</body>
+      <body className="min-h-screen bg-background antialiased">
+        {children}
+        <Analytics />
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
