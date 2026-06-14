@@ -80,8 +80,9 @@ model Program {
   id          String     @id @default(cuid())
   title       String
   slug        String     @unique
-  description String     @db.Text
-  objectives  String[]
+  description     String     @db.Text
+  longDescription String?    @db.Text
+  objectives      String[]
   icon        String?
   bannerImage String?
   gallery     String[]

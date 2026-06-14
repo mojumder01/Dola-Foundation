@@ -27,6 +27,7 @@ type Program = {
   title: string;
   slug: string;
   description: string;
+  longDescription: string | null;
   icon: string | null;
   bannerImage: string | null;
   objectives: string[];
@@ -236,15 +237,26 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
               />
             </div>
             <div>
-              <Label htmlFor="description">Description *</Label>
+              <Label htmlFor="description">Short Description *</Label>
               <Textarea
                 id="description"
                 name="description"
                 required
-                rows={3}
+                rows={2}
                 defaultValue={editingProgram?.description || ""}
-                placeholder="Describe this program..."
+                placeholder="Brief description shown on cards and hero..."
               />
+            </div>
+            <div>
+              <Label htmlFor="longDescription">Full Content</Label>
+              <Textarea
+                id="longDescription"
+                name="longDescription"
+                rows={6}
+                defaultValue={editingProgram?.longDescription || ""}
+                placeholder={"Write the full program story here...\n\nUse blank lines between paragraphs."}
+              />
+              <p className="text-xs text-gray-400 mt-1">Shown in the 'About This Program' section on the detail page. Separate paragraphs with a blank line.</p>
             </div>
             <div>
               <Label htmlFor="icon">Icon (emoji)</Label>

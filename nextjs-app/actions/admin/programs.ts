@@ -48,6 +48,7 @@ export async function createProgram(formData: FormData) {
       title,
       slug: slugify(title),
       description: formData.get("description") as string,
+      longDescription: (formData.get("longDescription") as string) || undefined,
       objectives,
       icon: (formData.get("icon") as string) || undefined,
       bannerImage: (formData.get("bannerImage") as string) || undefined,
@@ -83,6 +84,7 @@ export async function updateProgram(id: string, formData: FormData) {
       data: {
         title,
         description: formData.get("description") as string,
+        longDescription: (formData.get("longDescription") as string) || null,
         icon: (formData.get("icon") as string) || undefined,
         bannerImage: (formData.get("bannerImage") as string) || undefined,
         objectives: objectives ?? [],

@@ -214,7 +214,7 @@ async function getProgram(slug: string) {
         title: db.title,
         icon: db.icon || "🌟",
         description: db.description,
-        longDescription: db.description,
+        longDescription: db.longDescription || db.description,
         objectives: db.objectives ?? [],
         stats: [
           db.stat1Label && db.stat1Value ? { label: db.stat1Label, value: db.stat1Value } : null,

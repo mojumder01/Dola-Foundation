@@ -36,8 +36,8 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
   const pathname = usePathname();
   const isHome = pathname === "/";
 
-  // Non-home pages are always solid; home page starts transparent until scrolled
-  const [isScrolled, setIsScrolled] = useState(!isHome || (typeof window !== "undefined" && window.scrollY > 20));
+  // Always start solid to prevent flash of transparent+white-text on light pages
+  const [isScrolled, setIsScrolled] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
@@ -50,7 +50,7 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
 
   useEffect(() => {
     if (!isHome) { setIsScrolled(true); return; }
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -59,8 +59,8 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
   useEffect(() => {
     setMobileOpen(false);
     setActiveDropdown(null);
-    setIsScrolled(!isHome || window.scrollY > 20);
-  }, [pathname, isHome]);
+    if (!isHome) setIsScrolled(true);
+  }, [pathname]);
 
   useEffect(() => {
     if (mobileOpen) {
