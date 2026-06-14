@@ -33,10 +33,13 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
   ];
   const brandName = siteName || "Dola Foundation";
   const brandTagline = tagline || "Empowering Lives";
-  const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
+  // Non-home pages are always solid; home page starts transparent until scrolled
+  const [isScrolled, setIsScrolled] = useState(!isHome || (typeof window !== "undefined" && window.scrollY > 20));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const pathname = usePathname();
 
   const navLinks = [
     BASE_NAV[0],
@@ -45,20 +48,18 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
     ...BASE_NAV.slice(2),
   ];
 
-  const isHome = pathname === "/";
-
   useEffect(() => {
+    if (!isHome) { setIsScrolled(true); return; }
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    // force solid navbar immediately on non-home pages
-    if (!isHome) setIsScrolled(true);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHome]);
 
   useEffect(() => {
     setMobileOpen(false);
     setActiveDropdown(null);
-    if (!isHome) setIsScrolled(true);
+    setIsScrolled(!isHome || window.scrollY > 20);
   }, [pathname, isHome]);
 
   useEffect(() => {
