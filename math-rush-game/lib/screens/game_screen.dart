@@ -2,9 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/question.dart';
 import '../utils/question_generator.dart';
+import '../utils/coin_manager.dart';
 import 'result_screen.dart';
 
-// মূল gameplay screen — এখানেই প্রশ্ন দেখায় আর উত্তর দেওয়া যায়
+// মূল gameplay screen
 class GameScreen extends StatefulWidget {
   final Difficulty difficulty;
 
@@ -16,32 +17,38 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen>
     with SingleTickerProviderStateMixin {
-  // মোট ১০টা প্রশ্ন প্রতি গেমে
   static const int _totalQuestions = 10;
-
-  // প্রতি প্রশ্নে ১০ সেকেন্ড সময়
   static const int _timePerQuestion = 10;
 
-  late List<Question> _questions; // গেমের সব প্রশ্ন
-  int _currentIndex = 0; // এখন কোন প্রশ্নে আছি
-  int _score = 0; // মোট স্কোর
-  int _timeLeft = _timePerQuestion; // বাকি সময়
-  Timer? _timer; // countdown timer
-  int? _selectedOption; // user কোনটায় tap করেছে
-  bool _answered = false; // এই প্রশ্নের উত্তর দেওয়া হয়েছে কিনা
+  // Power-up costs
+  static const int _extraTimeCost = 5; // ⏰ +5 সেকেন্ড
+  static const int _hintCost = 3;      // 💡 2টা ভুল option বাদ দেয়
 
-  // উত্তর দেওয়ার পর ঠিক/ভুলের animation
+  late List<Question> _questions;
+  int _currentIndex = 0;
+  int _score = 0;
+  int _timeLeft = _timePerQuestion;
+  Timer? _timer;
+  int? _selectedOption;
+  bool _answered = false;
+
+  // Coin tracking
+  int _coins = 0;
+  int _coinsEarnedThisGame = 0; // গেমে মোট কত coins আয় হলো
+
+  // Hint state — কোন options eliminate হয়েছে
+  final Set<int> _eliminatedOptions = {};
+  bool _hintUsedThisQuestion = false;
+
+  // উত্তরের feedback animation
   late AnimationController _feedbackController;
   late Animation<double> _feedbackAnimation;
 
   @override
   void initState() {
     super.initState();
-
-    // Difficulty অনুযায়ী ১০টা প্রশ্ন বানাও
     _questions = QuestionGenerator.generateSet(widget.difficulty);
 
-    // Feedback animation — সঠিক/ভুল হলে screen একটু pulse করবে
     _feedbackController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
@@ -50,23 +57,25 @@ class _GameScreenState extends State<GameScreen>
       CurvedAnimation(parent: _feedbackController, curve: Curves.easeOut),
     );
 
-    // প্রথম প্রশ্নের timer শুরু করো
+    _loadCoins();
     _startTimer();
   }
 
-  // প্রতি সেকেন্ডে timer কমাও
+  Future<void> _loadCoins() async {
+    final coins = await CoinManager.getCoins();
+    if (mounted) setState(() => _coins = coins);
+  }
+
   void _startTimer() {
-    _timer?.cancel(); // আগের timer থাকলে বন্ধ করো
+    _timer?.cancel();
     _timeLeft = _timePerQuestion;
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!mounted) return; // Screen বন্ধ হয়ে গেলে কিছু করো না
-
+      if (!mounted) return;
       setState(() {
         if (_timeLeft > 0) {
           _timeLeft--;
         } else {
-          // সময় শেষ — উত্তর দেয়নি, পরের প্রশ্নে যাও
           timer.cancel();
           _handleTimeout();
         }
@@ -74,23 +83,20 @@ class _GameScreenState extends State<GameScreen>
     });
   }
 
-  // সময় শেষ হলে — ভুল হিসেবে ধরো, পরের প্রশ্নে যাও
   void _handleTimeout() {
-    if (_answered) return; // ইতোমধ্যে উত্তর দিলে কিছু করো না
+    if (_answered) return;
     setState(() {
       _answered = true;
-      _selectedOption = null; // কোনো selection নেই
+      _selectedOption = null;
     });
-
-    // ১ সেকেন্ড দেখাও তারপর পরের প্রশ্ন
     Future.delayed(const Duration(milliseconds: 800), _nextQuestion);
   }
 
-  // User কোনো option এ tap করলে
   void _handleAnswer(int chosen) {
-    if (_answered) return; // একবার উত্তর দিলে আর নেওয়া হবে না
+    if (_answered) return;
+    if (_eliminatedOptions.contains(chosen)) return; // Hint এ বাদ দেওয়া option
 
-    _timer?.cancel(); // Timer বন্ধ করো
+    _timer?.cancel();
 
     final current = _questions[_currentIndex];
     final isCorrect = chosen == current.correctAnswer;
@@ -98,25 +104,75 @@ class _GameScreenState extends State<GameScreen>
     setState(() {
       _answered = true;
       _selectedOption = chosen;
-
       if (isCorrect) {
-        // সঠিক উত্তরে base score + সময়ের bonus
-        // বেশি দ্রুত উত্তর দিলে বেশি পয়েন্ট
         _score += 100 + (_timeLeft * 5);
-        _feedbackController.forward(from: 0); // pulse animation
+        _feedbackController.forward(from: 0);
+
+        // প্রতি সঠিক উত্তরে 1 coin আয়
+        _coinsEarnedThisGame += 1;
+        _coins += 1;
       }
     });
 
-    // ৮০০ms পরে পরের প্রশ্নে যাও
+    if (isCorrect) {
+      // Coin সেভ করো (background এ)
+      CoinManager.addCoins(1);
+    }
+
     Future.delayed(const Duration(milliseconds: 800), _nextQuestion);
   }
 
-  // পরের প্রশ্নে যাও অথবা গেম শেষ করো
+  // ⏰ Power-up: +5 সেকেন্ড যোগ করো
+  Future<void> _useExtraTime() async {
+    if (_answered || _coins < _extraTimeCost) return;
+
+    final spent = await CoinManager.spendCoins(_extraTimeCost);
+    if (!spent || !mounted) return;
+
+    setState(() {
+      _coins -= _extraTimeCost;
+      _coinsEarnedThisGame -= _extraTimeCost; // net earnings থেকে বাদ দাও
+      _timeLeft = (_timeLeft + 5).clamp(0, 30); // max 30 সেকেন্ড
+    });
+
+    // Snackbar feedback
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('⏰ +5 সেকেন্ড যোগ হয়েছে!'),
+        backgroundColor: const Color(0xFF7C4DFF),
+        duration: const Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  // 💡 Power-up: ২টা ভুল option বাদ দাও
+  Future<void> _useHint() async {
+    if (_answered || _hintUsedThisQuestion || _coins < _hintCost) return;
+
+    final current = _questions[_currentIndex];
+    final spent = await CoinManager.spendCoins(_hintCost);
+    if (!spent || !mounted) return;
+
+    // সঠিক ছাড়া ২টা ভুল option বেছে নাও
+    final wrongOptions = current.options
+        .where((o) => o != current.correctAnswer)
+        .take(2)
+        .toSet();
+
+    setState(() {
+      _coins -= _hintCost;
+      _coinsEarnedThisGame -= _hintCost;
+      _eliminatedOptions.addAll(wrongOptions);
+      _hintUsedThisQuestion = true;
+    });
+  }
+
   void _nextQuestion() {
     if (!mounted) return;
 
     if (_currentIndex + 1 >= _totalQuestions) {
-      // সব প্রশ্ন শেষ — result screen এ যাও
       _goToResult();
       return;
     }
@@ -125,12 +181,13 @@ class _GameScreenState extends State<GameScreen>
       _currentIndex++;
       _answered = false;
       _selectedOption = null;
+      _eliminatedOptions.clear();
+      _hintUsedThisQuestion = false;
     });
 
-    _startTimer(); // নতুন প্রশ্নের জন্য timer reset
+    _startTimer();
   }
 
-  // Result screen এ navigate করো
   void _goToResult() {
     _timer?.cancel();
     Navigator.pushReplacement(
@@ -140,6 +197,7 @@ class _GameScreenState extends State<GameScreen>
           score: _score,
           difficulty: widget.difficulty,
           totalQuestions: _totalQuestions,
+          coinsEarned: _coinsEarnedThisGame,
         ),
       ),
     );
@@ -147,7 +205,7 @@ class _GameScreenState extends State<GameScreen>
 
   @override
   void dispose() {
-    _timer?.cancel(); // Screen বন্ধ হলে timer leak করা ঠিক না
+    _timer?.cancel();
     _feedbackController.dispose();
     super.dispose();
   }
@@ -156,12 +214,11 @@ class _GameScreenState extends State<GameScreen>
   Widget build(BuildContext context) {
     final current = _questions[_currentIndex];
 
-    // Timer এর রং — সময় কম হলে লাল হয়ে যাবে (danger বোঝাতে)
     final timerColor = _timeLeft <= 3
-        ? const Color(0xFFF44336) // লাল
+        ? const Color(0xFFF44336)
         : _timeLeft <= 5
-            ? const Color(0xFFFFC107) // হলুদ
-            : const Color(0xFF4CAF50); // সবুজ
+            ? const Color(0xFFFFC107)
+            : const Color(0xFF4CAF50);
 
     return Scaffold(
       body: Container(
@@ -177,27 +234,27 @@ class _GameScreenState extends State<GameScreen>
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                // Top bar — score, question counter, quit button
                 _buildTopBar(),
-
-                const SizedBox(height: 24),
-
-                // Timer + progress bar
+                const SizedBox(height: 16),
                 _buildTimerSection(timerColor),
+                const SizedBox(height: 16),
 
-                const SizedBox(height: 32),
+                // Power-up buttons
+                _buildPowerUps(),
 
-                // প্রশ্ন দেখানোর card
+                const SizedBox(height: 20),
+
+                // প্রশ্নের card
                 _buildQuestionCard(current),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
 
                 // ৪টা উত্তরের option
                 Expanded(
                   child: GridView.count(
                     crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 14,
+                    crossAxisSpacing: 14,
                     childAspectRatio: 2.5,
                     physics: const NeverScrollableScrollPhysics(),
                     children: current.options
@@ -213,13 +270,12 @@ class _GameScreenState extends State<GameScreen>
     );
   }
 
-  // উপরের bar — score, question number, back button
+  // উপরের bar — quit, question counter, score + coin balance
   Widget _buildTopBar() {
     return Row(
       children: [
-        // Quit button
         GestureDetector(
-          onTap: () => _showQuitDialog(),
+          onTap: _showQuitDialog,
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -232,7 +288,6 @@ class _GameScreenState extends State<GameScreen>
 
         const Spacer(),
 
-        // প্রশ্ন কতটা হলো
         Text(
           '${_currentIndex + 1} / $_totalQuestions',
           style: const TextStyle(
@@ -244,21 +299,41 @@ class _GameScreenState extends State<GameScreen>
 
         const Spacer(),
 
-        // স্কোর
+        // Score
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [Color(0xFF7C4DFF), Color(0xFF448AFF)],
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
             '⭐ $_score',
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 16,
+              fontSize: 15,
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 8),
+
+        // Coin balance
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: Colors.amber.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.amber.withOpacity(0.5)),
+          ),
+          child: Text(
+            '🪙 $_coins',
+            style: const TextStyle(
+              color: Colors.amber,
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
             ),
           ),
         ),
@@ -266,11 +341,10 @@ class _GameScreenState extends State<GameScreen>
     );
   }
 
-  // গোল timer + progress bar
+  // Timer bar
   Widget _buildTimerSection(Color color) {
     return Column(
       children: [
-        // Progress bar — সময় কমলে bar ছোট হয়
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: LinearProgressIndicator(
@@ -280,7 +354,7 @@ class _GameScreenState extends State<GameScreen>
             valueColor: AlwaysStoppedAnimation(color),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -289,16 +363,98 @@ class _GameScreenState extends State<GameScreen>
               style: TextStyle(
                 color: color,
                 fontWeight: FontWeight.bold,
-                fontSize: 14,
+                fontSize: 13,
               ),
             ),
             Text(
-              'সঠিক হলে +${100 + (_timeLeft * 5)} pts',
-              style: TextStyle(color: color.withOpacity(0.7), fontSize: 12),
+              'সঠিক হলে +${100 + (_timeLeft * 5)} pts + 🪙1',
+              style: TextStyle(color: color.withOpacity(0.7), fontSize: 11),
             ),
           ],
         ),
       ],
+    );
+  }
+
+  // Power-up buttons row
+  Widget _buildPowerUps() {
+    final canExtraTime = !_answered && _coins >= _extraTimeCost;
+    final canHint = !_answered && !_hintUsedThisQuestion && _coins >= _hintCost;
+
+    return Row(
+      children: [
+        // ⏰ Extra Time
+        Expanded(
+          child: _powerUpButton(
+            emoji: '⏰',
+            label: '+5 সেকেন্ড',
+            cost: _extraTimeCost,
+            enabled: canExtraTime,
+            onTap: _useExtraTime,
+            color: const Color(0xFF7C4DFF),
+          ),
+        ),
+        const SizedBox(width: 12),
+        // 💡 Hint
+        Expanded(
+          child: _powerUpButton(
+            emoji: '💡',
+            label: 'Hint',
+            cost: _hintCost,
+            enabled: canHint,
+            onTap: _useHint,
+            color: const Color(0xFF00BFA5),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _powerUpButton({
+    required String emoji,
+    required String label,
+    required int cost,
+    required bool enabled,
+    required VoidCallback onTap,
+    required Color color,
+  }) {
+    return GestureDetector(
+      onTap: enabled ? onTap : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: enabled ? color.withOpacity(0.15) : Colors.white.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: enabled ? color.withOpacity(0.6) : Colors.white.withOpacity(0.1),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(emoji, style: TextStyle(fontSize: 16, color: enabled ? null : const Color(0x44ffffff))),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                color: enabled ? Colors.white : Colors.white38,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              '🪙$cost',
+              style: TextStyle(
+                color: enabled ? Colors.amber : Colors.amber.withOpacity(0.3),
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -308,7 +464,7 @@ class _GameScreenState extends State<GameScreen>
       scale: _feedbackAnimation,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+        padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.1),
           borderRadius: BorderRadius.circular(24),
@@ -330,27 +486,27 @@ class _GameScreenState extends State<GameScreen>
 
   // একটা উত্তরের বাটন
   Widget _buildOptionButton(int option, Question question) {
-    // এই button এর state কি?
     final isSelected = _selectedOption == option;
     final isCorrect = option == question.correctAnswer;
+    final isEliminated = _eliminatedOptions.contains(option);
 
     Color bgColor;
     Color borderColor;
 
-    if (!_answered) {
-      // এখনো উত্তর দেয়নি — default style
+    if (isEliminated) {
+      // Hint এ বাদ দেওয়া — স্পষ্টভাবে disabled
+      bgColor = Colors.white.withOpacity(0.03);
+      borderColor = Colors.white.withOpacity(0.07);
+    } else if (!_answered) {
       bgColor = Colors.white.withOpacity(0.08);
       borderColor = Colors.white.withOpacity(0.2);
     } else if (isCorrect) {
-      // সঠিক উত্তর — সবুজ
       bgColor = const Color(0xFF4CAF50).withOpacity(0.3);
       borderColor = const Color(0xFF4CAF50);
     } else if (isSelected) {
-      // ভুল উত্তরে tap করেছে — লাল
       bgColor = const Color(0xFFF44336).withOpacity(0.3);
       borderColor = const Color(0xFFF44336);
     } else {
-      // অন্য ভুল option — fade করে দাও
       bgColor = Colors.white.withOpacity(0.04);
       borderColor = Colors.white.withOpacity(0.1);
     }
@@ -368,7 +524,8 @@ class _GameScreenState extends State<GameScreen>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // সঠিক/ভুলের icon উত্তর দেওয়ার পর দেখাও
+              if (isEliminated)
+                const Text('✗ ', style: TextStyle(color: Colors.white24, fontSize: 18)),
               if (_answered && isCorrect)
                 const Text('✓ ', style: TextStyle(color: Color(0xFF4CAF50), fontSize: 20)),
               if (_answered && isSelected && !isCorrect)
@@ -376,9 +533,11 @@ class _GameScreenState extends State<GameScreen>
               Text(
                 '$option',
                 style: TextStyle(
-                  color: _answered && !isCorrect && !isSelected
-                      ? Colors.white.withOpacity(0.4)
-                      : Colors.white,
+                  color: isEliminated
+                      ? Colors.white24
+                      : _answered && !isCorrect && !isSelected
+                          ? Colors.white.withOpacity(0.4)
+                          : Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
@@ -392,7 +551,7 @@ class _GameScreenState extends State<GameScreen>
 
   // গেম ছেড়ে যাওয়ার confirm dialog
   void _showQuitDialog() {
-    _timer?.cancel(); // Dialog open হলে timer pause করো
+    _timer?.cancel();
 
     showDialog(
       context: context,
@@ -408,7 +567,6 @@ class _GameScreenState extends State<GameScreen>
         actions: [
           TextButton(
             onPressed: () {
-              // Dialog বন্ধ করো, timer আবার চালু করো
               Navigator.pop(context);
               _startTimer();
             },
@@ -416,10 +574,13 @@ class _GameScreenState extends State<GameScreen>
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context); // dialog বন্ধ
-              Navigator.pop(context); // game screen বন্ধ
+              Navigator.pop(context);
+              Navigator.pop(context);
             },
-            child: const Text('হ্যাঁ, বের হবো', style: TextStyle(color: Color(0xFFF44336))),
+            child: const Text(
+              'হ্যাঁ, বের হবো',
+              style: TextStyle(color: Color(0xFFF44336)),
+            ),
           ),
         ],
       ),

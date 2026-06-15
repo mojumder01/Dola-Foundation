@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screens/home_screen.dart';
+import 'services/ad_service.dart';
 
 // অ্যাপের entry point — এখান থেকে সব শুরু হয়
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // AdMob initialize করো — coin system এর জন্য দরকার
+  await AdService.initialize();
 
   // Phone সবসময় portrait mode এ থাকবে — গেমের জন্য দরকার
   SystemChrome.setPreferredOrientations([

@@ -4,17 +4,19 @@ import '../utils/score_manager.dart';
 import 'home_screen.dart';
 import 'game_screen.dart';
 
-// গেম শেষ হলে এই screen দেখায় — score, high score, retry option
+// গেম শেষ হলে এই screen দেখায় — score, coins earned, high score, retry option
 class ResultScreen extends StatefulWidget {
   final int score;
   final Difficulty difficulty;
   final int totalQuestions;
+  final int coinsEarned; // এই game এ মোট coins আয় (net — power-up খরচ বাদ)
 
   const ResultScreen({
     super.key,
     required this.score,
     required this.difficulty,
     required this.totalQuestions,
+    required this.coinsEarned,
   });
 
   @override
@@ -25,7 +27,7 @@ class _ResultScreenState extends State<ResultScreen>
     with SingleTickerProviderStateMixin {
   bool _isNewHighScore = false;
 
-  // Score count-up animation — 0 থেকে final score পর্যন্ত বাড়বে
+  // Score count-up animation
   late AnimationController _scoreController;
   late Animation<int> _scoreAnimation;
 
@@ -33,7 +35,6 @@ class _ResultScreenState extends State<ResultScreen>
   void initState() {
     super.initState();
 
-    // Score animation — 1.5 সেকেন্ডে 0 থেকে final score
     _scoreController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
@@ -43,7 +44,6 @@ class _ResultScreenState extends State<ResultScreen>
       CurvedAnimation(parent: _scoreController, curve: Curves.easeOut),
     );
 
-    // High score check করো তারপর animation চালু করো
     _checkAndSaveScore();
   }
 
@@ -55,7 +55,7 @@ class _ResultScreenState extends State<ResultScreen>
 
     if (mounted) {
       setState(() => _isNewHighScore = isNew);
-      _scoreController.forward(); // এখন animation শুরু করো
+      _scoreController.forward();
     }
   }
 
@@ -65,9 +65,8 @@ class _ResultScreenState extends State<ResultScreen>
     super.dispose();
   }
 
-  // Score এর ভিত্তিতে কতটা ভালো করেছো — emoji + message
   String get _performanceEmoji {
-    final maxScore = widget.totalQuestions * 150; // max possible score
+    final maxScore = widget.totalQuestions * 150;
     final percent = widget.score / maxScore;
 
     if (percent >= 0.9) return '🏆';
@@ -88,7 +87,6 @@ class _ResultScreenState extends State<ResultScreen>
     return 'পরেরবার আরো ভালো করবে!';
   }
 
-  // Difficulty এর বাংলা নাম
   String get _difficultyName {
     switch (widget.difficulty) {
       case Difficulty.easy:
@@ -118,12 +116,10 @@ class _ResultScreenState extends State<ResultScreen>
               children: [
                 const SizedBox(height: 20),
 
-                // Performance emoji — বড় করে দেখাও
                 Text(_performanceEmoji, style: const TextStyle(fontSize: 80)),
 
                 const SizedBox(height: 16),
 
-                // গেম শেষ লেখা
                 const Text(
                   'গেম শেষ!',
                   style: TextStyle(
@@ -140,19 +136,23 @@ class _ResultScreenState extends State<ResultScreen>
                   style: const TextStyle(color: Color(0xFFB0BEC5), fontSize: 16),
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 28),
 
                 // Score card
                 _buildScoreCard(),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
-                // New High Score badge — নতুন record হলে দেখাবে
+                // Coins earned this game
+                _buildCoinsEarnedBadge(),
+
+                const SizedBox(height: 12),
+
+                // New high score badge
                 if (_isNewHighScore) _buildNewHighScoreBadge(),
 
                 const Spacer(),
 
-                // Retry এবং Home button
                 _buildActionButtons(context),
 
                 const SizedBox(height: 20),
@@ -164,7 +164,6 @@ class _ResultScreenState extends State<ResultScreen>
     );
   }
 
-  // Main score display card
   Widget _buildScoreCard() {
     return Container(
       width: double.infinity,
@@ -182,7 +181,7 @@ class _ResultScreenState extends State<ResultScreen>
           ),
           const SizedBox(height: 12),
 
-          // Animated score — 0 থেকে বাড়তে বাড়তে final score এ পৌঁছায়
+          // Animated score count-up
           AnimatedBuilder(
             animation: _scoreAnimation,
             builder: (_, __) => Text(
@@ -217,18 +216,13 @@ class _ResultScreenState extends State<ResultScreen>
           ),
 
           const SizedBox(height: 20),
-
-          // Score breakdown — base + bonus
           _buildScoreBreakdown(),
         ],
       ),
     );
   }
 
-  // Score এর হিসাব দেখাও
   Widget _buildScoreBreakdown() {
-    // মোট score থেকে breakdown বের করা কঠিন (timer bonus মিলিয়ে আছে)
-    // তাই শুধু total দেখাই
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -255,12 +249,59 @@ class _ResultScreenState extends State<ResultScreen>
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(label, style: const TextStyle(color: Color(0xFF607D8B), fontSize: 11)),
+        Text(
+          label,
+          style: const TextStyle(color: Color(0xFF607D8B), fontSize: 11),
+        ),
       ],
     );
   }
 
-  // New High Score badge — চকচকে দেখাবে
+  // এই গেমে কত coins আয় হলো
+  Widget _buildCoinsEarnedBadge() {
+    final isPositive = widget.coinsEarned > 0;
+    final isNegative = widget.coinsEarned < 0;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.amber.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.amber.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('🪙', style: TextStyle(fontSize: 22)),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                isPositive
+                    ? '+${widget.coinsEarned} coins আয় করেছো!'
+                    : isNegative
+                        ? '${widget.coinsEarned} coins (power-up ব্যবহার করেছো)'
+                        : 'এই গেমে coins সমান হয়েছে',
+                style: TextStyle(
+                  color: isPositive ? Colors.amber : const Color(0xFFB0BEC5),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+              const Text(
+                'প্রতি সঠিক উত্তরে 🪙1 • Ad দেখো 🪙15',
+                style: TextStyle(color: Color(0xFF607D8B), fontSize: 11),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // New High Score badge
   Widget _buildNewHighScoreBadge() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -295,11 +336,10 @@ class _ResultScreenState extends State<ResultScreen>
     );
   }
 
-  // নিচের দুটো button
   Widget _buildActionButtons(BuildContext context) {
     return Column(
       children: [
-        // আবার খেলো — same difficulty তে
+        // আবার খেলো
         GestureDetector(
           onTap: () {
             Navigator.pushReplacement(
@@ -342,7 +382,6 @@ class _ResultScreenState extends State<ResultScreen>
         // Home screen এ ফিরে যাও
         GestureDetector(
           onTap: () {
-            // সব screen সরিয়ে শুধু home রাখো
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -373,7 +412,6 @@ class _ResultScreenState extends State<ResultScreen>
     );
   }
 
-  // Difficulty অনুযায়ী রং
   Color _difficultyColor() {
     switch (widget.difficulty) {
       case Difficulty.easy:
