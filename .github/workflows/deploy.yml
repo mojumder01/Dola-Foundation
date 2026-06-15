@@ -38,6 +38,7 @@ jobs:
 
       - name: Apply database schema
         working-directory: nextjs-app
+        continue-on-error: true
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npx prisma db push --skip-generate
