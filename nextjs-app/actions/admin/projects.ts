@@ -19,12 +19,17 @@ export async function getProjects(status?: string) {
   }
 }
 
+function collectGallery(formData: FormData): string[] {
+  return ["gallery1", "gallery2", "gallery3", "gallery4"]
+    .map((k) => (formData.get(k) as string || "").trim())
+    .filter(Boolean);
+}
+
 export async function createProject(formData: FormData) {
   try {
     await requireAdmin();
     const title = formData.get("title") as string;
     const budgetRaw = formData.get("budget") as string;
-    const coverImage = formData.get("coverImage") as string;
     const project = await prisma.project.create({
       data: {
         title,
@@ -35,7 +40,7 @@ export async function createProject(formData: FormData) {
         published: formData.get("published") === "true",
         impact: (formData.get("impact") as string) || undefined,
         budget: budgetRaw ? parseFloat(budgetRaw) : undefined,
-        gallery: coverImage ? [coverImage] : [],
+        gallery: collectGallery(formData),
       },
     });
     revalidatePath('/admin/projects');
@@ -50,7 +55,6 @@ export async function updateProject(id: string, formData: FormData) {
   try {
     await requireAdmin();
     const budgetRaw = formData.get("budget") as string;
-    const coverImage = formData.get("coverImage") as string;
     const project = await prisma.project.update({
       where: { id },
       data: {
@@ -61,7 +65,7 @@ export async function updateProject(id: string, formData: FormData) {
         published: formData.get("published") === "true",
         impact: (formData.get("impact") as string) || undefined,
         budget: budgetRaw ? parseFloat(budgetRaw) : undefined,
-        gallery: coverImage ? [coverImage] : [],
+        gallery: collectGallery(formData),
       },
     });
     revalidatePath('/admin/projects');

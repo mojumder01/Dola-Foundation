@@ -99,12 +99,12 @@ async function getProject(slug: string) {
       return {
         title: db.title,
         description: db.description,
-        fullDescription: db.description,
+        fullDescription: db.impact || "",
         status: db.status,
         location: db.location,
         startDate: db.startDate ?? db.createdAt,
         budget: db.budget ? Number(db.budget) : null,
-        impact: db.impact,
+        impact: null,
         gallery: db.gallery ?? [],
         milestones: [],
       };
@@ -186,19 +186,23 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           <div className="grid lg:grid-cols-3 gap-10">
             {/* Main */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-2xl shadow-card p-8">
-                <h2 className="font-poppins font-bold text-2xl text-dark mb-4">About This Project</h2>
-                <div>
-                  {project.fullDescription.split("\n\n").map((para: string, i: number) => (
-                    <p key={i} className="text-gray-600 leading-relaxed mb-4">{para}</p>
-                  ))}
+              {project.fullDescription && (
+                <div className="bg-white rounded-2xl shadow-card p-8">
+                  <h2 className="font-poppins font-bold text-2xl text-dark mb-4">About This Project</h2>
+                  <div>
+                    {project.fullDescription.split("\n\n").map((para: string, i: number) => (
+                      <p key={i} className="text-gray-600 leading-relaxed mb-4">{para}</p>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="bg-white rounded-2xl shadow-card p-8">
-                <h2 className="font-poppins font-bold text-2xl text-dark mb-4">Impact</h2>
-                <p className="text-gray-600 leading-relaxed">{project.impact}</p>
-              </div>
+              {project.impact && (
+                <div className="bg-white rounded-2xl shadow-card p-8">
+                  <h2 className="font-poppins font-bold text-2xl text-dark mb-4">Impact</h2>
+                  <p className="text-gray-600 leading-relaxed">{project.impact}</p>
+                </div>
+              )}
 
               {project.gallery && project.gallery.length > 0 && (
                 <div className="bg-white rounded-2xl shadow-card p-8">

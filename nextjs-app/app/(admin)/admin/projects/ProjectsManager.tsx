@@ -34,6 +34,7 @@ type Project = {
   published: boolean;
   createdAt: Date;
   gallery: string[];
+  startDate?: Date | null;
 };
 
 const statusVariant: Record<string, any> = {
@@ -253,14 +254,14 @@ export default function ProjectsManager({
               />
             </div>
             <div>
-              <Label htmlFor="coverImage">Cover Image URL</Label>
-              <Input
-                id="coverImage"
-                name="coverImage"
-                defaultValue={editingProject?.gallery?.[0] || ""}
-                placeholder="https://... (paste image URL)"
+              <Label htmlFor="impact">About This Project</Label>
+              <Textarea
+                id="impact"
+                name="impact"
+                rows={5}
+                defaultValue={editingProject?.impact || ""}
+                placeholder="Detailed description of this project (separate paragraphs with a blank line)..."
               />
-              <p className="text-xs text-gray-400 mt-1">This image appears on project cards. Free hosts: ImgBB.com, Imgur.com</p>
             </div>
             <div>
               <Label htmlFor="location">Location</Label>
@@ -272,14 +273,30 @@ export default function ProjectsManager({
               />
             </div>
             <div>
-              <Label htmlFor="impact">Impact</Label>
-              <Textarea
-                id="impact"
-                name="impact"
-                rows={3}
-                defaultValue={editingProject?.impact || ""}
-                placeholder="Describe the impact of this project..."
-              />
+              <Label>Gallery Images</Label>
+              <p className="text-xs text-gray-400 mb-2">Cover image appears on project cards. Add up to 4 images. Free hosts: ImgBB.com, Imgur.com</p>
+              <div className="space-y-2">
+                <Input
+                  name="gallery1"
+                  defaultValue={editingProject?.gallery?.[0] || ""}
+                  placeholder="Cover image URL (required for card thumbnail)"
+                />
+                <Input
+                  name="gallery2"
+                  defaultValue={editingProject?.gallery?.[1] || ""}
+                  placeholder="Additional image URL (optional)"
+                />
+                <Input
+                  name="gallery3"
+                  defaultValue={editingProject?.gallery?.[2] || ""}
+                  placeholder="Additional image URL (optional)"
+                />
+                <Input
+                  name="gallery4"
+                  defaultValue={editingProject?.gallery?.[3] || ""}
+                  placeholder="Additional image URL (optional)"
+                />
+              </div>
             </div>
             <div>
               <Label htmlFor="budget">Budget (BDT)</Label>
