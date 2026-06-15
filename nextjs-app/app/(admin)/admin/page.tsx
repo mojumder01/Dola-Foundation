@@ -9,12 +9,10 @@ import {
   TrendingUp,
   Clock,
 } from "lucide-react";
-import dynamic from "next/dynamic";
 import StatsCard from "@/components/admin/StatsCard";
+import DashboardCharts from "@/components/admin/DashboardCharts";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-
-const DashboardCharts = dynamic(() => import("@/components/admin/DashboardCharts"), { ssr: false });
 
 async function getDashboardData() {
   const now = new Date();
