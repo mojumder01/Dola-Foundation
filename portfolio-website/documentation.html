@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentation — Alex Morgan Portfolio Template</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #7c4dff;
+      --bg: #0d0d1a;
+      --bg-card: #141428;
+      --text: #f0f0ff;
+      --text-muted: #8892a4;
+      --border: rgba(255,255,255,0.08);
+      --code-bg: #0a0a18;
+      --success: #00c853;
+      --warning: #ffd600;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* Sidebar layout */
+    .layout { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 260px;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 32px 0;
+      z-index: 10;
+    }
+
+    .sidebar-logo {
+      padding: 0 24px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    .sidebar-logo span {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .sidebar-logo p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .sidebar nav a {
+      display: block;
+      padding: 9px 24px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      border-left: 2px solid transparent;
+    }
+
+    .sidebar nav a:hover,
+    .sidebar nav a.active {
+      color: var(--primary);
+      border-left-color: var(--primary);
+      background: rgba(124,77,255,0.06);
+    }
+
+    .sidebar nav .nav-section {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 20px 24px 6px;
+    }
+
+    /* Main content */
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      padding: 48px 56px;
+      max-width: 860px;
+    }
+
+    /* Section */
+    .doc-section {
+      margin-bottom: 64px;
+      scroll-margin-top: 40px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    h1 span { color: var(--primary); }
+
+    .doc-section h2 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 24px 0 10px;
+      color: var(--primary);
+    }
+
+    p { margin-bottom: 14px; color: var(--text-muted); }
+
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Code blocks */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+
+    code {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      color: #a8d8ff;
+      line-height: 1.6;
+    }
+
+    p code, li code {
+      background: rgba(124,77,255,0.15);
+      color: #b39dff;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+    }
+
+    /* Note boxes */
+    .note {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.88rem;
+    }
+
+    .note-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .note p { margin: 0; }
+
+    .note-info    { background: rgba(33,150,243,0.1);  border: 1px solid rgba(33,150,243,0.25);  }
+    .note-tip     { background: rgba(0,200,83,0.08);   border: 1px solid rgba(0,200,83,0.25);    }
+    .note-warning { background: rgba(255,214,0,0.08);  border: 1px solid rgba(255,214,0,0.25);   }
+
+    .note-info    p { color: #90caf9; }
+    .note-tip     p { color: #69f0ae; }
+    .note-warning p { color: #fff176; }
+
+    /* File structure tree */
+    .file-tree {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.84rem;
+      line-height: 2;
+      margin: 16px 0;
+    }
+
+    .file-tree .folder { color: #ffd600; }
+    .file-tree .file   { color: #a8d8ff; }
+    .file-tree .desc   { color: #556; margin-left: 8px; }
+
+    /* Steps */
+    .steps { counter-reset: step; margin: 16px 0; }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-body h4 { font-size: 0.95rem; margin-bottom: 4px; color: var(--text); }
+    .step-body p  { margin: 0; font-size: 0.88rem; }
+
+    /* Color swatches */
+    .color-swatches {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+
+    .swatch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.82rem;
+    }
+
+    .swatch-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.87rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+
+    td:first-child { color: var(--text); font-family: monospace; font-size: 0.83rem; }
+
+    tr:last-child td { border-bottom: none; }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .badge-green  { background: rgba(0,200,83,0.15);  color: #69f0ae; }
+    .badge-purple { background: rgba(124,77,255,0.15); color: #b39dff; }
+    .badge-yellow { background: rgba(255,214,0,0.15);  color: #fff176; }
+
+    /* Hero header */
+    .doc-hero {
+      background: linear-gradient(135deg, rgba(124,77,255,0.15) 0%, rgba(68,138,255,0.08) 100%);
+      border: 1px solid rgba(124,77,255,0.2);
+      border-radius: 16px;
+      padding: 36px 40px;
+      margin-bottom: 48px;
+    }
+
+    .doc-hero h1 { font-size: 1.8rem; margin-bottom: 8px; }
+
+    .doc-hero .meta {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .doc-hero .meta span {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    ul, ol { padding-left: 20px; }
+    li { margin-bottom: 6px; color: var(--text-muted); font-size: 0.9rem; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ─────────────── SIDEBAR ─────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span>AM Portfolio</span>
+      <p>Template Documentation v1.0</p>
+    </div>
+
+    <nav>
+      <div class="nav-section">Getting Started</div>
+      <a href="#introduction">Introduction</a>
+      <a href="#files">File Structure</a>
+      <a href="#installation">Installation</a>
+
+      <div class="nav-section">Customization</div>
+      <a href="#personal-info">Personal Info</a>
+      <a href="#photo">Profile Photo</a>
+      <a href="#colors">Color Schemes</a>
+      <a href="#typing">Typing Animation</a>
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#contact">Contact Form</a>
+
+      <div class="nav-section">Reference</div>
+      <a href="#css-variables">CSS Variables</a>
+      <a href="#browser-support">Browser Support</a>
+      <a href="#support">Support</a>
+    </nav>
+  </aside>
+
+  <!-- ─────────────── MAIN CONTENT ─────────────── -->
+  <main class="main">
+
+    <!-- Hero header -->
+    <div class="doc-hero">
+      <h1>Alex Morgan Portfolio <span>Documentation</span></h1>
+      <p style="color:var(--text-muted); margin:0">Everything you need to customize this template and make it your own in under 30 minutes.</p>
+      <div class="meta">
+        <span>📄 Version 1.0</span>
+        <span>📅 2025</span>
+        <span>🌐 HTML5 / CSS3 / Vanilla JS</span>
+        <span>✅ No dependencies</span>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════════════════
+         INTRODUCTION
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="introduction">
+      <h2>👋 Introduction</h2>
+
+      <p>Thank you for purchasing the <strong>Alex Morgan Portfolio Template</strong>! This is a fully-featured, single-page portfolio template built with pure <strong>HTML5, CSS3, and vanilla JavaScript</strong> — no frameworks, no build tools, no npm required.</p>
+
+      <p>You can open it directly in any browser, upload it to any web host, or deploy it for free on GitHub Pages, Netlify, or Vercel.</p>
+
+      <div class="note note-tip">
+        <span class="note-icon">💡</span>
+        <p>This template is designed to be customizable without any coding knowledge. Every section that needs your content is marked with a <code>CHANGE:</code> comment in the HTML and JS files.</p>
+      </div>
+
+      <h3>What's Included</h3>
+      <ul>
+        <li><strong>index.html</strong> — Main template file</li>
+        <li><strong>css/style.css</strong> — All styles with 5 color schemes</li>
+        <li><strong>js/script.js</strong> — All interactions and animations</li>
+        <li><strong>documentation.html</strong> — This file</li>
+        <li><strong>assets/</strong> — Folder for your photo and CV</li>
+      </ul>
+
+      <h3>Features at a Glance</h3>
+      <ul>
+        <li>🎨 5 built-in color schemes (Purple, Blue, Green, Orange, Red)</li>
+        <li>🌙 Dark / Light mode toggle with localStorage persistence</li>
+        <li>⏳ Animated preloader</li>
+        <li>✍️ Typing animation (fully customizable text)</li>
+        <li>✨ Particle canvas background</li>
+        <li>🖱️ Custom cursor (desktop)</li>
+        <li>🛠️ Services section with 6 cards</li>
+        <li>📅 Experience timeline with Work / Education tabs</li>
+        <li>🔍 Projects section with filter (All / Web / Mobile / Design)</li>
+        <li>💬 Testimonials slider with auto-play</li>
+        <li>🔢 Animated counter stats</li>
+        <li>📬 Contact form (opens email client)</li>
+        <li>📱 Fully responsive — mobile, tablet, desktop</li>
+        <li>♿ Accessible — semantic HTML, aria-labels</li>
+      </ul>
+    </section>
+
+    <!-- ═════════════════════════════════════
+         FILE STRUCTURE
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="files">
+      <h2>📁 File Structure</h2>
+
+      <div class="file-tree">
+        <div><span class="folder">portfolio-template/</span></div>
+        <div>&nbsp;&nbsp;├── <span class="file">index.html</span> <span class="desc">← Main page (edit this first)</span></div>
+        <div>&nbsp;&nbsp;├── <span class="file">documentation.html</span> <span class="desc">← This file</span></div>
+        <div>&nbsp;&nbsp;├── <span class="folder">css/</span></div>
+        <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="file">style.css</span> <span class="desc">← All styles + color schemes</span></div>
+        <div>&nbsp;&nbsp;├── <span class="folder">js/</span></div>
+        <div>&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="file">script.js</span> <span class="desc">← All JavaScript</span></div>
+        <div>&nbsp;&nbsp;└── <span class="folder">assets/</span> <span class="desc">← Put your photo + CV here</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">photo.jpg</span> <span class="desc">← Your profile photo</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="file">your-cv.pdf</span> <span class="desc">← Your resume/CV</span></div>
+      </div>
+
+      <div class="note note-info">
+        <span class="note-icon">ℹ️</span>
+        <p>Create the <code>assets/</code> folder manually and place your photo and CV there. The template references <code>assets/photo.jpg</code> and <code>assets/alex-morgan-cv.pdf</code> by default.</p>
+      </div>
+    </section>
+
+    <!-- ═════════════════════════════════════
+         INSTALLATION
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="installation">
+      <h2>🚀 Installation</h2>
+
+      <p>No build process needed. Just open the files and go.</p>
+
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Extract the ZIP</h4>
+            <p>Unzip the downloaded file into any folder on your computer.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Open in browser or editor</h4>
+            <p>Double-click <code>index.html</code> to preview in your browser. Or open the folder in VS Code for editing.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Customize your content</h4>
+            <p>Follow the sections below to update your name, photo, links, skills, and projects.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>Deploy</h4>
+            <p>Upload all files to your web host, or push to GitHub and enable GitHub Pages for a free live site.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <h3>Deploy to GitHub Pages (Free)</h3>
+      <ol>
+        <li>Create a new GitHub repository (e.g. <code>my-portfolio</code>)</li>
+        <li>Upload all template files to the repository</li>
+        <li>Go to <strong>Settings → Pages → Source: main branch → / (root)</strong></li>
+        <li>Your site will be live at <code>https://yourusername.github.io/my-portfolio</code></li>
+      </ol>
+    </section>
+
+    <hr />
+
+    <!-- ═════════════════════════════════════
+         PERSONAL INFO
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="personal-info">
+      <h2>👤 Personal Info</h2>
+
+      <p>Open <code>index.html</code> in any text editor. Search for <code>CHANGE:</code> to find every place that needs your information.</p>
+
+      <h3>Name & Initials</h3>
+      <p>Find and replace <code>Alex Morgan</code> with your full name, and <code>AM</code> with your initials throughout the file.</p>
+
+      <pre><code>&lt;!-- CHANGE: Update initials --&gt;
+&lt;a href="#home" class="nav-logo"&gt;AM&lt;span class="dot"&gt;.&lt;/span&gt;&lt;/a&gt;
+
+&lt;!-- CHANGE: Your full name --&gt;
+&lt;h1 class="hero-name"&gt;
+  Alex&lt;br /&gt;
+  &lt;span class="name-accent"&gt;Morgan&lt;/span&gt;
+&lt;/h1&gt;</code></pre>
+
+      <h3>Location & Tagline</h3>
+      <pre><code>&lt;!-- CHANGE: Your short description --&gt;
+&lt;p class="hero-desc"&gt;
+  Crafting clean, beautiful digital experiences from 🗽 New York, USA.
+&lt;/p&gt;</code></pre>
+
+      <h3>Social Links</h3>
+      <p>Update all social media URLs in the Hero section and Footer:</p>
+      <pre><code>&lt;!-- CHANGE: Update social links --&gt;
+&lt;a href="https://github.com/YOUR_USERNAME" ...&gt;GitHub&lt;/a&gt;
+&lt;a href="https://linkedin.com/in/YOUR_PROFILE" ...&gt;LinkedIn&lt;/a&gt;
+&lt;a href="https://twitter.com/YOUR_HANDLE" ...&gt;Twitter&lt;/a&gt;
+&lt;a href="mailto:YOUR@EMAIL.COM" ...&gt;Email&lt;/a&gt;</code></pre>
+
+      <h3>CV / Resume</h3>
+      <p>Place your CV file in the <code>assets/</code> folder and update the link:</p>
+      <pre><code>&lt;!-- CHANGE: Update your CV/resume link --&gt;
+&lt;a href="assets/YOUR-CV-FILENAME.pdf" download ...&gt;Download CV&lt;/a&gt;</code></pre>
+    </section>
+
+    <!-- ═════════════════════════════════════
+         PROFILE PHOTO
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="photo">
+      <h2>📸 Profile Photo</h2>
+
+      <p>The hero section currently shows a placeholder with your initials. To use a real photo:</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Prepare your photo</h4>
+            <p>Use a square photo, minimum <strong>400×400px</strong>. JPG or PNG format. Name it <code>photo.jpg</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Place it in the assets folder</h4>
+            <p>Copy your photo to <code>assets/photo.jpg</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Update the HTML</h4>
+            <p>In <code>index.html</code>, find the hero photo section and replace the placeholder:</p>
+          </div>
+        </div>
+      </div>
+
+      <pre><code>&lt;!-- Remove this line: --&gt;
+&lt;div class="hero-photo-placeholder"&gt;AM&lt;/div&gt;
+
+&lt;!-- Add this line instead: --&gt;
+&lt;img src="assets/photo.jpg" alt="Your Name" /&gt;</code></pre>
+
+      <div class="note note-tip">
+        <span class="note-icon">💡</span>
+        <p>For the best look, use a photo with a clean or transparent background. The template applies a circular crop automatically.</p>
+      </div>
+
+      <p>The same placeholder exists in the About section avatar. Update it similarly:</p>
+      <pre><code>&lt;!-- About section avatar --&gt;
+&lt;div class="avatar-initials"&gt;AM&lt;/div&gt;
+&lt;!-- Replace with: --&gt;
+&lt;img src="assets/photo.jpg" alt="Your Name" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" /&gt;</code></pre>
+    </section>
+
+    <!-- ═════════════════════════════════════
+         COLOR SCHEMES
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="colors">
+      <h2>🎨 Color Schemes</h2>
+
+      <p>The template includes <strong>5 built-in accent colors</strong>. The color switcher panel (🎨 button on the right side) lets visitors switch colors live. The chosen color is saved in <code>localStorage</code>.</p>
+
+      <div class="color-swatches">
+        <div class="swatch"><div class="swatch-dot" style="background:#7c4dff"></div><span>Purple</span> <span class="badge badge-purple">Default</span></div>
+        <div class="swatch"><div class="swatch-dot" style="background:#2196f3"></div><span>Blue</span></div>
+        <div class="swatch"><div class="swatch-dot" style="background:#00bfa5"></div><span>Green</span></div>
+        <div class="swatch"><div class="swatch-dot" style="background:#ff6d00"></div><span>Orange</span></div>
+        <div class="swatch"><div class="swatch-dot" style="background:#f44336"></div><span>Red</span></div>
+      </div>
+
+      <h3>Change the Default Color</h3>
+      <p>To change what color loads by default, update the <code>data-color</code> attribute on the <code>&lt;html&gt;</code> tag:</p>
+      <pre><code>&lt;!-- Change "purple" to any of: blue, green, orange, red --&gt;
+&lt;html lang="en" data-theme="dark" data-color="purple"&gt;</code></pre>
+
+      <h3>Add a Custom Color</h3>
+      <p>Open <code>css/style.css</code> and add a new block after the existing color schemes:</p>
+      <pre><code>/* Your custom color */
+:root[data-color="custom"] {
+  --primary:     #your-color;
+  --primary-dim: rgba(r, g, b, 0.15);
+  --accent:      #your-accent;
+  --glow:        rgba(r, g, b, 0.45);
+  --card-hover:  rgba(r, g, b, 0.08);
+  --tag-bg:      rgba(r, g, b, 0.15);
+  --tag-color:   #lighter-shade;
+  --particle:    r, g, b;   /* RGB values, no rgba() */
+}</code></pre>
+
+      <p>Then add a dot button in the HTML color switcher panel:</p>
+      <pre><code>&lt;button class="cdot" data-color="custom" title="Custom"&gt;&lt;/button&gt;</code></pre>
+
+      <p>And the dot color in CSS:</p>
+      <pre><code>.cdot[data-color="custom"] { background: #your-color; }</code></pre>
+
+      <h3>Change Default Theme (Dark/Light)</h3>
+      <pre><code>&lt;!-- Change "dark" to "light" for light mode default --&gt;
+&lt;html lang="en" data-theme="light" data-color="purple"&gt;</code></pre>
+    </section>
+
+    <!-- ═════════════════════════════════════
+         TYPING ANIMATION
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="typing">
+      <h2>✍️ Typing Animation</h2>
+
+      <p>Open <code>js/script.js</code> and find the <code>roles</code> array (around line 60). Edit the strings to whatever you want to type:</p>
+
+      <pre><code>// CHANGE: Update these strings with your own skills/services
+const roles = [
+  'beautiful websites',
+  'Flutter mobile apps',
+  'React applications',
+  'clean UI/UX',
+  'full-stack solutions',
+  'your next project'
+];</code></pre>
+
+      <div class="note note-tip">
+        <span class="note-icon">💡</span>
+        <p>Keep each string under 25 characters for the best look on mobile screens. You can add or remove as many strings as you like.</p>
+      </div>
+    </section>
+
+    <!-- ═════════════════════════════════════
+         PROJECTS
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="projects">
+      <h2>💼 Projects</h2>
+
+      <p>Each project is a <code>.project-card</code> div in the Projects section of <code>index.html</code>. Update the 6 example cards with your own work.</p>
+
+      <h3>Project Card Structure</h3>
+      <pre><code>&lt;div class="project-card reveal"
+     data-category="web"     &lt;!-- web | mobile | design --&gt;
+     style="--delay: 0s"&gt;    &lt;!-- stagger delay: 0s, 0.1s, 0.2s... --&gt;
+
+  &lt;div class="project-header"&gt;
+    &lt;span class="project-emoji"&gt;🌐&lt;/span&gt;    &lt;!-- CHANGE: emoji --&gt;
+    &lt;div class="project-links"&gt;
+      &lt;a href="YOUR-LIVE-URL" ...&gt;🔗 Demo&lt;/a&gt;
+      &lt;a href="YOUR-GITHUB-URL" ...&gt;⌨ Code&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;h3 class="project-title"&gt;Project Name&lt;/h3&gt;  &lt;!-- CHANGE --&gt;
+  &lt;p class="project-desc"&gt;Short description...&lt;/p&gt; &lt;!-- CHANGE --&gt;
+
+  &lt;div class="project-tags"&gt;
+    &lt;span class="tag"&gt;React&lt;/span&gt;  &lt;!-- CHANGE: tech tags --&gt;
+    &lt;span class="tag"&gt;Node.js&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+      <h3>Category Filter Values</h3>
+      <table>
+        <thead><tr><th>data-category</th><th>Shows under filter</th></tr></thead>
+        <tbody>
+          <tr><td>web</td><td>All, Web</td></tr>
+          <tr><td>mobile</td><td>All, Mobile</td></tr>
+          <tr><td>design</td><td>All, Design</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════════════════════════════
+         EXPERIENCE
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="experience">
+      <h2>📅 Experience Timeline</h2>
+
+      <p>The Experience section has two tabs — <strong>Work</strong> and <strong>Education</strong>. Each tab has a <code>.timeline</code> div with <code>.timeline-item</code> cards.</p>
+
+      <pre><code>&lt;div class="timeline-item reveal"&gt;
+  &lt;div class="tl-dot"&gt;&lt;/div&gt;
+  &lt;div class="tl-card"&gt;
+    &lt;div class="tl-header"&gt;
+      &lt;h3&gt;Job Title&lt;/h3&gt;            &lt;!-- CHANGE --&gt;
+      &lt;span class="tl-company"&gt;Company · City&lt;/span&gt;  &lt;!-- CHANGE --&gt;
+    &lt;/div&gt;
+    &lt;span class="tl-date"&gt;Jan 2022 – Present&lt;/span&gt;  &lt;!-- CHANGE --&gt;
+    &lt;p&gt;What you did there...&lt;/p&gt;   &lt;!-- CHANGE --&gt;
+    &lt;div class="tl-tags"&gt;
+      &lt;span class="tag"&gt;React&lt;/span&gt;  &lt;!-- CHANGE: tech used --&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+      <p>Add or remove <code>.timeline-item</code> blocks as needed. No limit on the number of items.</p>
+    </section>
+
+    <!-- ═════════════════════════════════════
+         TESTIMONIALS
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="testimonials">
+      <h2>💬 Testimonials</h2>
+
+      <p>Testimonials are inside the <code>#testimonialsTrack</code> div. Each card is a <code>.testimonial-card</code>.</p>
+
+      <div class="note note-warning">
+        <span class="note-icon">⚠️</span>
+        <p>If you add or remove testimonial cards, also update the <strong>slider dots</strong> in the HTML and the <strong>total</strong> variable in <code>js/script.js</code> is calculated automatically from the dot count.</p>
+      </div>
+
+      <pre><code>&lt;div class="testimonial-card"&gt;
+  &lt;div class="testimonial-stars"&gt;★★★★★&lt;/div&gt;
+  &lt;p class="testimonial-text"&gt;"Your client's review..."&lt;/p&gt;  &lt;!-- CHANGE --&gt;
+  &lt;div class="testimonial-author"&gt;
+    &lt;div class="author-avatar"&gt;AB&lt;/div&gt;   &lt;!-- CHANGE: initials --&gt;
+    &lt;div&gt;
+      &lt;strong&gt;Client Name&lt;/strong&gt;          &lt;!-- CHANGE --&gt;
+      &lt;span&gt;Role, Company&lt;/span&gt;            &lt;!-- CHANGE --&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+      <p>Also add a matching dot for each extra card:</p>
+      <pre><code>&lt;button class="slider-dot" data-index="3"&gt;&lt;/button&gt;</code></pre>
+    </section>
+
+    <!-- ═════════════════════════════════════
+         CONTACT FORM
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="contact">
+      <h2>📬 Contact Form</h2>
+
+      <p>The contact form uses <code>mailto:</code> — when submitted, it opens the visitor's default email client with a pre-filled message. No backend or server is required.</p>
+
+      <h3>Update Your Email Address</h3>
+      <p>Open <code>js/script.js</code> and find the contact form section (around line 230):</p>
+
+      <pre><code>// CHANGE: Replace with your email address
+window.location.href = `mailto:hello@alexmorgan.dev?subject=...`;</code></pre>
+
+      <p>Replace <code>hello@alexmorgan.dev</code> with your actual email.</p>
+
+      <div class="note note-info">
+        <span class="note-icon">ℹ️</span>
+        <p>For a real contact form that sends emails without opening a mail client, consider using <a href="https://formspree.io" target="_blank">Formspree</a> (free plan available). Just replace the form's action URL.</p>
+      </div>
+
+      <h3>Using Formspree (Optional)</h3>
+      <pre><code>&lt;!-- Replace the form tag to use Formspree --&gt;
+&lt;form action="https://formspree.io/f/YOUR_FORM_ID" method="POST"&gt;</code></pre>
+    </section>
+
+    <hr />
+
+    <!-- ═════════════════════════════════════
+         CSS VARIABLES REFERENCE
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="css-variables">
+      <h2>🔧 CSS Variables Reference</h2>
+
+      <p>All design tokens are CSS custom properties. You can override any of these in <code>style.css</code>.</p>
+
+      <table>
+        <thead><tr><th>Variable</th><th>Controls</th><th>Set by</th></tr></thead>
+        <tbody>
+          <tr><td>--primary</td><td>Buttons, links, accents, bars</td><td>data-color</td></tr>
+          <tr><td>--accent</td><td>Gradient secondary color</td><td>data-color</td></tr>
+          <tr><td>--glow</td><td>Box shadows and glow effects</td><td>data-color</td></tr>
+          <tr><td>--particle</td><td>Canvas particle color (RGB only)</td><td>data-color</td></tr>
+          <tr><td>--bg</td><td>Page background</td><td>data-theme</td></tr>
+          <tr><td>--bg-card</td><td>Card backgrounds</td><td>data-theme</td></tr>
+          <tr><td>--text</td><td>Primary text color</td><td>data-theme</td></tr>
+          <tr><td>--text-muted</td><td>Secondary/subtitle text</td><td>data-theme</td></tr>
+          <tr><td>--border</td><td>Card borders, dividers</td><td>data-theme</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════════════════════════════
+         BROWSER SUPPORT
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="browser-support">
+      <h2>🌐 Browser Support</h2>
+
+      <table>
+        <thead><tr><th>Browser</th><th>Support</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Chrome 90+</td><td><span class="badge badge-green">Full</span></td><td>Recommended</td></tr>
+          <tr><td>Firefox 88+</td><td><span class="badge badge-green">Full</span></td><td></td></tr>
+          <tr><td>Safari 14+</td><td><span class="badge badge-green">Full</span></td><td></td></tr>
+          <tr><td>Edge 90+</td><td><span class="badge badge-green">Full</span></td><td>Chromium-based</td></tr>
+          <tr><td>IE 11</td><td><span class="badge badge-yellow">No</span></td><td>Not supported</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════════════════════════════
+         SUPPORT
+    ═════════════════════════════════════ -->
+    <section class="doc-section" id="support">
+      <h2>🙋 Support</h2>
+
+      <p>If you have any questions or run into issues, please reach out through the Envato item support page. Include a description of the problem and, if possible, a link to your site or a screenshot.</p>
+
+      <div class="note note-tip">
+        <span class="note-icon">💡</span>
+        <p>Before opening a support request, check that you've followed this documentation carefully and cleared your browser cache (Ctrl+Shift+R).</p>
+      </div>
+
+      <p style="margin-top: 32px; color: var(--text-muted); font-size: 0.85rem;">
+        Thank you for your purchase! If you enjoy this template, please consider leaving a rating — it helps a lot. ⭐
+      </p>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Highlight active sidebar link on scroll
+  const sections = document.querySelectorAll('.doc-section');
+  const links    = document.querySelectorAll('.sidebar nav a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      if (window.scrollY >= section.offsetTop - 80) {
+        current = section.id;
+      }
+    });
+    links.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
+    });
+  });
+</script>
+
+</body>
+</html>
