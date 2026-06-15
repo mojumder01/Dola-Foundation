@@ -1,12 +1,20 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-color="purple">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Muntasir Mamun | Frontend Developer</title>
-  <meta name="description" content="Md Muntasir Mamun Mojumder — Frontend Web Developer & Flutter App Developer from Bangladesh." />
 
-  <!-- Google Fonts: Space Grotesk for body, JetBrains Mono for code feel -->
+  <!-- CHANGE: Update title with your name and profession -->
+  <title>Alex Morgan | Full-Stack Developer & Designer</title>
+  <meta name="description" content="Alex Morgan — Full-Stack Developer & UI/UX Designer based in New York. Specializing in modern web apps, mobile experiences, and clean design." />
+  <meta name="keywords" content="web developer, designer, flutter, react, portfolio, freelance" />
+
+  <!-- Open Graph — for social media sharing preview -->
+  <meta property="og:title" content="Alex Morgan | Full-Stack Developer" />
+  <meta property="og:description" content="Crafting clean digital experiences that users love." />
+  <meta property="og:type" content="website" />
+
+  <!-- Google Fonts: Space Grotesk + JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
 
@@ -14,7 +22,44 @@
 </head>
 <body>
 
-  <!-- Custom cursor — desktop only, hidden on touch devices via CSS -->
+  <!-- ═══════════════════════════════════════
+       PRELOADER — shows while page loads
+  ═══════════════════════════════════════ -->
+  <div id="preloader">
+    <div class="preloader-inner">
+      <!-- CHANGE: Replace "AM" with your initials -->
+      <span class="preloader-logo">AM<span class="dot">.</span></span>
+      <div class="preloader-bar"><div class="preloader-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       COLOR SWITCHER PANEL
+       Buyers can choose accent color from here
+  ═══════════════════════════════════════ -->
+  <div class="color-switcher" id="colorSwitcher">
+    <button class="switcher-handle" id="switcherHandle" title="Customize">
+      <span>🎨</span>
+    </button>
+    <div class="switcher-body">
+      <p class="switcher-label">Accent Color</p>
+      <div class="color-dots">
+        <!-- data-color must match CSS [data-color="..."] rule -->
+        <button class="cdot active" data-color="purple" title="Purple"></button>
+        <button class="cdot" data-color="blue" title="Blue"></button>
+        <button class="cdot" data-color="green" title="Green"></button>
+        <button class="cdot" data-color="orange" title="Orange"></button>
+        <button class="cdot" data-color="red" title="Red"></button>
+      </div>
+      <p class="switcher-label">Theme</p>
+      <button class="switcher-theme-btn" id="themeBtn">
+        <span id="themeIcon">🌙</span>
+        <span id="themeLabel">Dark Mode</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Custom cursor — desktop only, hidden on touch via CSS -->
   <div class="cursor-dot" id="cursorDot"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
@@ -24,38 +69,34 @@
   <nav class="navbar" id="navbar">
     <div class="nav-inner">
 
-      <!-- Logo — initials with accent dot -->
-      <a href="#home" class="nav-logo">
-        <span>MM</span><span class="dot">.</span>
-      </a>
+      <!-- CHANGE: Update initials -->
+      <a href="#home" class="nav-logo">AM<span class="dot">.</span></a>
 
-      <!-- Desktop nav links -->
-      <ul class="nav-links" id="navLinks">
-        <li><a href="#about" class="nav-link">About</a></li>
-        <li><a href="#skills" class="nav-link">Skills</a></li>
-        <li><a href="#projects" class="nav-link">Projects</a></li>
-        <li><a href="#contact" class="nav-link">Contact</a></li>
+      <ul class="nav-links">
+        <li><a href="#about"        class="nav-link">About</a></li>
+        <li><a href="#services"     class="nav-link">Services</a></li>
+        <li><a href="#skills"       class="nav-link">Skills</a></li>
+        <li><a href="#experience"   class="nav-link">Experience</a></li>
+        <li><a href="#projects"     class="nav-link">Projects</a></li>
+        <li><a href="#contact"      class="nav-link">Contact</a></li>
       </ul>
 
       <div class="nav-actions">
-        <!-- Dark/Light toggle switch -->
-        <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme">
-          <span class="theme-icon" id="themeIcon">🌙</span>
-        </button>
-
-        <!-- Hamburger for mobile -->
+        <!-- CHANGE: Update your CV/resume link -->
+        <a href="assets/alex-morgan-cv.pdf" download class="btn btn-sm btn-outline">Download CV</a>
         <button class="hamburger" id="hamburger" aria-label="Open menu">
           <span></span><span></span><span></span>
         </button>
       </div>
     </div>
 
-    <!-- Mobile dropdown menu -->
     <div class="mobile-menu" id="mobileMenu">
-      <a href="#about" class="mobile-link">About</a>
-      <a href="#skills" class="mobile-link">Skills</a>
-      <a href="#projects" class="mobile-link">Projects</a>
-      <a href="#contact" class="mobile-link">Contact</a>
+      <a href="#about"      class="mobile-link">About</a>
+      <a href="#services"   class="mobile-link">Services</a>
+      <a href="#skills"     class="mobile-link">Skills</a>
+      <a href="#experience" class="mobile-link">Experience</a>
+      <a href="#projects"   class="mobile-link">Projects</a>
+      <a href="#contact"    class="mobile-link">Contact</a>
     </div>
   </nav>
 
@@ -63,54 +104,64 @@
        HERO SECTION
   ═══════════════════════════════════════ -->
   <section class="hero" id="home">
-
-    <!-- Animated particle background — canvas draws dots in dark mode -->
     <canvas id="particleCanvas"></canvas>
-
-    <!-- Glowing blobs in background -->
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
 
     <div class="hero-content">
       <p class="hero-tag">👋 Hello, I'm</p>
 
-      <!-- Name with gradient -->
+      <!-- CHANGE: Your full name -->
       <h1 class="hero-name">
-        Muntasir<br />
-        <span class="name-accent">Mamun</span>
+        Alex<br />
+        <span class="name-accent">Morgan</span>
       </h1>
 
-      <!-- Typing animation — roles cycle automatically -->
+      <!-- Typing animation — edit the roles array in script.js -->
       <div class="hero-role">
         <span>I build </span>
         <span class="typed" id="typed"></span>
         <span class="type-cursor">|</span>
       </div>
 
+      <!-- CHANGE: Your short description -->
       <p class="hero-desc">
-        Crafting clean, beautiful digital experiences from 🇧🇩 Bangladesh.
+        Crafting clean, beautiful digital experiences from 🗽 New York, USA.
       </p>
 
-      <!-- CTA buttons -->
       <div class="hero-btns">
         <a href="#projects" class="btn btn-glow">View My Work</a>
-        <a href="#contact" class="btn btn-ghost">Hire Me</a>
+        <a href="#contact"  class="btn btn-ghost">Hire Me</a>
       </div>
 
-      <!-- Social links row -->
+      <!-- CHANGE: Update social links -->
       <div class="hero-socials">
-        <a href="https://github.com/mojumder01" target="_blank" rel="noopener" class="social-pill">
+        <a href="https://github.com/alexmorgan" target="_blank" rel="noopener" class="social-pill">
           <span>⌨</span> GitHub
         </a>
-        <a href="https://facebook.com/muntasir077" target="_blank" rel="noopener" class="social-pill">
-          <span>👤</span> Facebook
+        <a href="https://linkedin.com/in/alexmorgan" target="_blank" rel="noopener" class="social-pill">
+          <span>💼</span> LinkedIn
         </a>
-        <a href="mailto:muntasir077@gmail.com" class="social-pill">
+        <a href="https://twitter.com/alexmorgan" target="_blank" rel="noopener" class="social-pill">
+          <span>🐦</span> Twitter
+        </a>
+        <a href="mailto:hello@alexmorgan.dev" class="social-pill">
           <span>✉</span> Email
         </a>
       </div>
     </div>
 
+    <!-- CHANGE: Replace with your actual photo — recommended 400x400px -->
+    <div class="hero-photo-wrap">
+      <div class="hero-photo">
+        <div class="hero-photo-placeholder">AM</div>
+        <!-- Uncomment below and remove the div above to use a real photo:
+        <img src="assets/photo.jpg" alt="Alex Morgan" />
+        -->
+      </div>
+      <div class="hero-photo-ring"></div>
+      <div class="hero-photo-glow"></div>
+    </div>
   </section>
 
   <!-- ═══════════════════════════════════════
@@ -126,15 +177,13 @@
 
       <div class="about-grid">
 
-        <!-- Left: avatar + badge -->
         <div class="about-left reveal">
           <div class="avatar-box">
-            <!-- Initials avatar — replace with real photo later -->
-            <div class="avatar-initials">MM</div>
+            <!-- CHANGE: Replace initials or use <img> tag -->
+            <div class="avatar-initials">AM</div>
             <div class="avatar-ring"></div>
           </div>
 
-          <!-- Floating available badge -->
           <div class="available-badge">
             <span class="pulse-dot"></span>
             <div>
@@ -143,50 +192,140 @@
             </div>
           </div>
 
-          <!-- Quick stats -->
+          <!-- CHANGE: Update your stats -->
           <div class="stats-row">
             <div class="stat">
-              <strong>1+</strong>
-              <small>Years Learning</small>
+              <strong class="count-up" data-target="5">0</strong>
+              <small>Years Exp.</small>
             </div>
             <div class="stat-divider"></div>
             <div class="stat">
-              <strong>5+</strong>
-              <small>Projects Built</small>
+              <strong class="count-up" data-target="48">0</strong>
+              <small>Projects Done</small>
             </div>
             <div class="stat-divider"></div>
             <div class="stat">
-              <strong>∞</strong>
-              <small>Ideas</small>
+              <strong class="count-up" data-target="32">0</strong>
+              <small>Happy Clients</small>
             </div>
           </div>
         </div>
 
-        <!-- Right: bio text -->
         <div class="about-right reveal">
-          <h3 class="about-subtitle">Frontend Developer & App Builder</h3>
+          <!-- CHANGE: Your name and bio -->
+          <h3 class="about-subtitle">Full-Stack Developer & UI/UX Designer</h3>
 
-          <p>I'm <strong>Muntasir Mamun Mojumder</strong>, a passionate self-taught Frontend Developer from Bangladesh. I love turning ideas into reality through clean code and thoughtful design.</p>
+          <p>I'm <strong>Alex Morgan</strong>, a passionate Full-Stack Developer based in New York with 5+ years of experience building digital products people love. I combine clean code with thoughtful design to deliver experiences that are both functional and beautiful.</p>
 
-          <p>I specialize in building responsive, high-performance websites and Android apps. Currently expanding my skills in <strong>Flutter</strong> and modern JavaScript frameworks — because good developers never stop learning.</p>
+          <p>I specialize in <strong>React</strong>, <strong>Node.js</strong>, and <strong>Flutter</strong> — building everything from complex web apps to cross-platform mobile experiences. When I'm not coding, I'm designing UI mockups or learning the latest web technologies.</p>
 
-          <p>My goal? To create digital products that are not just functional, but genuinely enjoyable to use. Every pixel and every line of code should serve a purpose.</p>
+          <p>My goal is simple: write code that's clean, performant, and maintainable — and design interfaces that users actually enjoy using.</p>
 
-          <!-- Contact info chips -->
+          <!-- CHANGE: Your contact info -->
           <div class="info-chips">
-            <span class="chip">📧 muntasir077@gmail.com</span>
-            <span class="chip">📍 Bangladesh</span>
+            <span class="chip">📧 hello@alexmorgan.dev</span>
+            <span class="chip">📍 New York, USA</span>
             <span class="chip">🌐 Open to Remote</span>
+            <span class="chip">💼 Freelance OK</span>
           </div>
 
-          <a href="mailto:muntasir077@gmail.com" class="btn btn-glow">Let's Work Together</a>
+          <div class="about-btns">
+            <!-- CHANGE: Update CV link -->
+            <a href="assets/alex-morgan-cv.pdf" download class="btn btn-glow">Download CV</a>
+            <a href="#contact" class="btn btn-ghost">Let's Talk</a>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ═══════════════════════════════════════
+       SERVICES SECTION
+       CHANGE: Edit the 6 service cards below
+  ═══════════════════════════════════════ -->
+  <section class="section services-section" id="services">
+    <div class="container">
+
+      <div class="section-head reveal">
+        <span class="section-tag">What I offer</span>
+        <h2 class="section-title">My Services</h2>
+      </div>
+
+      <div class="services-grid">
+
+        <div class="service-card reveal" style="--delay: 0s">
+          <div class="service-icon">🌐</div>
+          <h3>Web Development</h3>
+          <p>Fast, responsive websites and web apps built with modern technologies. From landing pages to full-stack applications.</p>
+          <ul class="service-list">
+            <li>React / Next.js</li>
+            <li>Node.js APIs</li>
+            <li>Performance optimization</li>
+          </ul>
+        </div>
+
+        <div class="service-card reveal" style="--delay: 0.1s">
+          <div class="service-icon">📱</div>
+          <h3>Mobile Apps</h3>
+          <p>Cross-platform Android & iOS apps with Flutter. One codebase, native performance on both platforms.</p>
+          <ul class="service-list">
+            <li>Flutter & Dart</li>
+            <li>REST API integration</li>
+            <li>Play Store deployment</li>
+          </ul>
+        </div>
+
+        <div class="service-card reveal" style="--delay: 0.2s">
+          <div class="service-icon">🎨</div>
+          <h3>UI/UX Design</h3>
+          <p>User-centered design that converts. Wireframes, prototypes, and pixel-perfect interfaces your users will love.</p>
+          <ul class="service-list">
+            <li>Figma prototyping</li>
+            <li>Design systems</li>
+            <li>Usability testing</li>
+          </ul>
+        </div>
+
+        <div class="service-card reveal" style="--delay: 0.3s">
+          <div class="service-icon">⚡</div>
+          <h3>Performance Audit</h3>
+          <p>Diagnose and fix slow websites. Core Web Vitals optimization, bundle analysis, and lighthouse score improvement.</p>
+          <ul class="service-list">
+            <li>Core Web Vitals</li>
+            <li>Lighthouse audits</li>
+            <li>Speed optimization</li>
+          </ul>
+        </div>
+
+        <div class="service-card reveal" style="--delay: 0.4s">
+          <div class="service-icon">🔗</div>
+          <h3>API Development</h3>
+          <p>Robust REST and GraphQL APIs. Database design, authentication, and third-party service integration.</p>
+          <ul class="service-list">
+            <li>REST & GraphQL</li>
+            <li>PostgreSQL / MongoDB</li>
+            <li>Auth & security</li>
+          </ul>
+        </div>
+
+        <div class="service-card reveal" style="--delay: 0.5s">
+          <div class="service-icon">🛒</div>
+          <h3>E-Commerce</h3>
+          <p>Custom online stores and shopping experiences. Payment integration, inventory management, and admin dashboards.</p>
+          <ul class="service-list">
+            <li>Stripe / PayPal</li>
+            <li>Product management</li>
+            <li>Admin dashboard</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
        SKILLS SECTION
+       CHANGE: Update skill names and percentages (--w value)
   ═══════════════════════════════════════ -->
   <section class="section skills-section" id="skills">
     <div class="container">
@@ -196,7 +335,6 @@
         <h2 class="section-title">My Skills</h2>
       </div>
 
-      <!-- Skill cards grid -->
       <div class="skills-grid">
 
         <div class="skill-card reveal" style="--delay: 0s">
@@ -204,70 +342,70 @@
           <h4>HTML5</h4>
           <p>Semantic markup, accessibility, SEO-friendly structure</p>
           <div class="skill-level">
-            <div class="skill-bar" style="--w: 90%"></div>
+            <div class="skill-bar" style="--w: 95%"></div>
           </div>
         </div>
 
         <div class="skill-card reveal" style="--delay: 0.1s">
           <div class="skill-icon">🎨</div>
-          <h4>CSS3</h4>
-          <p>Flexbox, Grid, animations, responsive design, dark/light themes</p>
+          <h4>CSS3 / Sass</h4>
+          <p>Flexbox, Grid, animations, responsive design, CSS variables</p>
           <div class="skill-level">
-            <div class="skill-bar" style="--w: 85%"></div>
+            <div class="skill-bar" style="--w: 90%"></div>
           </div>
         </div>
 
         <div class="skill-card reveal" style="--delay: 0.2s">
           <div class="skill-icon">⚡</div>
           <h4>JavaScript</h4>
-          <p>DOM manipulation, ES6+, async/await, APIs</p>
-          <div class="skill-level">
-            <div class="skill-bar" style="--w: 75%"></div>
-          </div>
-        </div>
-
-        <div class="skill-card reveal" style="--delay: 0.3s">
-          <div class="skill-icon">📱</div>
-          <h4>Flutter</h4>
-          <p>Cross-platform Android & iOS apps with Dart</p>
-          <div class="skill-level">
-            <div class="skill-bar" style="--w: 60%"></div>
-          </div>
-        </div>
-
-        <div class="skill-card reveal" style="--delay: 0.4s">
-          <div class="skill-icon">⚛️</div>
-          <h4>React</h4>
-          <p>Component-based UI, hooks, state management</p>
-          <div class="skill-level">
-            <div class="skill-bar" style="--w: 55%"></div>
-          </div>
-        </div>
-
-        <div class="skill-card reveal" style="--delay: 0.5s">
-          <div class="skill-icon">🔧</div>
-          <h4>Git & GitHub</h4>
-          <p>Version control, branching, collaboration, CI/CD</p>
-          <div class="skill-level">
-            <div class="skill-bar" style="--w: 80%"></div>
-          </div>
-        </div>
-
-        <div class="skill-card reveal" style="--delay: 0.6s">
-          <div class="skill-icon">📐</div>
-          <h4>Responsive Design</h4>
-          <p>Mobile-first approach, cross-browser compatibility</p>
+          <p>ES6+, async/await, DOM, REST APIs, TypeScript</p>
           <div class="skill-level">
             <div class="skill-bar" style="--w: 88%"></div>
           </div>
         </div>
 
-        <div class="skill-card reveal" style="--delay: 0.7s">
-          <div class="skill-icon">🎯</div>
-          <h4>UI/UX Design</h4>
-          <p>User-centered design, wireframing, prototyping</p>
+        <div class="skill-card reveal" style="--delay: 0.3s">
+          <div class="skill-icon">⚛️</div>
+          <h4>React / Next.js</h4>
+          <p>Hooks, context, Redux, SSR, static generation</p>
           <div class="skill-level">
-            <div class="skill-bar" style="--w: 65%"></div>
+            <div class="skill-bar" style="--w: 82%"></div>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" style="--delay: 0.4s">
+          <div class="skill-icon">📱</div>
+          <h4>Flutter / Dart</h4>
+          <p>Cross-platform Android & iOS apps, state management</p>
+          <div class="skill-level">
+            <div class="skill-bar" style="--w: 70%"></div>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" style="--delay: 0.5s">
+          <div class="skill-icon">🔧</div>
+          <h4>Node.js</h4>
+          <p>Express, REST APIs, authentication, database integration</p>
+          <div class="skill-level">
+            <div class="skill-bar" style="--w: 75%"></div>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" style="--delay: 0.6s">
+          <div class="skill-icon">🗄️</div>
+          <h4>Databases</h4>
+          <p>PostgreSQL, MongoDB, Redis, Prisma ORM</p>
+          <div class="skill-level">
+            <div class="skill-bar" style="--w: 72%"></div>
+          </div>
+        </div>
+
+        <div class="skill-card reveal" style="--delay: 0.7s">
+          <div class="skill-icon">🔀</div>
+          <h4>Git & DevOps</h4>
+          <p>Git, GitHub Actions, Docker, CI/CD pipelines</p>
+          <div class="skill-level">
+            <div class="skill-bar" style="--w: 80%"></div>
           </div>
         </div>
 
@@ -276,7 +414,128 @@
   </section>
 
   <!-- ═══════════════════════════════════════
+       EXPERIENCE / TIMELINE SECTION
+       CHANGE: Edit job titles, companies, dates, descriptions
+  ═══════════════════════════════════════ -->
+  <section class="section experience-section" id="experience">
+    <div class="container">
+
+      <div class="section-head reveal">
+        <span class="section-tag">My journey</span>
+        <h2 class="section-title">Experience</h2>
+      </div>
+
+      <div class="timeline-tabs reveal">
+        <button class="tab-btn active" data-tab="work">💼 Work</button>
+        <button class="tab-btn" data-tab="education">🎓 Education</button>
+      </div>
+
+      <!-- Work Timeline -->
+      <div class="timeline" id="tab-work">
+
+        <div class="timeline-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-header">
+              <!-- CHANGE: Job title and company -->
+              <h3>Senior Frontend Developer</h3>
+              <span class="tl-company">TechCorp Inc. · New York</span>
+            </div>
+            <!-- CHANGE: Date range -->
+            <span class="tl-date">Jan 2022 – Present</span>
+            <!-- CHANGE: Job description -->
+            <p>Led development of 3 major product features used by 50k+ users. Migrated legacy jQuery codebase to React, improving performance by 60%. Mentored 4 junior developers and set code standards.</p>
+            <div class="tl-tags">
+              <span class="tag">React</span>
+              <span class="tag">TypeScript</span>
+              <span class="tag">Node.js</span>
+              <span class="tag">AWS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-header">
+              <h3>Full-Stack Developer</h3>
+              <span class="tl-company">Digital Creative Agency · Remote</span>
+            </div>
+            <span class="tl-date">Mar 2020 – Dec 2021</span>
+            <p>Built 15+ client websites and web apps from scratch. Developed a custom CMS used by 8 clients. Introduced automated testing that reduced bugs by 40%.</p>
+            <div class="tl-tags">
+              <span class="tag">Next.js</span>
+              <span class="tag">PostgreSQL</span>
+              <span class="tag">Docker</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-header">
+              <h3>Junior Web Developer</h3>
+              <span class="tl-company">StartupXYZ · San Francisco</span>
+            </div>
+            <span class="tl-date">Jun 2018 – Feb 2020</span>
+            <p>Developed responsive landing pages and UI components. Collaborated with designers to implement pixel-perfect interfaces. Optimized site performance from 45 to 92 Lighthouse score.</p>
+            <div class="tl-tags">
+              <span class="tag">HTML</span>
+              <span class="tag">CSS</span>
+              <span class="tag">JavaScript</span>
+              <span class="tag">Vue.js</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Education Timeline -->
+      <div class="timeline hidden" id="tab-education">
+
+        <div class="timeline-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-header">
+              <h3>BSc Computer Science</h3>
+              <span class="tl-company">State University · New York</span>
+            </div>
+            <span class="tl-date">2014 – 2018</span>
+            <p>Graduated with honors (GPA 3.8). Specialized in Software Engineering and Human-Computer Interaction. Led the university's Web Development Club for 2 years.</p>
+            <div class="tl-tags">
+              <span class="tag">Algorithms</span>
+              <span class="tag">HCI</span>
+              <span class="tag">Software Engineering</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-header">
+              <h3>UI/UX Design Certificate</h3>
+              <span class="tl-company">Google UX Design · Online</span>
+            </div>
+            <span class="tl-date">2021</span>
+            <p>Completed Google's professional UX design certificate. Covered user research, wireframing, prototyping, and usability testing methodologies.</p>
+            <div class="tl-tags">
+              <span class="tag">Figma</span>
+              <span class="tag">User Research</span>
+              <span class="tag">Prototyping</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
        PROJECTS SECTION
+       CHANGE: Update project cards — title, description, tags, links
   ═══════════════════════════════════════ -->
   <section class="section" id="projects">
     <div class="container">
@@ -286,68 +545,125 @@
         <h2 class="section-title">Projects</h2>
       </div>
 
-      <div class="projects-grid">
+      <!-- Filter buttons -->
+      <div class="project-filters reveal">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="web">Web</button>
+        <button class="filter-btn" data-filter="mobile">Mobile</button>
+        <button class="filter-btn" data-filter="design">Design</button>
+      </div>
 
-        <!-- Project 1: Math Rush -->
-        <div class="project-card reveal" style="--delay: 0s">
+      <div class="projects-grid" id="projectsGrid">
+
+        <!-- CHANGE: Project 1 -->
+        <div class="project-card reveal" data-category="web" style="--delay: 0s">
           <div class="project-header">
-            <span class="project-emoji">🧮</span>
+            <span class="project-emoji">📋</span>
             <div class="project-links">
-              <a href="https://github.com/mojumder01/math-rush-game" target="_blank" rel="noopener" class="project-link" title="View Code">⌨ Code</a>
+              <a href="#" target="_blank" rel="noopener" class="project-link" title="Live Demo">🔗 Demo</a>
+              <a href="#" target="_blank" rel="noopener" class="project-link" title="Source Code">⌨ Code</a>
             </div>
           </div>
-          <h3 class="project-title">Math Rush</h3>
-          <p class="project-desc">A fast-paced math quiz game for Android. Features 3 difficulty levels, a 10-second countdown timer, score with time bonus, and local high score storage.</p>
+          <h3 class="project-title">TaskFlow Pro</h3>
+          <p class="project-desc">A full-featured project management app with real-time collaboration, drag-and-drop boards, team roles, and analytics dashboard.</p>
+          <div class="project-tags">
+            <span class="tag">React</span>
+            <span class="tag">Node.js</span>
+            <span class="tag">PostgreSQL</span>
+            <span class="tag">Socket.io</span>
+          </div>
+        </div>
+
+        <!-- CHANGE: Project 2 -->
+        <div class="project-card reveal" data-category="mobile" style="--delay: 0.1s">
+          <div class="project-header">
+            <span class="project-emoji">💪</span>
+            <div class="project-links">
+              <a href="#" target="_blank" rel="noopener" class="project-link" title="Play Store">📱 Store</a>
+              <a href="#" target="_blank" rel="noopener" class="project-link" title="Source Code">⌨ Code</a>
+            </div>
+          </div>
+          <h3 class="project-title">FitTrack App</h3>
+          <p class="project-desc">Cross-platform fitness tracker with workout logging, progress charts, custom exercise library, and motivational streak system.</p>
           <div class="project-tags">
             <span class="tag">Flutter</span>
             <span class="tag">Dart</span>
-            <span class="tag">Android</span>
-            <span class="tag">Google Play</span>
+            <span class="tag">Firebase</span>
+            <span class="tag">Charts</span>
           </div>
         </div>
 
-        <!-- Project 2: Dola Foundation Website -->
-        <div class="project-card reveal" style="--delay: 0.15s">
+        <!-- CHANGE: Project 3 -->
+        <div class="project-card reveal" data-category="web" style="--delay: 0.2s">
           <div class="project-header">
-            <span class="project-emoji">🌱</span>
+            <span class="project-emoji">🛒</span>
             <div class="project-links">
-              <a href="https://github.com/mojumder01/Dola-Foundation" target="_blank" rel="noopener" class="project-link" title="View Code">⌨ Code</a>
+              <a href="#" target="_blank" rel="noopener" class="project-link" title="Live Demo">🔗 Demo</a>
+              <a href="#" target="_blank" rel="noopener" class="project-link" title="Source Code">⌨ Code</a>
             </div>
           </div>
-          <h3 class="project-title">Dola Foundation</h3>
-          <p class="project-desc">Full website for a non-profit foundation. Dynamic admin panel, program management, volunteer registration, and a modern responsive public-facing site.</p>
+          <h3 class="project-title">ShopDash</h3>
+          <p class="project-desc">E-commerce admin dashboard with inventory management, order tracking, revenue analytics, and Stripe payment integration.</p>
           <div class="project-tags">
             <span class="tag">Next.js</span>
-            <span class="tag">React</span>
-            <span class="tag">PostgreSQL</span>
-            <span class="tag">Admin Panel</span>
+            <span class="tag">Stripe</span>
+            <span class="tag">Tailwind</span>
+            <span class="tag">Prisma</span>
           </div>
         </div>
 
-        <!-- Project 3: This portfolio -->
-        <div class="project-card reveal" style="--delay: 0.3s">
+        <!-- CHANGE: Project 4 -->
+        <div class="project-card reveal" data-category="design" style="--delay: 0.3s">
           <div class="project-header">
-            <span class="project-emoji">💼</span>
+            <span class="project-emoji">🍕</span>
             <div class="project-links">
-              <a href="https://github.com/mojumder01/portfolio-website" target="_blank" rel="noopener" class="project-link" title="View Code">⌨ Code</a>
+              <a href="#" target="_blank" rel="noopener" class="project-link" title="Live Demo">🔗 Demo</a>
+              <a href="#" target="_blank" rel="noopener" class="project-link" title="Figma">🎨 Figma</a>
             </div>
           </div>
-          <h3 class="project-title">Portfolio Website</h3>
-          <p class="project-desc">This portfolio! Built with pure HTML, CSS, and JavaScript. Features dark/light theme toggle, particle background, custom cursor, and smooth scroll animations.</p>
+          <h3 class="project-title">Bella Restaurant</h3>
+          <p class="project-desc">Elegant restaurant website with animated menu, online reservation system, gallery, and Google Maps integration. Figma design included.</p>
           <div class="project-tags">
             <span class="tag">HTML5</span>
             <span class="tag">CSS3</span>
             <span class="tag">JavaScript</span>
-            <span class="tag">Canvas API</span>
+            <span class="tag">Figma</span>
           </div>
         </div>
 
-        <!-- Project 4: Coming soon placeholder -->
-        <div class="project-card project-soon reveal" style="--delay: 0.45s">
-          <div class="soon-content">
-            <span class="soon-icon">🚀</span>
-            <h3>Next Project</h3>
-            <p>Something exciting is coming soon. Stay tuned!</p>
+        <!-- CHANGE: Project 5 -->
+        <div class="project-card reveal" data-category="web" style="--delay: 0.4s">
+          <div class="project-header">
+            <span class="project-emoji">🌤️</span>
+            <div class="project-links">
+              <a href="#" target="_blank" rel="noopener" class="project-link" title="Live Demo">🔗 Demo</a>
+              <a href="#" target="_blank" rel="noopener" class="project-link" title="Source Code">⌨ Code</a>
+            </div>
+          </div>
+          <h3 class="project-title">WeatherNow</h3>
+          <p class="project-desc">Beautiful weather dashboard with 7-day forecast, hourly charts, geolocation, saved cities, and animated weather icons.</p>
+          <div class="project-tags">
+            <span class="tag">React</span>
+            <span class="tag">OpenWeather API</span>
+            <span class="tag">Chart.js</span>
+          </div>
+        </div>
+
+        <!-- CHANGE: Project 6 -->
+        <div class="project-card reveal" data-category="mobile" style="--delay: 0.5s">
+          <div class="project-header">
+            <span class="project-emoji">₿</span>
+            <div class="project-links">
+              <a href="#" target="_blank" rel="noopener" class="project-link" title="Play Store">📱 Store</a>
+              <a href="#" target="_blank" rel="noopener" class="project-link" title="Source Code">⌨ Code</a>
+            </div>
+          </div>
+          <h3 class="project-title">CryptoWatch</h3>
+          <p class="project-desc">Real-time cryptocurrency price tracker with portfolio management, price alerts, price history charts, and news feed.</p>
+          <div class="project-tags">
+            <span class="tag">Flutter</span>
+            <span class="tag">CoinGecko API</span>
+            <span class="tag">Riverpod</span>
           </div>
         </div>
 
@@ -356,7 +672,79 @@
   </section>
 
   <!-- ═══════════════════════════════════════
+       TESTIMONIALS SECTION
+       CHANGE: Update client name, role, company, photo initials, and review text
+  ═══════════════════════════════════════ -->
+  <section class="section testimonials-section" id="testimonials">
+    <div class="container">
+
+      <div class="section-head reveal">
+        <span class="section-tag">What clients say</span>
+        <h2 class="section-title">Testimonials</h2>
+      </div>
+
+      <div class="testimonials-slider reveal">
+
+        <div class="testimonials-track" id="testimonialsTrack">
+
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <!-- CHANGE: Review text -->
+            <p class="testimonial-text">"Alex delivered our web app ahead of schedule with exceptional quality. The code is clean, well-documented, and exactly what we needed. Will hire again without hesitation!"</p>
+            <div class="testimonial-author">
+              <!-- CHANGE: Client initials, name, role, company -->
+              <div class="author-avatar">SC</div>
+              <div>
+                <strong>Sarah Chen</strong>
+                <span>CTO, InnovateTech</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"Our Flutter app went from idea to Play Store in 6 weeks. Alex's attention to detail and proactive communication made the whole process smooth. Outstanding work!"</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">MR</div>
+              <div>
+                <strong>Marcus Rivera</strong>
+                <span>Founder, FitStartup</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"The redesign Alex did for our e-commerce site increased our conversion rate by 34%. The site is beautiful, fast, and our customers love it. Highly recommended!"</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">JW</div>
+              <div>
+                <strong>Jennifer Walsh</strong>
+                <span>CEO, StyleShop</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Slider controls -->
+        <div class="slider-controls">
+          <button class="slider-btn" id="sliderPrev" aria-label="Previous">←</button>
+          <div class="slider-dots" id="sliderDots">
+            <button class="slider-dot active" data-index="0"></button>
+            <button class="slider-dot" data-index="1"></button>
+            <button class="slider-dot" data-index="2"></button>
+          </div>
+          <button class="slider-btn" id="sliderNext" aria-label="Next">→</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
        CONTACT SECTION
+       CHANGE: Update contact info and form target email in script.js
   ═══════════════════════════════════════ -->
   <section class="section contact-section" id="contact">
     <div class="container">
@@ -368,49 +756,64 @@
 
       <div class="contact-grid">
 
-        <!-- Left: contact info -->
         <div class="contact-info reveal">
-          <h3>Let's build something together</h3>
-          <p>Whether you have a project in mind, a question, or just want to say hello — my inbox is always open. I'll get back to you within 24 hours.</p>
+          <h3>Let's build something great</h3>
+          <p>Have a project in mind? I'd love to hear about it. Send me a message and I'll get back to you within 24 hours.</p>
 
           <div class="contact-items">
-            <a href="mailto:muntasir077@gmail.com" class="contact-item">
+            <!-- CHANGE: Your contact info -->
+            <a href="mailto:hello@alexmorgan.dev" class="contact-item">
               <div class="contact-icon">✉</div>
               <div>
                 <strong>Email</strong>
-                <span>muntasir077@gmail.com</span>
+                <span>hello@alexmorgan.dev</span>
               </div>
             </a>
 
-            <a href="https://facebook.com/muntasir077" target="_blank" rel="noopener" class="contact-item">
-              <div class="contact-icon">👤</div>
+            <a href="https://linkedin.com/in/alexmorgan" target="_blank" rel="noopener" class="contact-item">
+              <div class="contact-icon">💼</div>
               <div>
-                <strong>Facebook</strong>
-                <span>facebook.com/muntasir077</span>
+                <strong>LinkedIn</strong>
+                <span>linkedin.com/in/alexmorgan</span>
               </div>
             </a>
 
-            <a href="https://github.com/mojumder01" target="_blank" rel="noopener" class="contact-item">
+            <a href="https://github.com/alexmorgan" target="_blank" rel="noopener" class="contact-item">
               <div class="contact-icon">⌨</div>
               <div>
                 <strong>GitHub</strong>
-                <span>github.com/mojumder01</span>
+                <span>github.com/alexmorgan</span>
               </div>
             </a>
           </div>
+
+          <!-- Availability status -->
+          <div class="availability-card">
+            <span class="pulse-dot"></span>
+            <div>
+              <strong>Currently Available</strong>
+              <!-- CHANGE: Update availability info -->
+              <p>Open for freelance projects & full-time roles</p>
+            </div>
+          </div>
         </div>
 
-        <!-- Right: contact form -->
         <div class="contact-form-wrapper reveal">
           <form class="contact-form" id="contactForm">
-            <div class="form-group">
-              <label for="name">Your Name</label>
-              <input type="text" id="name" name="name" placeholder="John Doe" required />
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name" placeholder="John Smith" required />
+              </div>
+              <div class="form-group">
+                <label for="email">Your Email</label>
+                <input type="email" id="email" name="email" placeholder="john@company.com" required />
+              </div>
             </div>
 
             <div class="form-group">
-              <label for="email">Your Email</label>
-              <input type="email" id="email" name="email" placeholder="john@example.com" required />
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" name="subject" placeholder="Project inquiry..." />
             </div>
 
             <div class="form-group">
@@ -418,11 +821,9 @@
               <textarea id="message" name="message" rows="5" placeholder="Tell me about your project..." required></textarea>
             </div>
 
-            <!-- This form opens Gmail on submit since we have no backend -->
             <button type="submit" class="btn btn-glow btn-full">
               Send Message ✉
             </button>
-
             <p class="form-note">* This will open your email client to send the message.</p>
           </form>
         </div>
@@ -433,22 +834,23 @@
 
   <!-- ═══════════════════════════════════════
        FOOTER
+       CHANGE: Update name, year, and social links
   ═══════════════════════════════════════ -->
   <footer class="footer">
     <div class="container">
       <div class="footer-inner">
-        <span class="footer-logo">MM<span class="dot">.</span></span>
-        <p>Designed & built by <strong>Muntasir Mamun</strong> © 2025</p>
+        <span class="footer-logo">AM<span class="dot">.</span></span>
+        <p>Designed & built by <strong>Alex Morgan</strong> © 2025</p>
         <div class="footer-socials">
-          <a href="https://github.com/mojumder01" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://facebook.com/muntasir077" target="_blank" rel="noopener">Facebook</a>
-          <a href="mailto:muntasir077@gmail.com">Email</a>
+          <a href="https://github.com/alexmorgan"    target="_blank" rel="noopener">GitHub</a>
+          <a href="https://linkedin.com/in/alexmorgan" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://twitter.com/alexmorgan"   target="_blank" rel="noopener">Twitter</a>
+          <a href="mailto:hello@alexmorgan.dev">Email</a>
         </div>
       </div>
     </div>
   </footer>
 
-  <!-- Back to top button -->
   <button class="back-top" id="backTop" aria-label="Back to top" title="Back to top">↑</button>
 
   <script src="js/script.js"></script>

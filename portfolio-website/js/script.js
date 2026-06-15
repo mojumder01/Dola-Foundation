@@ -1,78 +1,125 @@
 // ═══════════════════════════════════════════
 // PORTFOLIO JAVASCRIPT
-// Muntasir Mamun — muntasir077@gmail.com
+// CHANGE: Search for "CHANGE:" comments to find
+// all the things you need to customize.
 // ═══════════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
 
   // ─────────────────────────────────────────
-  // 1. THEME TOGGLE — dark ↔ light
-  // localStorage এ save করা থাকে, refresh করলেও মনে থাকে
+  // 1. PRELOADER
+  // ─────────────────────────────────────────
+  const preloader = document.getElementById('preloader');
+
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      preloader.classList.add('done');
+    }, 1200);
+  });
+
+  // ─────────────────────────────────────────
+  // 2. THEME TOGGLE — dark ↔ light
+  // Saved to localStorage so it persists on refresh
   // ─────────────────────────────────────────
   const html      = document.documentElement;
   const themeBtn  = document.getElementById('themeBtn');
   const themeIcon = document.getElementById('themeIcon');
+  const themeLabel = document.getElementById('themeLabel');
 
-  // আগে save করা theme load করো, নাহলে dark default
   const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
   setTheme(savedTheme);
 
   themeBtn.addEventListener('click', () => {
     const current = html.getAttribute('data-theme');
     setTheme(current === 'dark' ? 'light' : 'dark');
-    // canvas is initialized by now, safe to re-render particles
     resizeParticles();
   });
 
   function setTheme(theme) {
     html.setAttribute('data-theme', theme);
     localStorage.setItem('portfolio-theme', theme);
-    themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
-    // resizeParticles() NOT called here — canvas hasn't been initialized yet on first load
+    themeIcon.textContent  = theme === 'dark' ? '🌙' : '☀️';
+    themeLabel.textContent = theme === 'dark' ? 'Dark Mode' : 'Light Mode';
   }
 
   // ─────────────────────────────────────────
-  // 2. NAVBAR — scroll করলে shadow আসে
+  // 3. COLOR SCHEME SWITCHER
+  // Saves chosen color to localStorage
+  // ─────────────────────────────────────────
+  const switcherHandle = document.getElementById('switcherHandle');
+  const colorSwitcher  = document.getElementById('colorSwitcher');
+  const colorDots      = document.querySelectorAll('.cdot');
+
+  switcherHandle.addEventListener('click', () => {
+    colorSwitcher.classList.toggle('open');
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!colorSwitcher.contains(e.target)) {
+      colorSwitcher.classList.remove('open');
+    }
+  });
+
+  // Load saved color scheme
+  const savedColor = localStorage.getItem('portfolio-color') || 'purple';
+  setColor(savedColor);
+
+  colorDots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      setColor(dot.dataset.color);
+      resizeParticles();
+    });
+  });
+
+  function setColor(color) {
+    html.setAttribute('data-color', color);
+    localStorage.setItem('portfolio-color', color);
+    colorDots.forEach(d => d.classList.toggle('active', d.dataset.color === color));
+  }
+
+  // ─────────────────────────────────────────
+  // 4. NAVBAR — shadow on scroll
   // ─────────────────────────────────────────
   const navbar = document.getElementById('navbar');
 
   window.addEventListener('scroll', () => {
-    // 50px এর বেশি scroll হলে navbar তে shadow দাও
     navbar.classList.toggle('scrolled', window.scrollY > 50);
-    // Back to top button দেখাও
     backTop.classList.toggle('visible', window.scrollY > 400);
-    // Active nav link update করো
     updateActiveNav();
+    triggerCounters();
   }, { passive: true });
 
   // ─────────────────────────────────────────
-  // 3. MOBILE HAMBURGER MENU
+  // 5. HAMBURGER MOBILE MENU
   // ─────────────────────────────────────────
   const hamburger  = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
 
   hamburger.addEventListener('click', () => {
     mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('active');
   });
 
-  // Mobile menu এর link click করলে menu বন্ধ হবে
   document.querySelectorAll('.mobile-link').forEach(link => {
-    link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    link.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      hamburger.classList.remove('active');
+    });
   });
 
   // ─────────────────────────────────────────
-  // 4. ACTIVE NAV LINK — scroll position দেখে
+  // 6. ACTIVE NAV LINK — updates based on scroll position
   // ─────────────────────────────────────────
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-link');
 
   function updateActiveNav() {
-    const scrollPos = window.scrollY + 100;
+    const scrollPos = window.scrollY + 120;
     sections.forEach(section => {
       const top    = section.offsetTop;
       const height = section.offsetHeight;
       const id     = section.getAttribute('id');
-
       if (scrollPos >= top && scrollPos < top + height) {
         navLinks.forEach(link => {
           link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
@@ -82,16 +129,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ─────────────────────────────────────────
-  // 5. TYPING ANIMATION
-  // roles গুলো একে একে type করে → erase করে
+  // 7. TYPING ANIMATION
+  // CHANGE: Edit the roles array to change what gets typed
   // ─────────────────────────────────────────
   const typedEl = document.getElementById('typed');
 
+  // CHANGE: Update these strings with your own skills/services
   const roles = [
     'beautiful websites',
-    'Android apps',
-    'Flutter experiences',
+    'Flutter mobile apps',
+    'React applications',
     'clean UI/UX',
+    'full-stack solutions',
     'your next project'
   ];
 
@@ -104,40 +153,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentRole = roles[roleIndex];
 
     if (!isDeleting) {
-      // টাইপ করছে — একটা character যোগ করো
       typedEl.textContent = currentRole.substring(0, charIndex + 1);
       charIndex++;
-
       if (charIndex === currentRole.length) {
-        // সম্পূর্ণ হয়ে গেলে একটু wait করো তারপর delete শুরু
         isDeleting = true;
-        typingDelay = 1800; // pause করো পড়ার জন্য
+        typingDelay = 2000;
       } else {
         typingDelay = 100;
       }
     } else {
-      // Delete করছে — একটা character সরাও
       typedEl.textContent = currentRole.substring(0, charIndex - 1);
       charIndex--;
-
       if (charIndex === 0) {
-        // সব মুছে গেলে পরের role এ যাও
         isDeleting = false;
         roleIndex = (roleIndex + 1) % roles.length;
-        typingDelay = 400; // নতুন word শুরু করার আগে pause
+        typingDelay = 400;
       } else {
-        typingDelay = 55; // Delete দ্রুত হয়
+        typingDelay = 55;
       }
     }
 
     setTimeout(typeLoop, typingDelay);
   }
 
-  // 1 সেকেন্ড পরে typing শুরু করো — page load হওয়ার সময় দাও
-  setTimeout(typeLoop, 1000);
+  setTimeout(typeLoop, 1400);
 
   // ─────────────────────────────────────────
-  // 6. SCROLL REVEAL — elements দেখা গেলে animate করো
+  // 8. SCROLL REVEAL — fade in on scroll
   // ─────────────────────────────────────────
   const reveals = document.querySelectorAll('.reveal');
 
@@ -145,35 +187,140 @@ document.addEventListener('DOMContentLoaded', () => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
-        // Skill bar animate করো
         const bar = entry.target.querySelector('.skill-bar');
-        if (bar) bar.style.width = bar.style.getPropertyValue('--w') || getComputedStyle(bar).getPropertyValue('--w');
-        // একবার animate হলে আর observe করার দরকার নেই
+        if (bar) {
+          bar.style.width = getComputedStyle(bar).getPropertyValue('--w');
+        }
         revealObserver.unobserve(entry.target);
       }
     });
-  }, {
-    threshold: 0.15,
-    rootMargin: '0px 0px -40px 0px'
-  });
+  }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
 
   reveals.forEach(el => revealObserver.observe(el));
 
-  // Skill cards এর জন্য আলাদা observer — skill bar animate করতে
-  const skillCards = document.querySelectorAll('.skill-card');
-  const skillObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        skillObserver.unobserve(entry.target);
+  // ─────────────────────────────────────────
+  // 9. COUNT-UP ANIMATION for stats
+  // Triggers once when the about section scrolls into view
+  // ─────────────────────────────────────────
+  const counters   = document.querySelectorAll('.count-up');
+  let   countersRan = false;
+
+  function triggerCounters() {
+    if (countersRan) return;
+    counters.forEach(counter => {
+      const rect = counter.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.85) {
+        countersRan = true;
+        runCounters();
       }
     });
-  }, { threshold: 0.2 });
+  }
 
-  skillCards.forEach(card => skillObserver.observe(card));
+  function runCounters() {
+    counters.forEach(counter => {
+      const target   = parseInt(counter.dataset.target);
+      const duration = 1800;
+      const step     = target / (duration / 16);
+      let   current  = 0;
+
+      const tick = () => {
+        current += step;
+        if (current < target) {
+          counter.textContent = Math.floor(current) + '+';
+          requestAnimationFrame(tick);
+        } else {
+          counter.textContent = target + '+';
+        }
+      };
+
+      tick();
+    });
+  }
 
   // ─────────────────────────────────────────
-  // 7. CUSTOM CURSOR — desktop only
+  // 10. EXPERIENCE TABS — Work / Education
+  // ─────────────────────────────────────────
+  const tabBtns = document.querySelectorAll('.tab-btn');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('.timeline').forEach(tl => {
+        tl.classList.toggle('hidden', tl.id !== `tab-${target}`);
+      });
+
+      // Re-trigger reveal for newly shown items
+      document.querySelectorAll(`#tab-${target} .reveal`).forEach(el => {
+        el.classList.add('visible');
+      });
+    });
+  });
+
+  // ─────────────────────────────────────────
+  // 11. PROJECT FILTER
+  // ─────────────────────────────────────────
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const projectCards = document.querySelectorAll('.project-card');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+
+      projectCards.forEach(card => {
+        const category = card.dataset.category;
+        if (filter === 'all' || category === filter) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  });
+
+  // ─────────────────────────────────────────
+  // 12. TESTIMONIALS SLIDER
+  // ─────────────────────────────────────────
+  const track     = document.getElementById('testimonialsTrack');
+  const dots      = document.querySelectorAll('.slider-dot');
+  const prevBtn   = document.getElementById('sliderPrev');
+  const nextBtn   = document.getElementById('sliderNext');
+  let   current   = 0;
+  const total     = dots.length;
+  let   autoSlide = null;
+
+  function goToSlide(index) {
+    current = (index + total) % total;
+    track.style.transform = `translateX(-${current * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+
+  prevBtn.addEventListener('click', () => { goToSlide(current - 1); resetAuto(); });
+  nextBtn.addEventListener('click', () => { goToSlide(current + 1); resetAuto(); });
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => { goToSlide(+dot.dataset.index); resetAuto(); });
+  });
+
+  function startAuto() {
+    autoSlide = setInterval(() => goToSlide(current + 1), 5000);
+  }
+
+  function resetAuto() {
+    clearInterval(autoSlide);
+    startAuto();
+  }
+
+  startAuto();
+
+  // ─────────────────────────────────────────
+  // 13. CUSTOM CURSOR — desktop only
   // ─────────────────────────────────────────
   const cursorDot  = document.getElementById('cursorDot');
   const cursorRing = document.getElementById('cursorRing');
@@ -181,42 +328,35 @@ document.addEventListener('DOMContentLoaded', () => {
   let mouseX = 0, mouseY = 0;
   let ringX  = 0, ringY  = 0;
 
-  // Dot সরাসরি mouse কে follow করে
   document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
-
     cursorDot.style.left = mouseX + 'px';
     cursorDot.style.top  = mouseY + 'px';
   });
 
-  // Ring একটু lag করে follow করে — smooth feel
   function animateRing() {
     const speed = 0.15;
     ringX += (mouseX - ringX) * speed;
     ringY += (mouseY - ringY) * speed;
-
     cursorRing.style.left = ringX + 'px';
     cursorRing.style.top  = ringY + 'px';
-
     requestAnimationFrame(animateRing);
   }
 
   animateRing();
 
-  // Interactive elements এ hover করলে ring বড় হয়
-  document.querySelectorAll('a, button, .skill-card, .project-card').forEach(el => {
+  document.querySelectorAll('a, button, .skill-card, .project-card, .service-card').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
   });
 
   // ─────────────────────────────────────────
-  // 8. PARTICLE CANVAS — dark mode background
+  // 14. PARTICLE CANVAS — animated background
   // ─────────────────────────────────────────
   const canvas  = document.getElementById('particleCanvas');
   const ctx     = canvas.getContext('2d');
   let particles = [];
-  let animFrame;
 
   function resizeParticles() {
     canvas.width  = window.innerWidth;
@@ -231,29 +371,32 @@ document.addEventListener('DOMContentLoaded', () => {
       particles.push({
         x:     Math.random() * canvas.width,
         y:     Math.random() * canvas.height,
-        r:     Math.random() * 1.5 + 0.5,  // radius
-        dx:    (Math.random() - 0.5) * 0.4, // speed x
-        dy:    (Math.random() - 0.5) * 0.4, // speed y
+        r:     Math.random() * 1.5 + 0.5,
+        dx:    (Math.random() - 0.5) * 0.4,
+        dy:    (Math.random() - 0.5) * 0.4,
         alpha: Math.random() * 0.5 + 0.1,
       });
     }
   }
 
+  function getParticleColor() {
+    // Reads --particle CSS variable (set per color scheme)
+    const raw = getComputedStyle(html).getPropertyValue('--particle').trim();
+    return raw || '124, 77, 255';
+  }
+
   function drawParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     const isDark = html.getAttribute('data-theme') === 'dark';
+    const rgb    = getParticleColor();
+    const mult   = isDark ? 1 : 0.25;
 
     particles.forEach((p, i) => {
-      // Particle আঁকো
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = isDark
-        ? `rgba(124, 77, 255, ${p.alpha})`
-        : `rgba(108, 61, 230, ${p.alpha * 0.3})`;
+      ctx.fillStyle = `rgba(${rgb}, ${p.alpha * mult})`;
       ctx.fill();
 
-      // Nearby particles এর মধ্যে line আঁকো
       for (let j = i + 1; j < particles.length; j++) {
         const q    = particles[j];
         const dist = Math.hypot(p.x - q.x, p.y - q.y);
@@ -261,36 +404,28 @@ document.addEventListener('DOMContentLoaded', () => {
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(q.x, q.y);
-          const opacity = (1 - dist / 120) * 0.12;
-          ctx.strokeStyle = isDark
-            ? `rgba(124, 77, 255, ${opacity})`
-            : `rgba(108, 61, 230, ${opacity * 0.3})`;
+          ctx.strokeStyle = `rgba(${rgb}, ${(1 - dist / 120) * 0.12 * mult})`;
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
       }
 
-      // Move করো
       p.x += p.dx;
       p.y += p.dy;
-
-      // Border এ পৌঁছালে bounce করো
       if (p.x < 0 || p.x > canvas.width)  p.dx *= -1;
       if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
     });
 
-    animFrame = requestAnimationFrame(drawParticles);
+    requestAnimationFrame(drawParticles);
   }
 
-  // Initial setup
   resizeParticles();
   drawParticles();
 
-  // Window resize এ canvas resize করো
   window.addEventListener('resize', resizeParticles, { passive: true });
 
   // ─────────────────────────────────────────
-  // 9. BACK TO TOP BUTTON
+  // 15. BACK TO TOP BUTTON
   // ─────────────────────────────────────────
   const backTop = document.getElementById('backTop');
 
@@ -299,8 +434,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ─────────────────────────────────────────
-  // 10. CONTACT FORM — Gmail link দিয়ে খোলে
-  // Backend নেই, তাই mailto: দিয়ে email খুলি
+  // 16. CONTACT FORM
+  // CHANGE: Update email address below
   // ─────────────────────────────────────────
   const contactForm = document.getElementById('contactForm');
 
@@ -309,33 +444,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const name    = document.getElementById('name').value.trim();
     const email   = document.getElementById('email').value.trim();
+    const subject = document.getElementById('subject').value.trim() || `Portfolio Contact from ${name}`;
     const message = document.getElementById('message').value.trim();
 
     if (!name || !email || !message) return;
 
-    // mailto: link তৈরি করো
-    const subject = encodeURIComponent(`Portfolio Contact from ${name}`);
-    const body    = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
-    );
+    const encodedSubject = encodeURIComponent(subject);
+    const encodedBody    = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
 
-    window.location.href = `mailto:muntasir077@gmail.com?subject=${subject}&body=${body}`;
+    // CHANGE: Replace with your email address
+    window.location.href = `mailto:hello@alexmorgan.dev?subject=${encodedSubject}&body=${encodedBody}`;
 
-    // Form reset করো
     contactForm.reset();
   });
 
   // ─────────────────────────────────────────
-  // 11. SMOOTH SCROLL — nav link click করলে
+  // 17. SMOOTH SCROLL for all anchor links
   // ─────────────────────────────────────────
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', (e) => {
-      e.preventDefault();
       const target = document.querySelector(anchor.getAttribute('href'));
       if (target) {
-        // Navbar height বাদ দিয়ে scroll করো
-        const offset = target.offsetTop - 80;
-        window.scrollTo({ top: offset, behavior: 'smooth' });
+        e.preventDefault();
+        window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
       }
     });
   });
