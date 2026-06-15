@@ -129,7 +129,8 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
               {navLinks.map((link) => (
                 <li key={link.href} className="relative group">
                   {link.children ? (
-                    <button
+                    <Link
+                      href={link.href}
                       className={cn(
                         "flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                         isScrolled
@@ -145,7 +146,7 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
                     >
                       {link.label}
                       <ChevronDown className="w-3.5 h-3.5 transition-transform group-hover:rotate-180" />
-                    </button>
+                    </Link>
                   ) : (
                     <Link
                       href={link.href}

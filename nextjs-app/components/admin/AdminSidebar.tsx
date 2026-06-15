@@ -19,6 +19,9 @@ import {
   ShieldCheck,
   MessageSquare,
   Youtube,
+  HelpCircle,
+  CreditCard,
+  BookMarked,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +38,9 @@ const navItems = [
   { label: "Testimonials", href: "/admin/testimonials", icon: Star },
   { label: "Contacts", href: "/admin/contacts", icon: MessageSquare },
   { label: "Users", href: "/admin/users", icon: ShieldCheck },
+  { label: "FAQ", href: "/admin/faq", icon: HelpCircle },
+  { label: "Payment Methods", href: "/admin/payment-methods", icon: CreditCard },
+  { label: "Pages", href: "/admin/pages", icon: BookMarked },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

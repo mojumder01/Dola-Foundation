@@ -63,6 +63,9 @@ export async function updateSiteSettings(formData: FormData) {
       programsBannerImage: (formData.get("programsBannerImage") as string) || undefined,
       projectsBannerImage: (formData.get("projectsBannerImage") as string) || undefined,
       contactBannerImage: (formData.get("contactBannerImage") as string) || undefined,
+      volunteerBannerImage: (formData.get("volunteerBannerImage") as string) || undefined,
+      blogBannerImage: (formData.get("blogBannerImage") as string) || undefined,
+      googleMapsEmbedUrl: (formData.get("googleMapsEmbedUrl") as string) || undefined,
     };
 
     const settings = existing

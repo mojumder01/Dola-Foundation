@@ -203,6 +203,8 @@ export default function SettingsForm({ settings }: { settings: any }) {
             { name: "aboutBannerImage", label: "About Page Banner", page: "/about" },
             { name: "programsBannerImage", label: "Programs Page Banner", page: "/programs" },
             { name: "projectsBannerImage", label: "Projects Page Banner", page: "/projects" },
+            { name: "volunteerBannerImage", label: "Volunteer Page Banner", page: "/volunteer" },
+            { name: "blogBannerImage", label: "Blog Page Banner", page: "/blog" },
             { name: "contactBannerImage", label: "Contact Page Banner", page: "/contact" },
           ].map(({ name, label, page }) => (
             <div key={name}>
@@ -338,6 +340,18 @@ export default function SettingsForm({ settings }: { settings: any }) {
           <div>
             <Label className="label-base" htmlFor="email">Email</Label>
             <Input id="email" name="email" defaultValue={settings?.email || ""} />
+          </div>
+          <div className="sm:col-span-2">
+            <Label className="label-base" htmlFor="googleMapsEmbedUrl">Google Maps Embed URL</Label>
+            <Input
+              id="googleMapsEmbedUrl"
+              name="googleMapsEmbedUrl"
+              defaultValue={(settings as any)?.googleMapsEmbedUrl || ""}
+              placeholder="https://www.google.com/maps/embed?pb=..."
+            />
+            <p className="text-xs text-gray-400 mt-1">
+              Go to Google Maps → search your address → Share → Embed a map → copy the <code className="bg-gray-100 px-1 rounded">src</code> URL from the iframe code.
+            </p>
           </div>
         </div>
       </div>

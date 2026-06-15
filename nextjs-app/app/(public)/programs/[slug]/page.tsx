@@ -215,6 +215,9 @@ async function getProgram(slug: string) {
         icon: db.icon || "🌟",
         description: db.description,
         longDescription: db.longDescription || db.description,
+        bannerImage: db.bannerImage || null,
+        videoUrl: db.videoUrl || null,
+        videoPriority: db.videoPriority || "image",
         objectives: db.objectives ?? [],
         stats: [
           db.stat1Label && db.stat1Value ? { label: db.stat1Label, value: db.stat1Value } : null,
@@ -251,7 +254,10 @@ export default async function ProgramDetailPage({ params }: PageProps) {
     <div className="pt-20">
       {/* Hero */}
       <section className={`bg-gradient-to-br ${program.gradient} py-20 md:py-28 relative`}>
-        <div className="absolute inset-0 bg-black/20" />
+        {program.bannerImage && (
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${program.bannerImage})` }} />
+        )}
+        <div className="absolute inset-0 bg-black/50" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <Link
             href="/programs"

@@ -27,15 +27,6 @@ const quickLinks = [
   { label: "Contact", href: "/contact" },
 ];
 
-const programs = [
-  { label: "Education", href: "/programs/education" },
-  { label: "Healthcare", href: "/programs/healthcare" },
-  { label: "Charity & Relief", href: "/programs/charity-relief" },
-  { label: "Environment", href: "/programs/environment" },
-  { label: "Youth Development", href: "/programs/youth-development" },
-  { label: "Orphan Care", href: "/programs/orphan-care" },
-];
-
 interface FooterSettings {
   siteName?: string | null;
   tagline?: string | null;
@@ -49,11 +40,20 @@ interface FooterSettings {
   youtubeUrl?: string | null;
 }
 
+const DEFAULT_PROGRAMS = [
+  { label: "Education", href: "/programs/education" },
+  { label: "Healthcare", href: "/programs/healthcare" },
+  { label: "Charity & Relief", href: "/programs/charity-relief" },
+];
+
 export default function Footer({
   settings,
+  programs: dbPrograms,
 }: {
   settings?: FooterSettings | null;
+  programs?: { label: string; href: string }[];
 }) {
+  const programs = dbPrograms && dbPrograms.length > 0 ? dbPrograms : DEFAULT_PROGRAMS;
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [subError, setSubError] = useState(false);
@@ -190,6 +190,11 @@ export default function Footer({
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link href="/programs" className="text-gold/70 hover:text-gold text-xs transition-colors">
+                  View all programs →
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -265,11 +270,11 @@ export default function Footer({
               Built with ❤️ for a better world.
             </p>
             <div className="flex items-center gap-4 text-sm">
-              <Link href="/privacy" className="text-gray-500 hover:text-gray-300 transition-colors">
+              <Link href="/privacy-policy" className="text-gray-500 hover:text-gray-300 transition-colors">
                 Privacy Policy
               </Link>
               <span className="text-gray-700">•</span>
-              <Link href="/terms" className="text-gray-500 hover:text-gray-300 transition-colors">
+              <Link href="/terms-of-use" className="text-gray-500 hover:text-gray-300 transition-colors">
                 Terms of Use
               </Link>
             </div>

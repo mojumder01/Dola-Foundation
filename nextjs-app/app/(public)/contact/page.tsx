@@ -27,8 +27,17 @@ async function getSettings() {
   }
 }
 
+async function getDBFAQs() {
+  try {
+    return await prisma.fAQ.findMany({ where: { active: true }, orderBy: [{ order: "asc" }, { createdAt: "asc" }] });
+  } catch {
+    return [];
+  }
+}
+
 export default async function ContactPage() {
-  const settings = await getSettings();
+  const [settings, dbFaqs] = await Promise.all([getSettings(), getDBFAQs()]);
+  const faqs = dbFaqs.length > 0 ? dbFaqs : FAQS;
 
   const contactInfo = [
     {
@@ -137,22 +146,38 @@ export default async function ContactPage() {
               <h2 className="font-poppins font-bold text-2xl text-dark mb-6">
                 Find Us
               </h2>
-              <div className="bg-[#F8FAFC] rounded-2xl overflow-hidden h-80 border border-gray-200 flex items-center justify-center">
-                <div className="text-center text-gray-400">
-                  <MapPin className="w-12 h-12 mx-auto mb-3" />
-                  <p className="font-medium">Dola Foundation Office</p>
-                  <p className="text-sm">
-                    {settings?.address || "Dhanmondi, Dhaka, Bangladesh"}
-                  </p>
-                  <a
-                    href="https://maps.google.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary text-sm mt-2 inline-block hover:underline"
-                  >
-                    View on Google Maps →
-                  </a>
-                </div>
+              <div className="rounded-2xl overflow-hidden h-80 border border-gray-200">
+                {(settings as any)?.googleMapsEmbedUrl ? (
+                  <iframe
+                    src={(settings as any).googleMapsEmbedUrl}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Dola Foundation Location"
+                  />
+                ) : (
+                  <div className="bg-[#F8FAFC] h-full flex items-center justify-center">
+                    <div className="text-center text-gray-400">
+                      <MapPin className="w-12 h-12 mx-auto mb-3" />
+                      <p className="font-medium text-gray-600">Dola Foundation Office</p>
+                      <p className="text-sm mt-1">
+                        {settings?.address || "Village: Daribinni, Thana: Harinakundu, District: Jhenaidah, Division: Khulna"}
+                      </p>
+                      <a
+                        href={`https://maps.google.com/maps?q=${encodeURIComponent(settings?.address || "Harinakundu, Jhenaidah, Bangladesh")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary text-sm mt-3 inline-block hover:underline font-medium"
+                      >
+                        View on Google Maps →
+                      </a>
+                      <p className="text-xs mt-2 text-gray-400">Add Google Maps embed URL in Admin → Settings</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Social links */}
@@ -193,13 +218,17 @@ export default async function ContactPage() {
           </div>
           <div className="bg-white rounded-2xl shadow-card overflow-hidden">
             <Accordion type="single" collapsible className="divide-y divide-gray-100">
-              {FAQS.map((faq, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="px-6">
+              {(faqs as any[]).map((faq: any, index: number) => (
+                <AccordionItem key={faq.id || index} value={`item-${index}`} className="px-6">
                   <AccordionTrigger className="text-left font-semibold text-dark hover:no-underline">
                     {faq.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-gray-500 leading-relaxed">
-                    {faq.answer}
+                    {faq.answer?.includes("<") ? (
+                      <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
+                    ) : (
+                      faq.answer
+                    )}
                   </AccordionContent>
                 </AccordionItem>
               ))}

@@ -106,6 +106,9 @@ async function getProject(slug: string) {
         budget: db.budget ? Number(db.budget) : null,
         impact: null,
         gallery: db.gallery ?? [],
+        coverImage: db.gallery?.[0] || null,
+        videoUrl: db.videoUrl || null,
+        videoPriority: db.videoPriority || "image",
         milestones: [],
       };
     }
@@ -138,8 +141,12 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-primary to-[#1a4da0] py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-br from-primary to-[#1a4da0] py-20 md:py-28 relative">
+        {project.coverImage && (
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${project.coverImage})` }} />
+        )}
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <Link
             href="/projects"
             className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm"

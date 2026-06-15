@@ -55,6 +55,11 @@ model SiteSettings {
   programsBannerImage  String?
   projectsBannerImage  String?
   contactBannerImage   String?
+  volunteerBannerImage String?
+  blogBannerImage      String?
+  googleMapsEmbedUrl   String?
+  donatePageTitle      String?
+  donatePageSubtitle   String?  @db.Text
   stat1Label     String   @default("Lives Impacted")
   stat1Value     String   @default("5000")
   stat2Label     String   @default("Active Programs")
@@ -85,6 +90,8 @@ model Program {
   objectives      String[]
   icon        String?
   bannerImage String?
+  videoUrl    String?
+  videoPriority String   @default("image")
   gallery     String[]
   stat1Label  String?
   stat1Value  String?
@@ -107,6 +114,8 @@ model Project {
   budget      Decimal?
   location    String?
   gallery     String[]
+  videoUrl    String?
+  videoPriority String      @default("image")
   impact      String?       @db.Text
   status      ProjectStatus @default(ONGOING)
   startDate   DateTime?
@@ -129,6 +138,8 @@ model BlogPost {
   excerpt     String?
   content     String    @db.Text
   coverImage  String?
+  videoUrl    String?
+  videoPriority String  @default("image")
   category    String?
   tags        String[]
   author      String    @default("Dola Foundation")
@@ -143,6 +154,8 @@ model GalleryImage {
   title     String?
   url       String
   publicId  String?
+  videoUrl  String?
+  videoPriority String @default("image")
   category  String?
   order     Int      @default(0)
   createdAt DateTime @default(now())
@@ -257,4 +270,36 @@ model Subscriber {
   name      String?
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String   @db.Text
+  category  String?
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PageContent {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  content   String   @db.Text
+  published Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model PaymentMethodConfig {
+  id           String   @id @default(cuid())
+  name         String
+  type         String
+  accountInfo  String?
+  instructions String?  @db.Text
+  active       Boolean  @default(true)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
