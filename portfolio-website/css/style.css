@@ -67,40 +67,57 @@
 
 /* ═══════════════════════════════════════════
    THEME VARIABLES
-   data-theme="dark" and "light" control background + text
+   data-theme controls background + text only.
+   Colors (--primary, --accent, --glow) are
+   controlled by data-color rules above.
 ═══════════════════════════════════════════ */
 :root[data-theme="dark"] {
   --bg:          #070710;
   --bg-surface:  #0f0f1a;
   --bg-card:     #141428;
-  --primary:     #7c4dff;
-  --primary-dim: rgba(124, 77, 255, 0.15);
-  --accent:      #448aff;
   --text:        #f0f0ff;
   --text-muted:  #8892a4;
   --border:      rgba(255, 255, 255, 0.08);
-  --glow:        rgba(124, 77, 255, 0.45);
-  --card-hover:  rgba(124, 77, 255, 0.08);
   --nav-blur:    rgba(7, 7, 16, 0.85);
-  --tag-bg:      rgba(124, 77, 255, 0.15);
-  --tag-color:   #b39dff;
 }
 
 :root[data-theme="light"] {
   --bg:          #f5f5ff;
   --bg-surface:  #ffffff;
   --bg-card:     #ffffff;
-  --primary:     #6c3de6;
-  --primary-dim: rgba(108, 61, 230, 0.1);
-  --accent:      #2979ff;
   --text:        #1a1a2e;
   --text-muted:  #5a6a80;
   --border:      rgba(0, 0, 0, 0.09);
-  --glow:        rgba(108, 61, 230, 0.2);
-  --card-hover:  rgba(108, 61, 230, 0.05);
   --nav-blur:    rgba(245, 245, 255, 0.9);
-  --tag-bg:      rgba(108, 61, 230, 0.1);
-  --tag-color:   #6c3de6;
+}
+
+/* In light mode, reduce glow and card-hover intensity */
+:root[data-theme="light"][data-color="purple"] {
+  --primary:    #6c3de6;
+  --glow:       rgba(108, 61, 230, 0.2);
+  --card-hover: rgba(108, 61, 230, 0.05);
+  --tag-bg:     rgba(108, 61, 230, 0.1);
+  --tag-color:  #6c3de6;
+}
+:root[data-theme="light"][data-color="blue"] {
+  --primary:    #1565c0;
+  --glow:       rgba(21, 101, 192, 0.2);
+  --card-hover: rgba(21, 101, 192, 0.05);
+}
+:root[data-theme="light"][data-color="green"] {
+  --primary:    #00897b;
+  --glow:       rgba(0, 137, 123, 0.2);
+  --card-hover: rgba(0, 137, 123, 0.05);
+}
+:root[data-theme="light"][data-color="orange"] {
+  --primary:    #e65100;
+  --glow:       rgba(230, 81, 0, 0.2);
+  --card-hover: rgba(230, 81, 0, 0.05);
+}
+:root[data-theme="light"][data-color="red"] {
+  --primary:    #c62828;
+  --glow:       rgba(198, 40, 40, 0.2);
+  --card-hover: rgba(198, 40, 40, 0.05);
 }
 
 /* ═══════════════════════════════════════════
