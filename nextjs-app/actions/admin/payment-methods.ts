@@ -18,9 +18,11 @@ export async function createPaymentMethod(formData: FormData) {
     await prisma.paymentMethodConfig.create({
       data: {
         name: formData.get("name") as string,
+        nameBn: (formData.get("nameBn") as string) || undefined,
         type: formData.get("type") as string,
         accountInfo: (formData.get("accountInfo") as string) || undefined,
         instructions: (formData.get("instructions") as string) || undefined,
+        instructionsBn: (formData.get("instructionsBn") as string) || undefined,
         order: parseInt((formData.get("order") as string) || "0"),
         active: formData.get("active") === "true",
       },
@@ -40,9 +42,11 @@ export async function updatePaymentMethod(id: string, formData: FormData) {
       where: { id },
       data: {
         name: formData.get("name") as string,
+        nameBn: (formData.get("nameBn") as string) || undefined,
         type: formData.get("type") as string,
         accountInfo: (formData.get("accountInfo") as string) || undefined,
         instructions: (formData.get("instructions") as string) || undefined,
+        instructionsBn: (formData.get("instructionsBn") as string) || undefined,
         order: parseInt((formData.get("order") as string) || "0"),
         active: formData.get("active") === "true",
       },

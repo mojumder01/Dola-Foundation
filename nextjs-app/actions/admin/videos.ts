@@ -19,8 +19,10 @@ export async function createVideo(formData: FormData) {
     await prisma.video.create({
       data: {
         title: formData.get("title") as string,
+        titleBn: (formData.get("titleBn") as string) || undefined,
         youtubeUrl: formData.get("youtubeUrl") as string,
         description: (formData.get("description") as string) || undefined,
+        descriptionBn: (formData.get("descriptionBn") as string) || undefined,
         published: formData.get("published") === "true",
         order: parseInt((formData.get("order") as string) || "0"),
       },
@@ -40,8 +42,10 @@ export async function updateVideo(id: string, formData: FormData) {
       where: { id },
       data: {
         title: formData.get("title") as string,
+        titleBn: (formData.get("titleBn") as string) || undefined,
         youtubeUrl: formData.get("youtubeUrl") as string,
         description: (formData.get("description") as string) || undefined,
+        descriptionBn: (formData.get("descriptionBn") as string) || undefined,
         published: formData.get("published") === "true",
         order: parseInt((formData.get("order") as string) || "0"),
       },

@@ -19,7 +19,9 @@ type ContentItem = {
   id: string;
   icon: string | null;
   title: string | null;
+  titleBn?: string | null;
   description: string | null;
+  descriptionBn?: string | null;
   active: boolean;
   order: number;
 };
@@ -144,14 +146,24 @@ export default function ContentManager({
                 </div>
               )}
               <div className={showIcon ? "col-span-2" : ""}>
-                <Label htmlFor="title">Title *</Label>
+                <Label htmlFor="title">Title * <span className="text-gray-400 font-normal">(English)</span></Label>
                 <Input id="title" name="title" required defaultValue={editing?.title || ""} />
               </div>
             </div>
+            <div>
+              <Label htmlFor="titleBn">Title <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Input id="titleBn" name="titleBn" defaultValue={editing?.titleBn || ""} placeholder="বাংলায় লিখুন" />
+            </div>
             {showDescription && (
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea id="description" name="description" rows={3} defaultValue={editing?.description || ""} />
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="description">Description <span className="text-gray-400 font-normal">(English)</span></Label>
+                  <Textarea id="description" name="description" rows={3} defaultValue={editing?.description || ""} />
+                </div>
+                <div>
+                  <Label htmlFor="descriptionBn">Description <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                  <Textarea id="descriptionBn" name="descriptionBn" rows={3} defaultValue={editing?.descriptionBn || ""} placeholder="বাংলায় লিখুন" />
+                </div>
               </div>
             )}
             <div>

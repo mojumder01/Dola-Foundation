@@ -15,17 +15,21 @@ import {
   Send,
   ArrowRight,
 } from "lucide-react";
+import { ui } from "@/lib/translations";
+import type { Locale } from "@/lib/locale";
 
-const quickLinks = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/about" },
-  { label: "Programs", href: "/programs" },
-  { label: "Projects", href: "/projects" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Blog", href: "/blog" },
-  { label: "Volunteer", href: "/volunteer" },
-  { label: "Contact", href: "/contact" },
-];
+function getQuickLinks(locale: Locale) {
+  return [
+    { label: ui("nav", "home", locale), href: "/" },
+    { label: locale === "bn" ? "আমাদের কথা" : "About Us", href: "/about" },
+    { label: ui("nav", "programs", locale), href: "/programs" },
+    { label: ui("nav", "projects", locale), href: "/projects" },
+    { label: ui("nav", "gallery", locale), href: "/gallery" },
+    { label: ui("nav", "blog", locale), href: "/blog" },
+    { label: ui("nav", "volunteer", locale), href: "/volunteer" },
+    { label: ui("nav", "contact", locale), href: "/contact" },
+  ];
+}
 
 interface FooterSettings {
   siteName?: string | null;
@@ -50,11 +54,14 @@ const DEFAULT_PROGRAMS = [
 export default function Footer({
   settings,
   programs: dbPrograms,
+  locale = "en",
 }: {
   settings?: FooterSettings | null;
   programs?: { label: string; href: string }[];
+  locale?: Locale;
 }) {
   const programs = dbPrograms && dbPrograms.length > 0 ? dbPrograms : DEFAULT_PROGRAMS;
+  const quickLinks = getQuickLinks(locale);
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [subError, setSubError] = useState(false);
@@ -154,7 +161,7 @@ export default function Footer({
           {/* Column 2: Quick Links */}
           <div>
             <h3 className="font-poppins font-semibold text-white mb-5 text-base relative">
-              Quick Links
+              {ui("footer", "quickLinks", locale)}
               <span className="absolute bottom-0 left-0 w-8 h-0.5 bg-gold -mb-2"></span>
             </h3>
             <ul className="space-y-2.5 mt-4">
@@ -175,7 +182,7 @@ export default function Footer({
           {/* Column 3: Programs */}
           <div>
             <h3 className="font-poppins font-semibold text-white mb-5 text-base relative">
-              Our Programs
+              {ui("footer", "ourPrograms", locale)}
               <span className="absolute bottom-0 left-0 w-8 h-0.5 bg-gold -mb-2"></span>
             </h3>
             <ul className="space-y-2.5 mt-4">
@@ -192,7 +199,7 @@ export default function Footer({
               ))}
               <li>
                 <Link href="/programs" className="text-gold/70 hover:text-gold text-xs transition-colors">
-                  View all programs →
+                  {locale === "bn" ? "সব কার্যক্রম দেখুন →" : "View all programs →"}
                 </Link>
               </li>
             </ul>
@@ -201,7 +208,7 @@ export default function Footer({
           {/* Column 4: Contact + Newsletter */}
           <div>
             <h3 className="font-poppins font-semibold text-white mb-5 text-base relative">
-              Contact Us
+              {ui("footer", "contactUs", locale)}
               <span className="absolute bottom-0 left-0 w-8 h-0.5 bg-gold -mb-2"></span>
             </h3>
             <ul className="space-y-3 mt-4 mb-6">
@@ -225,11 +232,11 @@ export default function Footer({
 
             {/* Newsletter */}
             <h4 className="font-poppins font-semibold text-white mb-3 text-sm">
-              Newsletter
+              {ui("footer", "newsletter", locale)}
             </h4>
             {subscribed ? (
               <p className="text-green-400 text-sm flex items-center gap-1.5">
-                <span>✓</span> Thank you for subscribing!
+                <span>✓</span> {locale === "bn" ? "সাবস্ক্রাইব করার জন্য ধন্যবাদ!" : "Thank you for subscribing!"}
               </p>
             ) : (
               <>
@@ -238,7 +245,7 @@ export default function Footer({
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
+                    placeholder={ui("footer", "emailPlaceholder", locale)}
                     required
                     className="flex-1 bg-white/10 border border-white/20 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-gold transition-colors"
                   />
@@ -255,7 +262,9 @@ export default function Footer({
                   </button>
                 </form>
                 {subError && (
-                  <p className="text-red-400 text-xs mt-1.5">Failed to subscribe. Please try again.</p>
+                  <p className="text-red-400 text-xs mt-1.5">
+                    {locale === "bn" ? "সাবস্ক্রাইব করতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।" : "Failed to subscribe. Please try again."}
+                  </p>
                 )}
               </>
             )}
@@ -266,16 +275,16 @@ export default function Footer({
         <div className="border-t border-white/10 pt-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm text-center sm:text-left">
-              © {new Date().getFullYear()} {siteName}. All rights reserved.
-              Built with ❤️ for a better world.
+              © {new Date().getFullYear()} {siteName}. {ui("footer", "allRightsReserved", locale)}{" "}
+              {locale === "bn" ? "একটি উন্নত বিশ্বের জন্য ❤️ সহযোগে তৈরি।" : "Built with ❤️ for a better world."}
             </p>
             <div className="flex items-center gap-4 text-sm">
               <Link href="/privacy-policy" className="text-gray-500 hover:text-gray-300 transition-colors">
-                Privacy Policy
+                {ui("footer", "privacyPolicy", locale)}
               </Link>
               <span className="text-gray-700">•</span>
               <Link href="/terms-of-use" className="text-gray-500 hover:text-gray-300 transition-colors">
-                Terms of Use
+                {ui("footer", "termsOfUse", locale)}
               </Link>
             </div>
           </div>

@@ -7,28 +7,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ChevronDown, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ui } from "@/lib/translations";
+import type { Locale } from "@/lib/locale";
+import LanguageSwitch from "@/components/shared/LanguageSwitch";
 
 type NavChild = { label: string; href: string };
 type NavLink = { label: string; href: string; children?: NavChild[] };
-
-const BASE_NAV: NavLink[] = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Projects", href: "/projects" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Blog", href: "/blog" },
-  { label: "Volunteer", href: "/volunteer" },
-  { label: "Contact", href: "/contact" },
-];
 
 interface NavbarProps {
   logoUrl?: string | null;
   siteName?: string | null;
   tagline?: string | null;
   programs?: { label: string; href: string }[];
+  locale: Locale;
 }
 
-export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarProps) {
+export default function Navbar({ logoUrl, siteName, tagline, programs, locale }: NavbarProps) {
   const programChildren = programs && programs.length > 0 ? programs : [
     { label: "Education", href: "/programs/education" },
     { label: "Healthcare", href: "/programs/healthcare" },
@@ -44,10 +38,20 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
+  const BASE_NAV: NavLink[] = [
+    { label: ui("nav", "home", locale), href: "/" },
+    { label: ui("nav", "about", locale), href: "/about" },
+    { label: ui("nav", "projects", locale), href: "/projects" },
+    { label: ui("nav", "gallery", locale), href: "/gallery" },
+    { label: ui("nav", "blog", locale), href: "/blog" },
+    { label: ui("nav", "volunteer", locale), href: "/volunteer" },
+    { label: ui("nav", "contact", locale), href: "/contact" },
+  ];
+
   const navLinks = [
     BASE_NAV[0],
     BASE_NAV[1],
-    { label: "Programs", href: "/programs", children: programChildren },
+    { label: ui("nav", "programs", locale), href: "/programs", children: programChildren },
     ...BASE_NAV.slice(2),
   ];
 
@@ -191,6 +195,16 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
 
             {/* CTA + Mobile Toggle */}
             <div className="flex items-center gap-3">
+              <LanguageSwitch
+                locale={locale}
+                className={cn(
+                  "hidden sm:flex",
+                  isScrolled
+                    ? "border-gray-200 text-gray-700 hover:bg-gray-100"
+                    : "border-white/30 text-white hover:bg-white/10"
+                )}
+              />
+
               <Link href="/donate" className="hidden sm:block">
                 <Button
                   variant="default"
@@ -198,7 +212,7 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
                   className="font-semibold text-sm"
                 >
                   <Heart className="w-4 h-4 mr-2" />
-                  Donate Now
+                  {ui("nav", "donateNow", locale)}
                 </Button>
               </Link>
 
@@ -302,12 +316,16 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
                   </motion.div>
                 ))}
 
+                <div className="px-4 mt-2">
+                  <LanguageSwitch locale={locale} className="border-gray-200 text-gray-700 w-full justify-center" />
+                </div>
+
                 <div className="mt-6 p-4 bg-gradient-to-br from-primary to-green rounded-2xl text-white">
                   <p className="font-poppins font-semibold text-lg mb-1">
-                    Make a Difference
+                    {ui("common", "makeADifference", locale)}
                   </p>
                   <p className="text-sm text-white/80 mb-4">
-                    Your donation changes lives
+                    {ui("common", "donationChangesLives", locale)}
                   </p>
                   <Link href="/donate">
                     <Button
@@ -316,7 +334,7 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
                       size="sm"
                     >
                       <Heart className="w-4 h-4 mr-2" />
-                      Donate Now
+                      {ui("nav", "donateNow", locale)}
                     </Button>
                   </Link>
                 </div>

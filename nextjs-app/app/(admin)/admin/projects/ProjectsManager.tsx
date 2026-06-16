@@ -26,11 +26,14 @@ import ImagePicker from "@/components/admin/ImagePicker";
 type Project = {
   id: string;
   title: string;
+  titleBn?: string | null;
   slug: string;
   description: string;
+  descriptionBn?: string | null;
   location: string | null;
   status: string;
   impact: string | null;
+  impactBn?: string | null;
   budget: any;
   published: boolean;
   createdAt: Date;
@@ -249,7 +252,7 @@ export default function ProjectsManager({
               </div>
             )}
             <div>
-              <Label htmlFor="title">Title *</Label>
+              <Label htmlFor="title">Title * <span className="text-gray-400 font-normal">(English)</span></Label>
               <Input
                 id="title"
                 name="title"
@@ -259,25 +262,58 @@ export default function ProjectsManager({
               />
             </div>
             <div>
-              <Label htmlFor="description">Description *</Label>
-              <Textarea
-                id="description"
-                name="description"
-                required
-                rows={3}
-                defaultValue={editingProject?.description || ""}
-                placeholder="Describe this project..."
+              <Label htmlFor="titleBn">Title <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Input
+                id="titleBn"
+                name="titleBn"
+                defaultValue={editingProject?.titleBn || ""}
+                placeholder="বাংলায় লিখুন"
               />
             </div>
-            <div>
-              <Label htmlFor="impact">About This Project</Label>
-              <Textarea
-                id="impact"
-                name="impact"
-                rows={5}
-                defaultValue={editingProject?.impact || ""}
-                placeholder="Detailed description of this project (separate paragraphs with a blank line)..."
-              />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="description">Description * <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  required
+                  rows={3}
+                  defaultValue={editingProject?.description || ""}
+                  placeholder="Describe this project..."
+                />
+              </div>
+              <div>
+                <Label htmlFor="descriptionBn">Description <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Textarea
+                  id="descriptionBn"
+                  name="descriptionBn"
+                  rows={3}
+                  defaultValue={editingProject?.descriptionBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="impact">About This Project <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Textarea
+                  id="impact"
+                  name="impact"
+                  rows={5}
+                  defaultValue={editingProject?.impact || ""}
+                  placeholder="Detailed description of this project (separate paragraphs with a blank line)..."
+                />
+              </div>
+              <div>
+                <Label htmlFor="impactBn">About This Project <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Textarea
+                  id="impactBn"
+                  name="impactBn"
+                  rows={5}
+                  defaultValue={editingProject?.impactBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
             </div>
             <div>
               <Label htmlFor="location">Location</Label>

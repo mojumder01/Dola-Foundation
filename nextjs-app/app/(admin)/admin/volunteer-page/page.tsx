@@ -49,12 +49,14 @@ export default async function AdminVolunteerPagePage() {
               label: "Badge Text",
               defaultValue: settings?.volunteerPageBadge || "",
               placeholder: "Get Involved",
+              bn: { name: "volunteerPageBadgeBn", defaultValue: (settings as any)?.volunteerPageBadgeBn || "" },
             },
             {
               name: "volunteerPageTitle",
               label: "Title",
               defaultValue: settings?.volunteerPageTitle || "",
               placeholder: "Volunteer With Us",
+              bn: { name: "volunteerPageTitleBn", defaultValue: (settings as any)?.volunteerPageTitleBn || "" },
             },
             {
               name: "volunteerPageSubtitle",
@@ -64,6 +66,7 @@ export default async function AdminVolunteerPagePage() {
               defaultValue: settings?.volunteerPageSubtitle || "",
               placeholder:
                 "Your time, skills, and passion can change lives. Join our community of 500+ volunteers working to build a better Bangladesh.",
+              bn: { name: "volunteerPageSubtitleBn", defaultValue: (settings as any)?.volunteerPageSubtitleBn || "" },
             },
           ]}
         />
@@ -78,6 +81,7 @@ export default async function AdminVolunteerPagePage() {
               label: "Heading",
               defaultValue: settings?.volunteerWhyHeading || "",
               placeholder: "Why Volunteer With Us?",
+              bn: { name: "volunteerWhyHeadingBn", defaultValue: (settings as any)?.volunteerWhyHeadingBn || "" },
             },
             {
               name: "volunteerWhyDescription",
@@ -87,6 +91,7 @@ export default async function AdminVolunteerPagePage() {
               defaultValue: settings?.volunteerWhyDescription || "",
               placeholder:
                 "Volunteering with Dola Foundation is a rewarding experience that benefits both you and the communities we serve.",
+              bn: { name: "volunteerWhyDescriptionBn", defaultValue: (settings as any)?.volunteerWhyDescriptionBn || "" },
             },
           ]}
         />
@@ -109,6 +114,7 @@ export default async function AdminVolunteerPagePage() {
               label: "Heading",
               defaultValue: settings?.volunteerHowHeading || "",
               placeholder: "How It Works",
+              bn: { name: "volunteerHowHeadingBn", defaultValue: (settings as any)?.volunteerHowHeadingBn || "" },
             },
           ]}
         />
@@ -131,6 +137,7 @@ export default async function AdminVolunteerPagePage() {
               label: "Heading",
               defaultValue: settings?.volunteerApplyHeading || "",
               placeholder: "Apply to Volunteer",
+              bn: { name: "volunteerApplyHeadingBn", defaultValue: (settings as any)?.volunteerApplyHeadingBn || "" },
             },
             {
               name: "volunteerApplySubtitle",
@@ -139,6 +146,7 @@ export default async function AdminVolunteerPagePage() {
               rows: 2,
               defaultValue: settings?.volunteerApplySubtitle || "",
               placeholder: "Fill in the form below and we'll get back to you within 3-5 business days.",
+              bn: { name: "volunteerApplySubtitleBn", defaultValue: (settings as any)?.volunteerApplySubtitleBn || "" },
             },
           ]}
         />

@@ -14,8 +14,11 @@ import { formatDate } from "@/lib/utils";
 type FAQ = {
   id: string;
   question: string;
+  questionBn?: string | null;
   answer: string;
+  answerBn?: string | null;
   category: string | null;
+  categoryBn?: string | null;
   order: number;
   active: boolean;
   createdAt: Date;
@@ -112,23 +115,37 @@ export default function FAQManager({ faqs }: { faqs: FAQ[] }) {
           <form onSubmit={handleSubmit} className="space-y-4">
             {formError && <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm">{formError}</div>}
             <div>
-              <Label htmlFor="question">Question *</Label>
+              <Label htmlFor="question">Question * <span className="text-gray-400 font-normal">(English)</span></Label>
               <Input id="question" name="question" required defaultValue={editing?.question || ""} placeholder="e.g. How can I donate?" />
             </div>
             <div>
-              <Label htmlFor="answer">Answer *</Label>
-              <Textarea id="answer" name="answer" required rows={5} defaultValue={editing?.answer || ""} placeholder="Detailed answer... (HTML supported)" />
-              <p className="text-xs text-gray-400 mt-1">You can use HTML tags like &lt;b&gt;, &lt;a&gt;, &lt;br&gt; for formatting</p>
+              <Label htmlFor="questionBn">Question <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Input id="questionBn" name="questionBn" defaultValue={editing?.questionBn || ""} placeholder="বাংলায় লিখুন" />
             </div>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="answer">Answer * <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Textarea id="answer" name="answer" required rows={5} defaultValue={editing?.answer || ""} placeholder="Detailed answer... (HTML supported)" />
+              </div>
+              <div>
+                <Label htmlFor="answerBn">Answer <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Textarea id="answerBn" name="answerBn" rows={5} defaultValue={editing?.answerBn || ""} placeholder="বাংলায় লিখুন" />
+              </div>
+            </div>
+            <p className="text-xs text-gray-400 -mt-2">You can use HTML tags like &lt;b&gt;, &lt;a&gt;, &lt;br&gt; for formatting</p>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label htmlFor="category">Category (optional)</Label>
+                <Label htmlFor="category">Category (optional) <span className="text-gray-400 font-normal">(English)</span></Label>
                 <Input id="category" name="category" defaultValue={editing?.category || ""} placeholder="e.g. Donation, Volunteer" />
               </div>
               <div>
-                <Label htmlFor="order">Display Order</Label>
-                <Input id="order" name="order" type="number" defaultValue={editing?.order ?? 0} />
+                <Label htmlFor="categoryBn">Category <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Input id="categoryBn" name="categoryBn" defaultValue={editing?.categoryBn || ""} placeholder="বাংলায় লিখুন" />
               </div>
+            </div>
+            <div>
+              <Label htmlFor="order">Display Order</Label>
+              <Input id="order" name="order" type="number" defaultValue={editing?.order ?? 0} />
             </div>
             <div className="flex items-center gap-2">
               <input ref={activeRef} type="checkbox" id="active" name="active" defaultChecked={editing?.active ?? true} className="w-4 h-4 rounded" />

@@ -26,13 +26,18 @@ import ImagePicker from "@/components/admin/ImagePicker";
 type Post = {
   id: string;
   title: string;
+  titleBn?: string | null;
   slug: string;
   category: string | null;
+  categoryBn?: string | null;
   author: string;
+  authorBn?: string | null;
   createdAt: Date;
   published: boolean;
   excerpt: string | null;
+  excerptBn?: string | null;
   content: string;
+  contentBn?: string | null;
   coverImage: string | null;
 };
 
@@ -230,13 +235,22 @@ export default function BlogManager({ posts, galleryImages = [] }: { posts: Post
               </div>
             )}
             <div>
-              <Label htmlFor="title">Title *</Label>
+              <Label htmlFor="title">Title * <span className="text-gray-400 font-normal">(English)</span></Label>
               <Input
                 id="title"
                 name="title"
                 required
                 defaultValue={editingPost?.title || ""}
                 placeholder="Post title"
+              />
+            </div>
+            <div>
+              <Label htmlFor="titleBn">Title <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Input
+                id="titleBn"
+                name="titleBn"
+                defaultValue={editingPost?.titleBn || ""}
+                placeholder="বাংলায় লিখুন"
               />
             </div>
             <div>
@@ -250,18 +264,30 @@ export default function BlogManager({ posts, galleryImages = [] }: { posts: Post
                 placeholder="https://... (shown on blog cards)"
               />
             </div>
-            <div>
-              <Label htmlFor="excerpt">Excerpt</Label>
-              <Textarea
-                id="excerpt"
-                name="excerpt"
-                rows={2}
-                defaultValue={editingPost?.excerpt || ""}
-                placeholder="Short description..."
-              />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="excerpt">Excerpt <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Textarea
+                  id="excerpt"
+                  name="excerpt"
+                  rows={2}
+                  defaultValue={editingPost?.excerpt || ""}
+                  placeholder="Short description..."
+                />
+              </div>
+              <div>
+                <Label htmlFor="excerptBn">Excerpt <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Textarea
+                  id="excerptBn"
+                  name="excerptBn"
+                  rows={2}
+                  defaultValue={editingPost?.excerptBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
             </div>
             <div>
-              <Label htmlFor="content">Content *</Label>
+              <Label htmlFor="content">Content * <span className="text-gray-400 font-normal">(English)</span></Label>
               <Textarea
                 id="content"
                 name="content"
@@ -271,9 +297,19 @@ export default function BlogManager({ posts, galleryImages = [] }: { posts: Post
                 placeholder="Post content..."
               />
             </div>
+            <div>
+              <Label htmlFor="contentBn">Content <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Textarea
+                id="contentBn"
+                name="contentBn"
+                rows={5}
+                defaultValue={editingPost?.contentBn || ""}
+                placeholder="বাংলায় লিখুন"
+              />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="category">Category</Label>
+                <Label htmlFor="category">Category <span className="text-gray-400 font-normal">(English)</span></Label>
                 <Input
                   id="category"
                   name="category"
@@ -282,12 +318,30 @@ export default function BlogManager({ posts, galleryImages = [] }: { posts: Post
                 />
               </div>
               <div>
-                <Label htmlFor="author">Author</Label>
+                <Label htmlFor="categoryBn">Category <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Input
+                  id="categoryBn"
+                  name="categoryBn"
+                  defaultValue={editingPost?.categoryBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
+              <div>
+                <Label htmlFor="author">Author <span className="text-gray-400 font-normal">(English)</span></Label>
                 <Input
                   id="author"
                   name="author"
                   defaultValue={editingPost?.author || "Dola Foundation"}
                   placeholder="Author name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="authorBn">Author <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Input
+                  id="authorBn"
+                  name="authorBn"
+                  defaultValue={editingPost?.authorBn || ""}
+                  placeholder="বাংলায় লিখুন"
                 />
               </div>
             </div>

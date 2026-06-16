@@ -1,6 +1,7 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { prisma } from "@/lib/prisma";
+import { getLocale, pickLocale } from "@/lib/locale";
 
 export const dynamic = "force-dynamic";
 
@@ -12,14 +13,17 @@ async function getSettings() {
   }
 }
 
-async function getNavPrograms() {
+async function getNavPrograms(locale: Awaited<ReturnType<typeof getLocale>>) {
   try {
     const programs = await prisma.program.findMany({
       where: { published: true },
       orderBy: { order: "asc" },
-      select: { title: true, slug: true },
+      select: { title: true, titleBn: true, slug: true },
     });
-    return programs.map((p) => ({ label: p.title, href: `/programs/${p.slug}` }));
+    return programs.map((p) => ({
+      label: pickLocale(p.title, p.titleBn, locale),
+      href: `/programs/${p.slug}`,
+    }));
   } catch {
     return [];
   }
@@ -42,7 +46,8 @@ export default async function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [settings, navPrograms] = await Promise.all([getSettings(), getNavPrograms()]);
+  const locale = await getLocale();
+  const [settings, navPrograms] = await Promise.all([getSettings(), getNavPrograms(locale)]);
 
   return (
     <>
@@ -56,18 +61,20 @@ export default async function PublicLayout({
       <div className="min-h-screen flex flex-col">
         <Navbar
           logoUrl={settings?.logoUrl}
-          siteName={settings?.siteName}
-          tagline={settings?.tagline}
+          siteName={settings ? pickLocale(settings.siteName, settings.siteNameBn, locale) : undefined}
+          tagline={settings ? pickLocale(settings.tagline, settings.taglineBn, locale) : undefined}
           programs={navPrograms}
+          locale={locale}
         />
         <main className="flex-1">{children}</main>
         <Footer
           programs={navPrograms}
+          locale={locale}
           settings={
             settings
               ? {
-                  siteName: settings.siteName,
-                  tagline: settings.tagline,
+                  siteName: pickLocale(settings.siteName, settings.siteNameBn, locale),
+                  tagline: pickLocale(settings.tagline, settings.taglineBn, locale),
                   logoUrl: settings.logoUrl,
                   address: settings.address,
                   phone: settings.phone,
@@ -76,7 +83,7 @@ export default async function PublicLayout({
                   instagramUrl: settings.instagramUrl,
                   twitterUrl: settings.twitterUrl,
                   youtubeUrl: settings.youtubeUrl,
-                  footerMissionText: (settings as any).footerMissionText,
+                  footerMissionText: pickLocale(settings.footerMissionText, settings.footerMissionTextBn, locale),
                 }
               : null
           }

@@ -59,12 +59,14 @@ export default async function AdminHomepagePage() {
               label: "Badge Text",
               defaultValue: settings?.homeStatsBadge || "",
               placeholder: "Our Impact",
+              bn: { name: "homeStatsBadgeBn", defaultValue: (settings as any)?.homeStatsBadgeBn || "" },
             },
             {
               name: "homeStatsTitle",
               label: "Title",
               defaultValue: settings?.homeStatsTitle || "",
               placeholder: "Creating Real Change",
+              bn: { name: "homeStatsTitleBn", defaultValue: (settings as any)?.homeStatsTitleBn || "" },
             },
           ]}
         />
@@ -79,12 +81,14 @@ export default async function AdminHomepagePage() {
               label: "Badge Text",
               defaultValue: settings?.programsSectionBadge || "",
               placeholder: "What We Do",
+              bn: { name: "programsSectionBadgeBn", defaultValue: (settings as any)?.programsSectionBadgeBn || "" },
             },
             {
               name: "programsSectionTitle",
               label: "Title",
               defaultValue: settings?.programsSectionTitle || "",
               placeholder: "Our Programs",
+              bn: { name: "programsSectionTitleBn", defaultValue: (settings as any)?.programsSectionTitleBn || "" },
             },
             {
               name: "programsSectionSubtitle",
@@ -94,6 +98,7 @@ export default async function AdminHomepagePage() {
               defaultValue: settings?.programsSectionSubtitle || "",
               placeholder:
                 "We run six comprehensive programs designed to address the most critical needs of vulnerable communities in Bangladesh.",
+              bn: { name: "programsSectionSubtitleBn", defaultValue: (settings as any)?.programsSectionSubtitleBn || "" },
             },
           ]}
         />
@@ -108,12 +113,14 @@ export default async function AdminHomepagePage() {
               label: "Badge Text",
               defaultValue: settings?.projectsSectionBadge || "",
               placeholder: "Our Work",
+              bn: { name: "projectsSectionBadgeBn", defaultValue: (settings as any)?.projectsSectionBadgeBn || "" },
             },
             {
               name: "projectsSectionTitle",
               label: "Title",
               defaultValue: settings?.projectsSectionTitle || "",
               placeholder: "Featured Projects",
+              bn: { name: "projectsSectionTitleBn", defaultValue: (settings as any)?.projectsSectionTitleBn || "" },
             },
             {
               name: "projectsSectionSubtitle",
@@ -123,6 +130,7 @@ export default async function AdminHomepagePage() {
               defaultValue: settings?.projectsSectionSubtitle || "",
               placeholder:
                 "Discover some of our impactful projects transforming lives and communities across Bangladesh.",
+              bn: { name: "projectsSectionSubtitleBn", defaultValue: (settings as any)?.projectsSectionSubtitleBn || "" },
             },
           ]}
         />
@@ -137,12 +145,14 @@ export default async function AdminHomepagePage() {
               label: "Badge Text",
               defaultValue: settings?.storiesSectionBadge || "",
               placeholder: "Success Stories",
+              bn: { name: "storiesSectionBadgeBn", defaultValue: (settings as any)?.storiesSectionBadgeBn || "" },
             },
             {
               name: "storiesSectionTitle",
               label: "Title",
               defaultValue: settings?.storiesSectionTitle || "",
               placeholder: "Lives We've Changed",
+              bn: { name: "storiesSectionTitleBn", defaultValue: (settings as any)?.storiesSectionTitleBn || "" },
             },
             {
               name: "storiesSectionSubtitle",
@@ -152,6 +162,7 @@ export default async function AdminHomepagePage() {
               defaultValue: settings?.storiesSectionSubtitle || "",
               placeholder:
                 "Read the stories of real people whose lives have been transformed through our programs and your generous support.",
+              bn: { name: "storiesSectionSubtitleBn", defaultValue: (settings as any)?.storiesSectionSubtitleBn || "" },
             },
           ]}
         />
@@ -166,12 +177,14 @@ export default async function AdminHomepagePage() {
               label: "Badge Text",
               defaultValue: settings?.gallerySectionBadge || "",
               placeholder: "Gallery",
+              bn: { name: "gallerySectionBadgeBn", defaultValue: (settings as any)?.gallerySectionBadgeBn || "" },
             },
             {
               name: "gallerySectionTitle",
               label: "Title",
               defaultValue: settings?.gallerySectionTitle || "",
               placeholder: "Our Gallery",
+              bn: { name: "gallerySectionTitleBn", defaultValue: (settings as any)?.gallerySectionTitleBn || "" },
             },
             {
               name: "gallerySectionSubtitle",
@@ -180,6 +193,7 @@ export default async function AdminHomepagePage() {
               rows: 2,
               defaultValue: settings?.gallerySectionSubtitle || "",
               placeholder: "Glimpses of our work and impact across communities.",
+              bn: { name: "gallerySectionSubtitleBn", defaultValue: (settings as any)?.gallerySectionSubtitleBn || "" },
             },
           ]}
         />
@@ -194,12 +208,14 @@ export default async function AdminHomepagePage() {
               label: "Badge Text",
               defaultValue: settings?.videoSectionBadge || "",
               placeholder: "Watch & Learn",
+              bn: { name: "videoSectionBadgeBn", defaultValue: (settings as any)?.videoSectionBadgeBn || "" },
             },
             {
               name: "videoSectionTitle",
               label: "Title",
               defaultValue: settings?.videoSectionTitle || "",
               placeholder: "Our Videos",
+              bn: { name: "videoSectionTitleBn", defaultValue: (settings as any)?.videoSectionTitleBn || "" },
             },
             {
               name: "videoSectionSubtitle",
@@ -208,6 +224,7 @@ export default async function AdminHomepagePage() {
               rows: 2,
               defaultValue: settings?.videoSectionSubtitle || "",
               placeholder: "Watch our latest videos to learn more about our work and impact across Bangladesh.",
+              bn: { name: "videoSectionSubtitleBn", defaultValue: (settings as any)?.videoSectionSubtitleBn || "" },
             },
           ]}
         />
@@ -222,12 +239,14 @@ export default async function AdminHomepagePage() {
               label: "Badge Text",
               defaultValue: settings?.homeVolunteerCtaBadge || "",
               placeholder: "Join Us",
+              bn: { name: "homeVolunteerCtaBadgeBn", defaultValue: (settings as any)?.homeVolunteerCtaBadgeBn || "" },
             },
             {
               name: "homeVolunteerCtaTitle",
               label: "Title",
               defaultValue: settings?.homeVolunteerCtaTitle || "",
               placeholder: "Join Our Mission to Change Lives",
+              bn: { name: "homeVolunteerCtaTitleBn", defaultValue: (settings as any)?.homeVolunteerCtaTitleBn || "" },
             },
             {
               name: "homeVolunteerCtaSubtitle",
@@ -237,6 +256,7 @@ export default async function AdminHomepagePage() {
               defaultValue: settings?.homeVolunteerCtaSubtitle || "",
               placeholder:
                 "Become a volunteer and make a tangible difference in the lives of those who need it most. Your time and skills are invaluable.",
+              bn: { name: "homeVolunteerCtaSubtitleBn", defaultValue: (settings as any)?.homeVolunteerCtaSubtitleBn || "" },
             },
           ]}
         />
@@ -259,18 +279,21 @@ export default async function AdminHomepagePage() {
               label: "Badge Text",
               defaultValue: settings?.homeDonationCtaBadge || "",
               placeholder: "Support Our Mission",
+              bn: { name: "homeDonationCtaBadgeBn", defaultValue: (settings as any)?.homeDonationCtaBadgeBn || "" },
             },
             {
               name: "homeDonationCtaTitleLine1",
               label: "Title (Line 1)",
               defaultValue: settings?.homeDonationCtaTitleLine1 || "",
               placeholder: "Your Generosity",
+              bn: { name: "homeDonationCtaTitleLine1Bn", defaultValue: (settings as any)?.homeDonationCtaTitleLine1Bn || "" },
             },
             {
               name: "homeDonationCtaTitleLine2",
               label: "Title (Line 2, gold)",
               defaultValue: settings?.homeDonationCtaTitleLine2 || "",
               placeholder: "Changes Lives",
+              bn: { name: "homeDonationCtaTitleLine2Bn", defaultValue: (settings as any)?.homeDonationCtaTitleLine2Bn || "" },
             },
             {
               name: "homeDonationCtaSubtitle",
@@ -280,6 +303,7 @@ export default async function AdminHomepagePage() {
               defaultValue: settings?.homeDonationCtaSubtitle || "",
               placeholder:
                 "Every donation, big or small, makes a real difference in the lives of the people we serve. Join thousands of donors who are helping us build a better Bangladesh.",
+              bn: { name: "homeDonationCtaSubtitleBn", defaultValue: (settings as any)?.homeDonationCtaSubtitleBn || "" },
             },
           ]}
         />

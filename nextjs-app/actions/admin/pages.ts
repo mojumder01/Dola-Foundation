@@ -20,12 +20,16 @@ export async function upsertPageContent(slug: string, formData: FormData) {
       create: {
         slug,
         title: formData.get("title") as string,
+        titleBn: (formData.get("titleBn") as string) || undefined,
         content: formData.get("content") as string,
+        contentBn: (formData.get("contentBn") as string) || undefined,
         published,
       },
       update: {
         title: formData.get("title") as string,
+        titleBn: (formData.get("titleBn") as string) || undefined,
         content: formData.get("content") as string,
+        contentBn: (formData.get("contentBn") as string) || undefined,
         published,
       },
     });

@@ -27,19 +27,29 @@ enum Role {
 model SiteSettings {
   id             String   @id @default(cuid())
   siteName       String   @default("Dola Foundation")
+  siteNameBn     String?
   tagline        String   @default("Empowering Lives")
+  taglineBn      String?
   logoUrl        String?
   faviconUrl          String?
   announcementText    String?
+  announcementTextBn  String?
   announcementEnabled Boolean  @default(true)
   heroTitle      String   @default("Empowering Lives, Inspiring Hope")
+  heroTitleBn    String?
   heroSubtitle   String   @default("We work to uplift communities through education, healthcare, and sustainable development across Bangladesh.")
+  heroSubtitleBn String?  @db.Text
   heroImage      String?
   aboutText      String?  @db.Text
+  aboutTextBn    String?  @db.Text
   missionText    String?  @db.Text
+  missionTextBn  String?  @db.Text
   visionText     String?  @db.Text
+  visionTextBn   String?  @db.Text
   founderName    String?
+  founderNameBn  String?
   founderMessage String?  @db.Text
+  founderMessageBn String? @db.Text
   founderImage   String?
   address        String?
   phone          String?
@@ -61,70 +71,115 @@ model SiteSettings {
   donateBannerImage    String?
   googleMapsEmbedUrl   String?
   donatePageTitle      String?
+  donatePageTitleBn    String?
   donatePageSubtitle   String?  @db.Text
+  donatePageSubtitleBn String?  @db.Text
   volunteerPageBadge      String?
+  volunteerPageBadgeBn    String?
   volunteerPageTitle      String?
+  volunteerPageTitleBn    String?
   volunteerPageSubtitle   String?  @db.Text
+  volunteerPageSubtitleBn String?  @db.Text
   volunteerWhyHeading     String?
+  volunteerWhyHeadingBn   String?
   volunteerWhyDescription String?  @db.Text
+  volunteerWhyDescriptionBn String? @db.Text
   volunteerHowHeading     String?
+  volunteerHowHeadingBn   String?
   volunteerApplyHeading   String?
+  volunteerApplyHeadingBn String?
   volunteerApplySubtitle  String?  @db.Text
+  volunteerApplySubtitleBn String? @db.Text
   officeHours          String?
   footerMissionText    String?  @db.Text
+  footerMissionTextBn  String?  @db.Text
   homeStatsBadge          String?
+  homeStatsBadgeBn        String?
   homeStatsTitle          String?
+  homeStatsTitleBn        String?
   programsSectionBadge    String?
+  programsSectionBadgeBn  String?
   programsSectionTitle    String?
+  programsSectionTitleBn  String?
   programsSectionSubtitle String?  @db.Text
+  programsSectionSubtitleBn String? @db.Text
   projectsSectionBadge    String?
+  projectsSectionBadgeBn  String?
   projectsSectionTitle    String?
+  projectsSectionTitleBn  String?
   projectsSectionSubtitle String?  @db.Text
+  projectsSectionSubtitleBn String? @db.Text
   storiesSectionBadge     String?
+  storiesSectionBadgeBn   String?
   storiesSectionTitle     String?
+  storiesSectionTitleBn   String?
   storiesSectionSubtitle  String?  @db.Text
+  storiesSectionSubtitleBn String? @db.Text
   gallerySectionBadge     String?
+  gallerySectionBadgeBn   String?
   gallerySectionTitle     String?
+  gallerySectionTitleBn   String?
   gallerySectionSubtitle  String?  @db.Text
+  gallerySectionSubtitleBn String? @db.Text
   videoSectionBadge       String?
+  videoSectionBadgeBn     String?
   videoSectionTitle       String?
+  videoSectionTitleBn     String?
   videoSectionSubtitle    String?  @db.Text
+  videoSectionSubtitleBn  String?  @db.Text
   homeVolunteerCtaBadge      String?
+  homeVolunteerCtaBadgeBn    String?
   homeVolunteerCtaTitle      String?
+  homeVolunteerCtaTitleBn    String?
   homeVolunteerCtaSubtitle   String?  @db.Text
+  homeVolunteerCtaSubtitleBn String?  @db.Text
   homeDonationCtaBadge       String?
+  homeDonationCtaBadgeBn     String?
   homeDonationCtaTitleLine1  String?
+  homeDonationCtaTitleLine1Bn String?
   homeDonationCtaTitleLine2  String?
+  homeDonationCtaTitleLine2Bn String?
   homeDonationCtaSubtitle    String?  @db.Text
+  homeDonationCtaSubtitleBn  String?  @db.Text
   sectionOrder   String   @default("stats,programs,projects,testimonials,gallery,video,volunteer,donation")
   stat1Label     String   @default("Lives Impacted")
+  stat1LabelBn   String?
   stat1Value     String   @default("5000")
   stat2Label     String   @default("Active Programs")
+  stat2LabelBn   String?
   stat2Value     String   @default("12")
   stat3Label     String   @default("Districts Reached")
+  stat3LabelBn   String?
   stat3Value     String   @default("8")
   stat4Label     String   @default("Volunteers")
+  stat4LabelBn   String?
   stat4Value     String   @default("500")
   aboutStat1Icon  String  @default("🏛️")
   aboutStat1Value String  @default("2015")
   aboutStat1Label String  @default("Founded")
+  aboutStat1LabelBn String?
   aboutStat2Icon  String  @default("❤️")
   aboutStat2Value String  @default("5,000+")
   aboutStat2Label String  @default("Lives Impacted")
+  aboutStat2LabelBn String?
   aboutStat3Icon  String  @default("📍")
   aboutStat3Value String  @default("8")
   aboutStat3Label String  @default("Districts Served")
+  aboutStat3LabelBn String?
   aboutStat4Icon  String  @default("👥")
   aboutStat4Value String  @default("500+")
   aboutStat4Label String  @default("Volunteers")
+  aboutStat4LabelBn String?
   updatedAt      DateTime @updatedAt
 }
 
 model Video {
   id          String   @id @default(cuid())
   title       String
+  titleBn     String?
   youtubeUrl  String
   description String?
+  descriptionBn String?
   published   Boolean  @default(true)
   order       Int      @default(0)
   createdAt   DateTime @default(now())
@@ -133,9 +188,12 @@ model Video {
 model Program {
   id          String     @id @default(cuid())
   title       String
+  titleBn     String?
   slug        String     @unique
   description     String     @db.Text
+  descriptionBn   String?    @db.Text
   longDescription String?    @db.Text
+  longDescriptionBn String?  @db.Text
   objectives      String[]
   icon        String?
   bannerImage String?
@@ -143,10 +201,13 @@ model Program {
   videoPriority String   @default("image")
   gallery     String[]
   stat1Label  String?
+  stat1LabelBn String?
   stat1Value  String?
   stat2Label  String?
+  stat2LabelBn String?
   stat2Value  String?
   stat3Label  String?
+  stat3LabelBn String?
   stat3Value  String?
   order       Int        @default(0)
   published   Boolean    @default(true)
@@ -158,14 +219,17 @@ model Program {
 model Project {
   id          String        @id @default(cuid())
   title       String
+  titleBn     String?
   slug        String        @unique
   description String        @db.Text
+  descriptionBn String?     @db.Text
   budget      Decimal?
   location    String?
   gallery     String[]
   videoUrl    String?
   videoPriority String      @default("image")
   impact      String?       @db.Text
+  impactBn    String?       @db.Text
   status      ProjectStatus @default(ONGOING)
   startDate   DateTime?
   endDate     DateTime?
@@ -183,15 +247,20 @@ enum ProjectStatus {
 model BlogPost {
   id          String    @id @default(cuid())
   title       String
+  titleBn     String?
   slug        String    @unique
   excerpt     String?
+  excerptBn   String?
   content     String    @db.Text
+  contentBn   String?   @db.Text
   coverImage  String?
   videoUrl    String?
   videoPriority String  @default("image")
   category    String?
+  categoryBn  String?
   tags        String[]
   author      String    @default("Dola Foundation")
+  authorBn    String?
   published   Boolean   @default(false)
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
@@ -201,6 +270,7 @@ model BlogPost {
 model GalleryImage {
   id        String   @id @default(cuid())
   title     String?
+  titleBn   String?
   url       String
   publicId  String?
   videoUrl  String?
@@ -213,8 +283,11 @@ model GalleryImage {
 model TeamMember {
   id        String   @id @default(cuid())
   name      String
+  nameBn    String?
   role      String
+  roleBn    String?
   bio       String?  @db.Text
+  bioBn     String?  @db.Text
   image     String?
   order     Int      @default(0)
   active    Boolean  @default(true)
@@ -224,8 +297,11 @@ model TeamMember {
 model Testimonial {
   id        String   @id @default(cuid())
   name      String
+  nameBn    String?
   quote     String   @db.Text
+  quoteBn   String?  @db.Text
   program   String?
+  programBn String?
   image     String?
   active    Boolean  @default(true)
   order     Int      @default(0)
@@ -324,8 +400,11 @@ model Subscriber {
 model FAQ {
   id        String   @id @default(cuid())
   question  String
+  questionBn String?
   answer    String   @db.Text
+  answerBn  String?  @db.Text
   category  String?
+  categoryBn String?
   order     Int      @default(0)
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
@@ -336,7 +415,9 @@ model PageContent {
   id        String   @id @default(cuid())
   slug      String   @unique
   title     String
+  titleBn   String?
   content   String   @db.Text
+  contentBn String?  @db.Text
   published Boolean  @default(true)
   updatedAt DateTime @updatedAt
 }
@@ -344,9 +425,11 @@ model PageContent {
 model PaymentMethodConfig {
   id           String   @id @default(cuid())
   name         String
+  nameBn       String?
   type         String
   accountInfo  String?
   instructions String?  @db.Text
+  instructionsBn String? @db.Text
   active       Boolean  @default(true)
   order        Int      @default(0)
   createdAt    DateTime @default(now())
@@ -358,6 +441,7 @@ model DonationImpact {
   icon      String   @default("💝")
   amount    Int
   impact    String
+  impactBn  String?
   active    Boolean  @default(true)
   order     Int      @default(0)
   createdAt DateTime @default(now())
@@ -369,7 +453,9 @@ model ContentItem {
   section     String
   icon        String?
   title       String?
+  titleBn     String?
   description String?  @db.Text
+  descriptionBn String? @db.Text
   order       Int      @default(0)
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())

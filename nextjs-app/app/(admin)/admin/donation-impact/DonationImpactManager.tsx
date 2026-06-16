@@ -15,6 +15,7 @@ type DonationImpact = {
   icon: string;
   amount: number;
   impact: string;
+  impactBn?: string | null;
   active: boolean;
   order: number;
 };
@@ -127,9 +128,15 @@ export default function DonationImpactManager({ impacts }: { impacts: DonationIm
                 <Input id="amount" name="amount" type="number" required min="1" defaultValue={editing?.amount ?? ""} placeholder="500" />
               </div>
             </div>
-            <div>
-              <Label htmlFor="impact">Impact Description *</Label>
-              <Textarea id="impact" name="impact" required rows={2} defaultValue={editing?.impact || ""} placeholder="e.g. Feeds a family of 5 for a week" />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="impact">Impact Description * <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Textarea id="impact" name="impact" required rows={2} defaultValue={editing?.impact || ""} placeholder="e.g. Feeds a family of 5 for a week" />
+              </div>
+              <div>
+                <Label htmlFor="impactBn">Impact Description <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Textarea id="impactBn" name="impactBn" rows={2} defaultValue={editing?.impactBn || ""} placeholder="বাংলায় লিখুন" />
+              </div>
             </div>
             <div>
               <Label htmlFor="order">Display Order</Label>

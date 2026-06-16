@@ -26,17 +26,23 @@ import ImagePicker from "@/components/admin/ImagePicker";
 type Program = {
   id: string;
   title: string;
+  titleBn?: string | null;
   slug: string;
   description: string;
+  descriptionBn?: string | null;
   longDescription: string | null;
+  longDescriptionBn?: string | null;
   icon: string | null;
   bannerImage: string | null;
   objectives: string[];
   stat1Label: string | null;
+  stat1LabelBn?: string | null;
   stat1Value: string | null;
   stat2Label: string | null;
+  stat2LabelBn?: string | null;
   stat2Value: string | null;
   stat3Label: string | null;
+  stat3LabelBn?: string | null;
   stat3Value: string | null;
   published: boolean;
   order: number;
@@ -233,7 +239,7 @@ export default function ProgramsManager({ programs, galleryImages = [] }: { prog
               </div>
             )}
             <div>
-              <Label htmlFor="title">Title *</Label>
+              <Label htmlFor="title">Title * <span className="text-gray-400 font-normal">(English)</span></Label>
               <Input
                 id="title"
                 name="title"
@@ -243,26 +249,59 @@ export default function ProgramsManager({ programs, galleryImages = [] }: { prog
               />
             </div>
             <div>
-              <Label htmlFor="description">Short Description *</Label>
-              <Textarea
-                id="description"
-                name="description"
-                required
-                rows={2}
-                defaultValue={editingProgram?.description || ""}
-                placeholder="Brief description shown on cards and hero..."
+              <Label htmlFor="titleBn">Title <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Input
+                id="titleBn"
+                name="titleBn"
+                defaultValue={editingProgram?.titleBn || ""}
+                placeholder="বাংলায় লিখুন"
               />
             </div>
-            <div>
-              <Label htmlFor="longDescription">Full Content</Label>
-              <Textarea
-                id="longDescription"
-                name="longDescription"
-                rows={6}
-                defaultValue={editingProgram?.longDescription || ""}
-                placeholder={"Write the full program story here...\n\nUse blank lines between paragraphs."}
-              />
-              <p className="text-xs text-gray-400 mt-1">Shown in the 'About This Program' section on the detail page. Separate paragraphs with a blank line.</p>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="description">Short Description * <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  required
+                  rows={2}
+                  defaultValue={editingProgram?.description || ""}
+                  placeholder="Brief description shown on cards and hero..."
+                />
+              </div>
+              <div>
+                <Label htmlFor="descriptionBn">Short Description <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Textarea
+                  id="descriptionBn"
+                  name="descriptionBn"
+                  rows={2}
+                  defaultValue={editingProgram?.descriptionBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="longDescription">Full Content <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Textarea
+                  id="longDescription"
+                  name="longDescription"
+                  rows={6}
+                  defaultValue={editingProgram?.longDescription || ""}
+                  placeholder={"Write the full program story here...\n\nUse blank lines between paragraphs."}
+                />
+                <p className="text-xs text-gray-400 mt-1">Shown in the 'About This Program' section on the detail page. Separate paragraphs with a blank line.</p>
+              </div>
+              <div>
+                <Label htmlFor="longDescriptionBn">Full Content <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Textarea
+                  id="longDescriptionBn"
+                  name="longDescriptionBn"
+                  rows={6}
+                  defaultValue={editingProgram?.longDescriptionBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
             </div>
             <div>
               <Label htmlFor="icon">Icon (emoji)</Label>
@@ -308,16 +347,20 @@ export default function ProgramsManager({ programs, galleryImages = [] }: { prog
                 { i: 2, valueEx: "15", labelEx: "Learning Centers" },
                 { i: 3, valueEx: "5", labelEx: "Districts Covered" },
               ].map(({ i, valueEx, labelEx }) => (
-                <div key={i} className="grid grid-cols-2 gap-2 bg-[#F8FAFC] rounded-xl p-3">
+                <div key={i} className="grid sm:grid-cols-3 gap-2 bg-[#F8FAFC] rounded-xl p-3">
                   <div>
                     <Label htmlFor={`stat${i}Value`} className="text-xs">Stat {i} — Value</Label>
                     <Input id={`stat${i}Value`} name={`stat${i}Value`} defaultValue={(editingProgram as any)?.[`stat${i}Value`] || ""} placeholder={valueEx} />
                     <p className="text-xs text-gray-400 mt-0.5">e.g. {valueEx}</p>
                   </div>
                   <div>
-                    <Label htmlFor={`stat${i}Label`} className="text-xs">Stat {i} — Label</Label>
+                    <Label htmlFor={`stat${i}Label`} className="text-xs">Stat {i} — Label <span className="text-gray-400 font-normal">(English)</span></Label>
                     <Input id={`stat${i}Label`} name={`stat${i}Label`} defaultValue={(editingProgram as any)?.[`stat${i}Label`] || ""} placeholder={labelEx} />
                     <p className="text-xs text-gray-400 mt-0.5">e.g. {labelEx}</p>
+                  </div>
+                  <div>
+                    <Label htmlFor={`stat${i}LabelBn`} className="text-xs">Stat {i} — Label <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                    <Input id={`stat${i}LabelBn`} name={`stat${i}LabelBn`} defaultValue={(editingProgram as any)?.[`stat${i}LabelBn`] || ""} placeholder="বাংলায় লিখুন" />
                   </div>
                 </div>
               ))}

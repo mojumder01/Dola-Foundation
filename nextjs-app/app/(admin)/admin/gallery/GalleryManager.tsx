@@ -19,6 +19,7 @@ type GalleryImage = {
   id: string;
   url: string;
   title: string | null;
+  titleBn?: string | null;
   category: string | null;
   order: number;
 };
@@ -72,12 +73,14 @@ export default function GalleryManager({
     const fd = new FormData(form);
     const url = fd.get("url") as string;
     const title = fd.get("title") as string;
+    const titleBn = fd.get("titleBn") as string;
     const category = fd.get("category") as string;
     setFormError(null);
     startTransition(async () => {
       const result = await addGalleryImage({
         url,
         title: title || undefined,
+        titleBn: titleBn || undefined,
         category: category || undefined,
       });
       if (!result.success) {
@@ -244,13 +247,23 @@ export default function GalleryManager({
                 placeholder="https://example.com/image.jpg"
               />
             </div>
-            <div>
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                name="title"
-                placeholder="Image title"
-              />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="title">Title <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Input
+                  id="title"
+                  name="title"
+                  placeholder="Image title"
+                />
+              </div>
+              <div>
+                <Label htmlFor="titleBn">Title <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Input
+                  id="titleBn"
+                  name="titleBn"
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
             </div>
             <div>
               <Label htmlFor="category">Category</Label>

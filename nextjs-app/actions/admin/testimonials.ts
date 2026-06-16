@@ -23,8 +23,11 @@ export async function createTestimonial(formData: FormData) {
     const testimonial = await prisma.testimonial.create({
       data: {
         name: formData.get("name") as string,
+        nameBn: (formData.get("nameBn") as string) || undefined,
         quote: formData.get("quote") as string,
+        quoteBn: (formData.get("quoteBn") as string) || undefined,
         program: (formData.get("program") as string) || undefined,
+        programBn: (formData.get("programBn") as string) || undefined,
         image: (formData.get("image") as string) || undefined,
         active: formData.get("active") === "true",
       },
@@ -44,8 +47,11 @@ export async function updateTestimonial(id: string, formData: FormData) {
       where: { id },
       data: {
         name: formData.get("name") as string,
+        nameBn: (formData.get("nameBn") as string) || undefined,
         quote: formData.get("quote") as string,
+        quoteBn: (formData.get("quoteBn") as string) || undefined,
         program: (formData.get("program") as string) || undefined,
+        programBn: (formData.get("programBn") as string) || undefined,
         image: (formData.get("image") as string) || undefined,
         active: formData.get("active") === "true",
       },

@@ -146,12 +146,20 @@ export default function SettingsForm({ settings }: { settings: any }) {
         <div className="space-y-4">
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <Label className="label-base" htmlFor="siteName">Site Name</Label>
+              <Label className="label-base" htmlFor="siteName">Site Name <span className="text-gray-400 font-normal">(English)</span></Label>
               <Input id="siteName" name="siteName" defaultValue={settings?.siteName || ""} placeholder="Dola Foundation" />
             </div>
             <div>
-              <Label className="label-base" htmlFor="tagline">Tagline</Label>
+              <Label className="label-base" htmlFor="siteNameBn">Site Name <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Input id="siteNameBn" name="siteNameBn" defaultValue={(settings as any)?.siteNameBn || ""} placeholder="বাংলায় লিখুন" />
+            </div>
+            <div>
+              <Label className="label-base" htmlFor="tagline">Tagline <span className="text-gray-400 font-normal">(English)</span></Label>
               <Input id="tagline" name="tagline" defaultValue={settings?.tagline || ""} placeholder="Empowering Lives" />
+            </div>
+            <div>
+              <Label className="label-base" htmlFor="taglineBn">Tagline <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Input id="taglineBn" name="taglineBn" defaultValue={(settings as any)?.taglineBn || ""} placeholder="বাংলায় লিখুন" />
             </div>
           </div>
           <div>
@@ -229,13 +237,25 @@ export default function SettingsForm({ settings }: { settings: any }) {
           Hero Section
         </h2>
         <div className="space-y-4">
-          <div>
-            <Label className="label-base" htmlFor="heroTitle">Hero Title</Label>
-            <Input id="heroTitle" name="heroTitle" defaultValue={settings?.heroTitle} placeholder="Empowering Lives, Inspiring Hope" />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label className="label-base" htmlFor="heroTitle">Hero Title <span className="text-gray-400 font-normal">(English)</span></Label>
+              <Input id="heroTitle" name="heroTitle" defaultValue={settings?.heroTitle} placeholder="Empowering Lives, Inspiring Hope" />
+            </div>
+            <div>
+              <Label className="label-base" htmlFor="heroTitleBn">Hero Title <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Input id="heroTitleBn" name="heroTitleBn" defaultValue={(settings as any)?.heroTitleBn || ""} placeholder="বাংলায় লিখুন" />
+            </div>
           </div>
-          <div>
-            <Label className="label-base" htmlFor="heroSubtitle">Hero Subtitle</Label>
-            <Textarea id="heroSubtitle" name="heroSubtitle" defaultValue={settings?.heroSubtitle} rows={2} />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label className="label-base" htmlFor="heroSubtitle">Hero Subtitle <span className="text-gray-400 font-normal">(English)</span></Label>
+              <Textarea id="heroSubtitle" name="heroSubtitle" defaultValue={settings?.heroSubtitle} rows={2} />
+            </div>
+            <div>
+              <Label className="label-base" htmlFor="heroSubtitleBn">Hero Subtitle <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Textarea id="heroSubtitleBn" name="heroSubtitleBn" defaultValue={(settings as any)?.heroSubtitleBn || ""} rows={2} placeholder="বাংলায় লিখুন" />
+            </div>
           </div>
           <div>
             <Label className="label-base" htmlFor="heroImage">Hero Background Image URL</Label>
@@ -258,14 +278,25 @@ export default function SettingsForm({ settings }: { settings: any }) {
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
               </label>
             </div>
-            <div>
-              <Label className="label-base" htmlFor="announcementText">Announcement Text</Label>
-              <Input
-                id="announcementText"
-                name="announcementText"
-                defaultValue={(settings as any)?.announcementText || ""}
-                placeholder="✨ Empowering Communities Since 2015"
-              />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label className="label-base" htmlFor="announcementText">Announcement Text <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Input
+                  id="announcementText"
+                  name="announcementText"
+                  defaultValue={(settings as any)?.announcementText || ""}
+                  placeholder="✨ Empowering Communities Since 2015"
+                />
+              </div>
+              <div>
+                <Label className="label-base" htmlFor="announcementTextBn">Announcement Text <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Input
+                  id="announcementTextBn"
+                  name="announcementTextBn"
+                  defaultValue={(settings as any)?.announcementTextBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -320,13 +351,25 @@ export default function SettingsForm({ settings }: { settings: any }) {
           The headline and subtitle shown in the hero section of the <strong>/donate</strong> page.
         </p>
         <div className="space-y-4">
-          <div>
-            <Label className="label-base" htmlFor="donatePageTitle">Donate Page Title</Label>
-            <Input id="donatePageTitle" name="donatePageTitle" defaultValue={(settings as any)?.donatePageTitle || ""} placeholder="Donate to Dola Foundation" />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label className="label-base" htmlFor="donatePageTitle">Donate Page Title <span className="text-gray-400 font-normal">(English)</span></Label>
+              <Input id="donatePageTitle" name="donatePageTitle" defaultValue={(settings as any)?.donatePageTitle || ""} placeholder="Donate to Dola Foundation" />
+            </div>
+            <div>
+              <Label className="label-base" htmlFor="donatePageTitleBn">Donate Page Title <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Input id="donatePageTitleBn" name="donatePageTitleBn" defaultValue={(settings as any)?.donatePageTitleBn || ""} placeholder="বাংলায় লিখুন" />
+            </div>
           </div>
-          <div>
-            <Label className="label-base" htmlFor="donatePageSubtitle">Donate Page Subtitle</Label>
-            <Textarea id="donatePageSubtitle" name="donatePageSubtitle" defaultValue={(settings as any)?.donatePageSubtitle || ""} rows={2} placeholder="Your generous donation directly funds our programs..." />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label className="label-base" htmlFor="donatePageSubtitle">Donate Page Subtitle <span className="text-gray-400 font-normal">(English)</span></Label>
+              <Textarea id="donatePageSubtitle" name="donatePageSubtitle" defaultValue={(settings as any)?.donatePageSubtitle || ""} rows={2} placeholder="Your generous donation directly funds our programs..." />
+            </div>
+            <div>
+              <Label className="label-base" htmlFor="donatePageSubtitleBn">Donate Page Subtitle <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Textarea id="donatePageSubtitleBn" name="donatePageSubtitleBn" defaultValue={(settings as any)?.donatePageSubtitleBn || ""} rows={2} placeholder="বাংলায় লিখুন" />
+            </div>
           </div>
         </div>
       </div>
@@ -354,7 +397,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
                 <span className="w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center font-bold">{i}</span>
                 Statistic #{i}
               </h3>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
                   <Label className="label-base" htmlFor={`stat${i}Value`}>Number / Value</Label>
                   <Input
@@ -366,7 +409,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
                   <p className="text-xs text-gray-400 mt-1">e.g. {valueEx}</p>
                 </div>
                 <div>
-                  <Label className="label-base" htmlFor={`stat${i}Label`}>Label / Title</Label>
+                  <Label className="label-base" htmlFor={`stat${i}Label`}>Label <span className="text-gray-400 font-normal">(English)</span></Label>
                   <Input
                     id={`stat${i}Label`}
                     name={`stat${i}Label`}
@@ -374,6 +417,15 @@ export default function SettingsForm({ settings }: { settings: any }) {
                     placeholder={labelEx}
                   />
                   <p className="text-xs text-gray-400 mt-1">e.g. {labelEx}</p>
+                </div>
+                <div>
+                  <Label className="label-base" htmlFor={`stat${i}LabelBn`}>Label <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                  <Input
+                    id={`stat${i}LabelBn`}
+                    name={`stat${i}LabelBn`}
+                    defaultValue={(settings as any)?.[`stat${i}LabelBn`]}
+                    placeholder="বাংলায় লিখুন"
+                  />
                 </div>
               </div>
             </div>
@@ -402,17 +454,35 @@ export default function SettingsForm({ settings }: { settings: any }) {
           About Section
         </h2>
         <div className="space-y-4">
-          <div>
-            <Label className="label-base" htmlFor="aboutText">About Text</Label>
-            <Textarea id="aboutText" name="aboutText" defaultValue={settings?.aboutText || ""} rows={4} />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label className="label-base" htmlFor="aboutText">About Text <span className="text-gray-400 font-normal">(English)</span></Label>
+              <Textarea id="aboutText" name="aboutText" defaultValue={settings?.aboutText || ""} rows={4} />
+            </div>
+            <div>
+              <Label className="label-base" htmlFor="aboutTextBn">About Text <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Textarea id="aboutTextBn" name="aboutTextBn" defaultValue={(settings as any)?.aboutTextBn || ""} rows={4} placeholder="বাংলায় লিখুন" />
+            </div>
           </div>
-          <div>
-            <Label className="label-base" htmlFor="missionText">Mission Statement</Label>
-            <Textarea id="missionText" name="missionText" defaultValue={settings?.missionText || ""} rows={3} />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label className="label-base" htmlFor="missionText">Mission Statement <span className="text-gray-400 font-normal">(English)</span></Label>
+              <Textarea id="missionText" name="missionText" defaultValue={settings?.missionText || ""} rows={3} />
+            </div>
+            <div>
+              <Label className="label-base" htmlFor="missionTextBn">Mission Statement <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Textarea id="missionTextBn" name="missionTextBn" defaultValue={(settings as any)?.missionTextBn || ""} rows={3} placeholder="বাংলায় লিখুন" />
+            </div>
           </div>
-          <div>
-            <Label className="label-base" htmlFor="visionText">Vision Statement</Label>
-            <Textarea id="visionText" name="visionText" defaultValue={settings?.visionText || ""} rows={3} />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label className="label-base" htmlFor="visionText">Vision Statement <span className="text-gray-400 font-normal">(English)</span></Label>
+              <Textarea id="visionText" name="visionText" defaultValue={settings?.visionText || ""} rows={3} />
+            </div>
+            <div>
+              <Label className="label-base" htmlFor="visionTextBn">Vision Statement <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Textarea id="visionTextBn" name="visionTextBn" defaultValue={(settings as any)?.visionTextBn || ""} rows={3} placeholder="বাংলায় লিখুন" />
+            </div>
           </div>
         </div>
       </div>
@@ -437,7 +507,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
                 <span className="w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center font-bold">{i}</span>
                 Statistic #{i}
               </h3>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-4 gap-3">
                 <div>
                   <Label className="label-base" htmlFor={`aboutStat${i}Icon`}>Icon</Label>
                   <Input
@@ -457,12 +527,21 @@ export default function SettingsForm({ settings }: { settings: any }) {
                   />
                 </div>
                 <div>
-                  <Label className="label-base" htmlFor={`aboutStat${i}Label`}>Label</Label>
+                  <Label className="label-base" htmlFor={`aboutStat${i}Label`}>Label <span className="text-gray-400 font-normal">(En)</span></Label>
                   <Input
                     id={`aboutStat${i}Label`}
                     name={`aboutStat${i}Label`}
                     defaultValue={(settings as any)?.[`aboutStat${i}Label`]}
                     placeholder={labelEx}
+                  />
+                </div>
+                <div>
+                  <Label className="label-base" htmlFor={`aboutStat${i}LabelBn`}>Label <span className="text-gray-400 font-normal">(বাং)</span></Label>
+                  <Input
+                    id={`aboutStat${i}LabelBn`}
+                    name={`aboutStat${i}LabelBn`}
+                    defaultValue={(settings as any)?.[`aboutStat${i}LabelBn`]}
+                    placeholder="বাংলায়"
                   />
                 </div>
               </div>
@@ -477,17 +556,29 @@ export default function SettingsForm({ settings }: { settings: any }) {
           Founder's Message
         </h2>
         <div className="space-y-4">
-          <div>
-            <Label className="label-base" htmlFor="founderName">Founder Name</Label>
-            <Input id="founderName" name="founderName" defaultValue={settings?.founderName || ""} />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label className="label-base" htmlFor="founderName">Founder Name <span className="text-gray-400 font-normal">(English)</span></Label>
+              <Input id="founderName" name="founderName" defaultValue={settings?.founderName || ""} />
+            </div>
+            <div>
+              <Label className="label-base" htmlFor="founderNameBn">Founder Name <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Input id="founderNameBn" name="founderNameBn" defaultValue={(settings as any)?.founderNameBn || ""} placeholder="বাংলায় লিখুন" />
+            </div>
           </div>
           <div>
             <Label className="label-base" htmlFor="founderImage">Founder Photo URL</Label>
             <Input id="founderImage" name="founderImage" defaultValue={settings?.founderImage || ""} placeholder="https://..." />
           </div>
-          <div>
-            <Label className="label-base" htmlFor="founderMessage">Message</Label>
-            <Textarea id="founderMessage" name="founderMessage" defaultValue={settings?.founderMessage || ""} rows={5} />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label className="label-base" htmlFor="founderMessage">Message <span className="text-gray-400 font-normal">(English)</span></Label>
+              <Textarea id="founderMessage" name="founderMessage" defaultValue={settings?.founderMessage || ""} rows={5} />
+            </div>
+            <div>
+              <Label className="label-base" htmlFor="founderMessageBn">Message <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Textarea id="founderMessageBn" name="founderMessageBn" defaultValue={(settings as any)?.founderMessageBn || ""} rows={5} placeholder="বাংলায় লিখুন" />
+            </div>
           </div>
         </div>
       </div>
@@ -563,15 +654,27 @@ export default function SettingsForm({ settings }: { settings: any }) {
         <p className="text-xs text-gray-500 mb-4 mt-2">
           The short mission paragraph shown under the logo in the website footer.
         </p>
-        <div>
-          <Label className="label-base" htmlFor="footerMissionText">Footer Mission Text</Label>
-          <Textarea
-            id="footerMissionText"
-            name="footerMissionText"
-            defaultValue={(settings as any)?.footerMissionText || ""}
-            rows={3}
-            placeholder="We are dedicated to empowering communities through sustainable development, education, healthcare, and social welfare programs across Bangladesh."
-          />
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <Label className="label-base" htmlFor="footerMissionText">Footer Mission Text <span className="text-gray-400 font-normal">(English)</span></Label>
+            <Textarea
+              id="footerMissionText"
+              name="footerMissionText"
+              defaultValue={(settings as any)?.footerMissionText || ""}
+              rows={3}
+              placeholder="We are dedicated to empowering communities through sustainable development, education, healthcare, and social welfare programs across Bangladesh."
+            />
+          </div>
+          <div>
+            <Label className="label-base" htmlFor="footerMissionTextBn">Footer Mission Text <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+            <Textarea
+              id="footerMissionTextBn"
+              name="footerMissionTextBn"
+              defaultValue={(settings as any)?.footerMissionTextBn || ""}
+              rows={3}
+              placeholder="বাংলায় লিখুন"
+            />
+          </div>
         </div>
       </div>
 

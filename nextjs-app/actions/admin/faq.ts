@@ -18,8 +18,11 @@ export async function createFAQ(formData: FormData) {
     await prisma.fAQ.create({
       data: {
         question: formData.get("question") as string,
+        questionBn: (formData.get("questionBn") as string) || undefined,
         answer: formData.get("answer") as string,
+        answerBn: (formData.get("answerBn") as string) || undefined,
         category: (formData.get("category") as string) || undefined,
+        categoryBn: (formData.get("categoryBn") as string) || undefined,
         order: parseInt((formData.get("order") as string) || "0"),
         active: formData.get("active") === "true",
       },
@@ -39,8 +42,11 @@ export async function updateFAQ(id: string, formData: FormData) {
       where: { id },
       data: {
         question: formData.get("question") as string,
+        questionBn: (formData.get("questionBn") as string) || undefined,
         answer: formData.get("answer") as string,
+        answerBn: (formData.get("answerBn") as string) || undefined,
         category: (formData.get("category") as string) || undefined,
+        categoryBn: (formData.get("categoryBn") as string) || undefined,
         order: parseInt((formData.get("order") as string) || "0"),
         active: formData.get("active") === "true",
       },

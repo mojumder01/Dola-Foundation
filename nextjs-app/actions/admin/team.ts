@@ -23,8 +23,11 @@ export async function createTeamMember(formData: FormData) {
     const member = await prisma.teamMember.create({
       data: {
         name: formData.get("name") as string,
+        nameBn: (formData.get("nameBn") as string) || undefined,
         role: formData.get("role") as string,
+        roleBn: (formData.get("roleBn") as string) || undefined,
         bio: (formData.get("bio") as string) || undefined,
+        bioBn: (formData.get("bioBn") as string) || undefined,
         image: (formData.get("image") as string) || undefined,
         active: formData.get("active") === "true",
       },
@@ -44,8 +47,11 @@ export async function updateTeamMember(id: string, formData: FormData) {
       where: { id },
       data: {
         name: formData.get("name") as string,
+        nameBn: (formData.get("nameBn") as string) || undefined,
         role: formData.get("role") as string,
+        roleBn: (formData.get("roleBn") as string) || undefined,
         bio: (formData.get("bio") as string) || undefined,
+        bioBn: (formData.get("bioBn") as string) || undefined,
         image: (formData.get("image") as string) || undefined,
         active: formData.get("active") === "true",
       },

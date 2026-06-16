@@ -24,8 +24,11 @@ import {
 type Member = {
   id: string;
   name: string;
+  nameBn?: string | null;
   role: string;
+  roleBn?: string | null;
   bio: string | null;
+  bioBn?: string | null;
   image: string | null;
   active: boolean;
   order: number;
@@ -181,35 +184,69 @@ export default function TeamManager({ members }: { members: Member[] }) {
                 {formError}
               </div>
             )}
-            <div>
-              <Label htmlFor="name">Name *</Label>
-              <Input
-                id="name"
-                name="name"
-                required
-                defaultValue={editingMember?.name || ""}
-                placeholder="Full name"
-              />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="name">Name * <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Input
+                  id="name"
+                  name="name"
+                  required
+                  defaultValue={editingMember?.name || ""}
+                  placeholder="Full name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="nameBn">Name <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Input
+                  id="nameBn"
+                  name="nameBn"
+                  defaultValue={editingMember?.nameBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
             </div>
-            <div>
-              <Label htmlFor="role">Role *</Label>
-              <Input
-                id="role"
-                name="role"
-                required
-                defaultValue={editingMember?.role || ""}
-                placeholder="e.g. Executive Director"
-              />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="role">Role * <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Input
+                  id="role"
+                  name="role"
+                  required
+                  defaultValue={editingMember?.role || ""}
+                  placeholder="e.g. Executive Director"
+                />
+              </div>
+              <div>
+                <Label htmlFor="roleBn">Role <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Input
+                  id="roleBn"
+                  name="roleBn"
+                  defaultValue={editingMember?.roleBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
             </div>
-            <div>
-              <Label htmlFor="bio">Bio</Label>
-              <Textarea
-                id="bio"
-                name="bio"
-                rows={3}
-                defaultValue={editingMember?.bio || ""}
-                placeholder="Short biography..."
-              />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="bio">Bio <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Textarea
+                  id="bio"
+                  name="bio"
+                  rows={3}
+                  defaultValue={editingMember?.bio || ""}
+                  placeholder="Short biography..."
+                />
+              </div>
+              <div>
+                <Label htmlFor="bioBn">Bio <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Textarea
+                  id="bioBn"
+                  name="bioBn"
+                  rows={3}
+                  defaultValue={editingMember?.bioBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
             </div>
             <div>
               <Label htmlFor="image">Image URL</Label>

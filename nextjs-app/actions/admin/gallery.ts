@@ -20,6 +20,7 @@ export async function getGalleryImages(category?: string) {
 
 export async function addGalleryImage(data: {
   title?: string;
+  titleBn?: string;
   url: string;
   publicId?: string;
   category?: string;

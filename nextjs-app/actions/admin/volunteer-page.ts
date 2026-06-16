@@ -15,8 +15,11 @@ export async function updateVolunteerHero(formData: FormData) {
     const existing = await prisma.siteSettings.findFirst();
     const data = {
       volunteerPageBadge: (formData.get("volunteerPageBadge") as string) || undefined,
+      volunteerPageBadgeBn: (formData.get("volunteerPageBadgeBn") as string) || undefined,
       volunteerPageTitle: (formData.get("volunteerPageTitle") as string) || undefined,
+      volunteerPageTitleBn: (formData.get("volunteerPageTitleBn") as string) || undefined,
       volunteerPageSubtitle: (formData.get("volunteerPageSubtitle") as string) || undefined,
+      volunteerPageSubtitleBn: (formData.get("volunteerPageSubtitleBn") as string) || undefined,
     };
     const settings = existing
       ? await prisma.siteSettings.update({ where: { id: existing.id }, data })
@@ -35,7 +38,9 @@ export async function updateVolunteerWhySection(formData: FormData) {
     const existing = await prisma.siteSettings.findFirst();
     const data = {
       volunteerWhyHeading: (formData.get("volunteerWhyHeading") as string) || undefined,
+      volunteerWhyHeadingBn: (formData.get("volunteerWhyHeadingBn") as string) || undefined,
       volunteerWhyDescription: (formData.get("volunteerWhyDescription") as string) || undefined,
+      volunteerWhyDescriptionBn: (formData.get("volunteerWhyDescriptionBn") as string) || undefined,
     };
     const settings = existing
       ? await prisma.siteSettings.update({ where: { id: existing.id }, data })
@@ -54,6 +59,7 @@ export async function updateVolunteerHowSection(formData: FormData) {
     const existing = await prisma.siteSettings.findFirst();
     const data = {
       volunteerHowHeading: (formData.get("volunteerHowHeading") as string) || undefined,
+      volunteerHowHeadingBn: (formData.get("volunteerHowHeadingBn") as string) || undefined,
     };
     const settings = existing
       ? await prisma.siteSettings.update({ where: { id: existing.id }, data })
@@ -72,7 +78,9 @@ export async function updateVolunteerApplySection(formData: FormData) {
     const existing = await prisma.siteSettings.findFirst();
     const data = {
       volunteerApplyHeading: (formData.get("volunteerApplyHeading") as string) || undefined,
+      volunteerApplyHeadingBn: (formData.get("volunteerApplyHeadingBn") as string) || undefined,
       volunteerApplySubtitle: (formData.get("volunteerApplySubtitle") as string) || undefined,
+      volunteerApplySubtitleBn: (formData.get("volunteerApplySubtitleBn") as string) || undefined,
     };
     const settings = existing
       ? await prisma.siteSettings.update({ where: { id: existing.id }, data })

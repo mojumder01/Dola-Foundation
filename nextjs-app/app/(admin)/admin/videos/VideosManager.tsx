@@ -14,8 +14,10 @@ import { createVideo, updateVideo, deleteVideo } from "@/actions/admin/videos";
 type VideoItem = {
   id: string;
   title: string;
+  titleBn?: string | null;
   youtubeUrl: string;
   description: string | null;
+  descriptionBn?: string | null;
   published: boolean;
   order: number;
   createdAt: Date;
@@ -124,17 +126,27 @@ export default function VideosManager({ videos }: { videos: VideoItem[] }) {
           <form onSubmit={handleSubmit} className="space-y-4">
             {formError && <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm">{formError}</div>}
             <div>
-              <Label htmlFor="title">Title *</Label>
+              <Label htmlFor="title">Title * <span className="text-gray-400 font-normal">(English)</span></Label>
               <Input id="title" name="title" required defaultValue={editing?.title || ""} placeholder="Video title" />
+            </div>
+            <div>
+              <Label htmlFor="titleBn">Title <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Input id="titleBn" name="titleBn" defaultValue={editing?.titleBn || ""} placeholder="বাংলায় লিখুন" />
             </div>
             <div>
               <Label htmlFor="youtubeUrl">YouTube URL *</Label>
               <Input id="youtubeUrl" name="youtubeUrl" required defaultValue={editing?.youtubeUrl || ""} placeholder="https://www.youtube.com/watch?v=..." />
               <p className="text-xs text-gray-400 mt-1">Paste the full YouTube video URL</p>
             </div>
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea id="description" name="description" rows={2} defaultValue={editing?.description || ""} placeholder="Short description..." />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="description">Description <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Textarea id="description" name="description" rows={2} defaultValue={editing?.description || ""} placeholder="Short description..." />
+              </div>
+              <div>
+                <Label htmlFor="descriptionBn">Description <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Textarea id="descriptionBn" name="descriptionBn" rows={2} defaultValue={editing?.descriptionBn || ""} placeholder="বাংলায় লিখুন" />
+              </div>
             </div>
             <div>
               <Label htmlFor="order">Display Order</Label>

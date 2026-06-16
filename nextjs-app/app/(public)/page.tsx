@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
+import { getLocale, pickLocale } from "@/lib/locale";
 import HeroSection from "@/components/home/HeroSection";
 import ImpactStats from "@/components/home/ImpactStats";
 import ProgramsSection from "@/components/home/ProgramsSection";
@@ -108,6 +109,7 @@ const DEFAULT_SECTION_ORDER = [
 
 export default async function HomePage() {
   const [
+    locale,
     settings,
     galleryImages,
     testimonials,
@@ -117,6 +119,7 @@ export default async function HomePage() {
     homeVolunteerBenefits,
     homeDonationTrust,
   ] = await Promise.all([
+    getLocale(),
     getSettings(),
     getGalleryImages(),
     getTestimonials(),
@@ -127,12 +130,14 @@ export default async function HomePage() {
     getDBItems("home-donation-trust"),
   ]);
 
+  const t = (en?: string | null, bn?: string | null) => pickLocale(en, bn, locale);
+
   const heroStats = settings
     ? [
-        { label: settings.stat1Label, value: settings.stat1Value },
-        { label: settings.stat2Label, value: settings.stat2Value },
-        { label: settings.stat3Label, value: settings.stat3Value },
-        { label: settings.stat4Label, value: settings.stat4Value },
+        { label: t(settings.stat1Label, settings.stat1LabelBn), value: settings.stat1Value },
+        { label: t(settings.stat2Label, settings.stat2LabelBn), value: settings.stat2Value },
+        { label: t(settings.stat3Label, settings.stat3LabelBn), value: settings.stat3Value },
+        { label: t(settings.stat4Label, settings.stat4LabelBn), value: settings.stat4Value },
       ]
     : undefined;
 
@@ -141,8 +146,8 @@ export default async function HomePage() {
       <ImpactStats
         key="stats"
         stats={heroStats}
-        badge={settings?.homeStatsBadge}
-        title={settings?.homeStatsTitle}
+        badge={t(settings?.homeStatsBadge, settings?.homeStatsBadgeBn)}
+        title={t(settings?.homeStatsTitle, settings?.homeStatsTitleBn)}
       />
     ),
     programs: (
@@ -150,14 +155,14 @@ export default async function HomePage() {
         key="programs"
         programs={programs.map((program) => ({
           id: program.id,
-          title: program.title,
-          description: program.description,
+          title: t(program.title, program.titleBn),
+          description: t(program.description, program.descriptionBn),
           icon: program.icon,
           slug: program.slug,
         }))}
-        badge={settings?.programsSectionBadge}
-        title={settings?.programsSectionTitle}
-        subtitle={settings?.programsSectionSubtitle}
+        badge={t(settings?.programsSectionBadge, settings?.programsSectionBadgeBn)}
+        title={t(settings?.programsSectionTitle, settings?.programsSectionTitleBn)}
+        subtitle={t(settings?.programsSectionSubtitle, settings?.programsSectionSubtitleBn)}
       />
     ),
     projects: (
@@ -165,17 +170,17 @@ export default async function HomePage() {
         key="projects"
         projects={projects.map((p) => ({
           id: p.id,
-          title: p.title,
+          title: t(p.title, p.titleBn),
           slug: p.slug,
-          description: p.description,
+          description: t(p.description, p.descriptionBn),
           status: p.status,
           location: p.location,
           startDate: p.startDate,
           gallery: p.gallery,
         }))}
-        badge={settings?.projectsSectionBadge}
-        title={settings?.projectsSectionTitle}
-        subtitle={settings?.projectsSectionSubtitle}
+        badge={t(settings?.projectsSectionBadge, settings?.projectsSectionBadgeBn)}
+        title={t(settings?.projectsSectionTitle, settings?.projectsSectionTitleBn)}
+        subtitle={t(settings?.projectsSectionSubtitle, settings?.projectsSectionSubtitleBn)}
       />
     ),
     testimonials: (
@@ -183,14 +188,14 @@ export default async function HomePage() {
         key="testimonials"
         testimonials={testimonials.map((testimonial) => ({
           id: testimonial.id,
-          name: testimonial.name,
-          quote: testimonial.quote,
-          program: testimonial.program,
+          name: t(testimonial.name, testimonial.nameBn),
+          quote: t(testimonial.quote, testimonial.quoteBn),
+          program: t(testimonial.program, testimonial.programBn),
           image: testimonial.image,
         }))}
-        badge={settings?.storiesSectionBadge}
-        title={settings?.storiesSectionTitle}
-        subtitle={settings?.storiesSectionSubtitle}
+        badge={t(settings?.storiesSectionBadge, settings?.storiesSectionBadgeBn)}
+        title={t(settings?.storiesSectionTitle, settings?.storiesSectionTitleBn)}
+        subtitle={t(settings?.storiesSectionSubtitle, settings?.storiesSectionSubtitleBn)}
       />
     ),
     gallery: (
@@ -199,33 +204,38 @@ export default async function HomePage() {
         images={galleryImages.map((image) => ({
           id: image.id,
           url: image.url,
-          title: image.title,
+          title: t(image.title, image.titleBn),
           category: image.category,
         }))}
-        badge={settings?.gallerySectionBadge}
-        title={settings?.gallerySectionTitle}
-        subtitle={settings?.gallerySectionSubtitle}
+        badge={t(settings?.gallerySectionBadge, settings?.gallerySectionBadgeBn)}
+        title={t(settings?.gallerySectionTitle, settings?.gallerySectionTitleBn)}
+        subtitle={t(settings?.gallerySectionSubtitle, settings?.gallerySectionSubtitleBn)}
       />
     ),
     video: (
       <VideoSection
         key="video"
-        videos={videos.map((v) => ({ id: v.id, title: v.title, youtubeUrl: v.youtubeUrl, description: v.description }))}
-        badge={settings?.videoSectionBadge}
-        title={settings?.videoSectionTitle}
-        subtitle={settings?.videoSectionSubtitle}
+        videos={videos.map((v) => ({
+          id: v.id,
+          title: t(v.title, v.titleBn),
+          youtubeUrl: v.youtubeUrl,
+          description: t(v.description, v.descriptionBn),
+        }))}
+        badge={t(settings?.videoSectionBadge, settings?.videoSectionBadgeBn)}
+        title={t(settings?.videoSectionTitle, settings?.videoSectionTitleBn)}
+        subtitle={t(settings?.videoSectionSubtitle, settings?.videoSectionSubtitleBn)}
       />
     ),
     volunteer: (
       <VolunteerCTA
         key="volunteer"
-        badge={settings?.homeVolunteerCtaBadge}
-        title={settings?.homeVolunteerCtaTitle}
-        subtitle={settings?.homeVolunteerCtaSubtitle}
+        badge={t(settings?.homeVolunteerCtaBadge, settings?.homeVolunteerCtaBadgeBn)}
+        title={t(settings?.homeVolunteerCtaTitle, settings?.homeVolunteerCtaTitleBn)}
+        subtitle={t(settings?.homeVolunteerCtaSubtitle, settings?.homeVolunteerCtaSubtitleBn)}
         benefits={homeVolunteerBenefits?.map((item) => ({
           icon: item.icon,
-          title: item.title || "",
-          description: item.description,
+          title: t(item.title, item.titleBn) || "",
+          description: t(item.description, item.descriptionBn),
         }))}
         stats={heroStats}
       />
@@ -233,11 +243,11 @@ export default async function HomePage() {
     donation: (
       <DonationCTA
         key="donation"
-        badge={settings?.homeDonationCtaBadge}
-        titleLine1={settings?.homeDonationCtaTitleLine1}
-        titleLine2={settings?.homeDonationCtaTitleLine2}
-        subtitle={settings?.homeDonationCtaSubtitle}
-        trustPoints={homeDonationTrust?.map((item) => item.title || "").filter(Boolean)}
+        badge={t(settings?.homeDonationCtaBadge, settings?.homeDonationCtaBadgeBn)}
+        titleLine1={t(settings?.homeDonationCtaTitleLine1, settings?.homeDonationCtaTitleLine1Bn)}
+        titleLine2={t(settings?.homeDonationCtaTitleLine2, settings?.homeDonationCtaTitleLine2Bn)}
+        subtitle={t(settings?.homeDonationCtaSubtitle, settings?.homeDonationCtaSubtitleBn)}
+        trustPoints={homeDonationTrust?.map((item) => t(item.title, item.titleBn)).filter(Boolean)}
       />
     ),
   };
@@ -252,10 +262,10 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection
-        title={settings?.heroTitle}
-        subtitle={settings?.heroSubtitle}
+        title={t(settings?.heroTitle, settings?.heroTitleBn)}
+        subtitle={t(settings?.heroSubtitle, settings?.heroSubtitleBn)}
         image={settings?.heroImage}
-        announcementText={(settings as any)?.announcementText}
+        announcementText={t((settings as any)?.announcementText, (settings as any)?.announcementTextBn)}
         announcementEnabled={(settings as any)?.announcementEnabled ?? true}
         stats={heroStats}
       />

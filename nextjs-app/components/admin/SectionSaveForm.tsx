@@ -16,6 +16,11 @@ export type SectionField = {
   placeholder?: string;
   rows?: number;
   hint?: string;
+  bn?: {
+    name: string;
+    defaultValue?: string;
+    placeholder?: string;
+  };
 };
 
 export default function SectionSaveForm({
@@ -87,27 +92,52 @@ export default function SectionSaveForm({
       )}
       <div className={cn("space-y-4", !description && "mt-4")}>
         {fields.map((field) => (
-          <div key={field.name}>
-            <Label className="label-base" htmlFor={field.name}>
-              {field.label}
-            </Label>
-            {field.type === "textarea" ? (
-              <Textarea
-                id={field.name}
-                name={field.name}
-                defaultValue={field.defaultValue}
-                placeholder={field.placeholder}
-                rows={field.rows ?? 3}
-              />
-            ) : (
-              <Input
-                id={field.name}
-                name={field.name}
-                defaultValue={field.defaultValue}
-                placeholder={field.placeholder}
-              />
+          <div key={field.name} className={cn(field.bn && "grid sm:grid-cols-2 gap-3")}>
+            <div>
+              <Label className="label-base" htmlFor={field.name}>
+                {field.label} {field.bn && <span className="text-gray-400 font-normal">(English)</span>}
+              </Label>
+              {field.type === "textarea" ? (
+                <Textarea
+                  id={field.name}
+                  name={field.name}
+                  defaultValue={field.defaultValue}
+                  placeholder={field.placeholder}
+                  rows={field.rows ?? 3}
+                />
+              ) : (
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  defaultValue={field.defaultValue}
+                  placeholder={field.placeholder}
+                />
+              )}
+              {field.hint && <p className="text-xs text-gray-400 mt-1">{field.hint}</p>}
+            </div>
+            {field.bn && (
+              <div>
+                <Label className="label-base" htmlFor={field.bn.name}>
+                  {field.label} <span className="text-gray-400 font-normal">(বাংলা)</span>
+                </Label>
+                {field.type === "textarea" ? (
+                  <Textarea
+                    id={field.bn.name}
+                    name={field.bn.name}
+                    defaultValue={field.bn.defaultValue}
+                    placeholder={field.bn.placeholder || "বাংলায় লিখুন"}
+                    rows={field.rows ?? 3}
+                  />
+                ) : (
+                  <Input
+                    id={field.bn.name}
+                    name={field.bn.name}
+                    defaultValue={field.bn.defaultValue}
+                    placeholder={field.bn.placeholder || "বাংলায় লিখুন"}
+                  />
+                )}
+              </div>
             )}
-            {field.hint && <p className="text-xs text-gray-400 mt-1">{field.hint}</p>}
           </div>
         ))}
       </div>

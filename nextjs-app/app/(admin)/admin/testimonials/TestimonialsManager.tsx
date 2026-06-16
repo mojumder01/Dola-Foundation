@@ -24,8 +24,11 @@ import {
 type Testimonial = {
   id: string;
   name: string;
+  nameBn?: string | null;
   quote: string;
+  quoteBn?: string | null;
   program: string | null;
+  programBn?: string | null;
   image: string | null;
   active: boolean;
 };
@@ -190,35 +193,69 @@ export default function TestimonialsManager({
                 {formError}
               </div>
             )}
-            <div>
-              <Label htmlFor="name">Name *</Label>
-              <Input
-                id="name"
-                name="name"
-                required
-                defaultValue={editingItem?.name || ""}
-                placeholder="Person's name"
-              />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="name">Name * <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Input
+                  id="name"
+                  name="name"
+                  required
+                  defaultValue={editingItem?.name || ""}
+                  placeholder="Person's name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="nameBn">Name <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Input
+                  id="nameBn"
+                  name="nameBn"
+                  defaultValue={editingItem?.nameBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
             </div>
-            <div>
-              <Label htmlFor="quote">Quote *</Label>
-              <Textarea
-                id="quote"
-                name="quote"
-                required
-                rows={4}
-                defaultValue={editingItem?.quote || ""}
-                placeholder="Their testimonial..."
-              />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="quote">Quote * <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Textarea
+                  id="quote"
+                  name="quote"
+                  required
+                  rows={4}
+                  defaultValue={editingItem?.quote || ""}
+                  placeholder="Their testimonial..."
+                />
+              </div>
+              <div>
+                <Label htmlFor="quoteBn">Quote <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Textarea
+                  id="quoteBn"
+                  name="quoteBn"
+                  rows={4}
+                  defaultValue={editingItem?.quoteBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
             </div>
-            <div>
-              <Label htmlFor="program">Program</Label>
-              <Input
-                id="program"
-                name="program"
-                defaultValue={editingItem?.program || ""}
-                placeholder="e.g. Education Program"
-              />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="program">Program <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Input
+                  id="program"
+                  name="program"
+                  defaultValue={editingItem?.program || ""}
+                  placeholder="e.g. Education Program"
+                />
+              </div>
+              <div>
+                <Label htmlFor="programBn">Program <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Input
+                  id="programBn"
+                  name="programBn"
+                  defaultValue={editingItem?.programBn || ""}
+                  placeholder="বাংলায় লিখুন"
+                />
+              </div>
             </div>
             <div>
               <Label htmlFor="image">Image URL</Label>

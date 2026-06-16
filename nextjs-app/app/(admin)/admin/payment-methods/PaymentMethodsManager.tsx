@@ -14,9 +14,11 @@ import { formatDate } from "@/lib/utils";
 type PaymentMethod = {
   id: string;
   name: string;
+  nameBn?: string | null;
   type: string;
   accountInfo: string | null;
   instructions: string | null;
+  instructionsBn?: string | null;
   active: boolean;
   order: number;
   createdAt: Date;
@@ -130,8 +132,12 @@ export default function PaymentMethodsManager({ methods }: { methods: PaymentMet
           <form onSubmit={handleSubmit} className="space-y-4">
             {formError && <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm">{formError}</div>}
             <div>
-              <Label htmlFor="name">Display Name *</Label>
+              <Label htmlFor="name">Display Name * <span className="text-gray-400 font-normal">(English)</span></Label>
               <Input id="name" name="name" required defaultValue={editing?.name || ""} placeholder="e.g. bKash, Bank Transfer" />
+            </div>
+            <div>
+              <Label htmlFor="nameBn">Display Name <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+              <Input id="nameBn" name="nameBn" defaultValue={editing?.nameBn || ""} placeholder="বাংলায় লিখুন" />
             </div>
             <div>
               <Label htmlFor="type">Payment Type *</Label>
@@ -156,9 +162,15 @@ export default function PaymentMethodsManager({ methods }: { methods: PaymentMet
               />
               <p className="text-xs text-gray-400 mt-1">This will be shown to donors on the donate page. Keep it to account number only.</p>
             </div>
-            <div>
-              <Label htmlFor="instructions">Instructions (optional)</Label>
-              <Textarea id="instructions" name="instructions" rows={3} defaultValue={editing?.instructions || ""} placeholder="e.g. Send to bKash Personal 01XXXXXXXX and include your name as reference." />
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="instructions">Instructions (optional) <span className="text-gray-400 font-normal">(English)</span></Label>
+                <Textarea id="instructions" name="instructions" rows={3} defaultValue={editing?.instructions || ""} placeholder="e.g. Send to bKash Personal 01XXXXXXXX and include your name as reference." />
+              </div>
+              <div>
+                <Label htmlFor="instructionsBn">Instructions <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                <Textarea id="instructionsBn" name="instructionsBn" rows={3} defaultValue={editing?.instructionsBn || ""} placeholder="বাংলায় লিখুন" />
+              </div>
             </div>
             <div>
               <Label htmlFor="order">Display Order</Label>

@@ -7,7 +7,16 @@ import { Label } from "@/components/ui/label";
 import { FileText, Loader2, Eye, EyeOff } from "lucide-react";
 import { upsertPageContent } from "@/actions/admin/pages";
 
-type PageContent = { id: string; slug: string; title: string; content: string; published: boolean; updatedAt: Date } | null;
+type PageContent = {
+  id: string;
+  slug: string;
+  title: string;
+  titleBn?: string | null;
+  content: string;
+  contentBn?: string | null;
+  published: boolean;
+  updatedAt: Date;
+} | null;
 
 const MANAGED_PAGES = [
   { slug: "privacy-policy", label: "Privacy Policy", description: "Data usage, cookies, user rights" },
@@ -98,11 +107,15 @@ export default function PagesManager({ pages }: { pages: Record<string, PageCont
               {saveSuccess && <div className="mb-4 bg-green-50 border border-green-200 text-green-700 rounded-xl p-3 text-sm">✓ Saved successfully!</div>}
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="title">Page Title *</Label>
+                  <Label htmlFor="title">Page Title * <span className="text-gray-400 font-normal">(English)</span></Label>
                   <Input id="title" name="title" required defaultValue={activePage?.title || MANAGED_PAGES.find(p => p.slug === activeSlug)?.label || ""} placeholder="Page title" />
                 </div>
                 <div>
-                  <Label htmlFor="content">Content (HTML) *</Label>
+                  <Label htmlFor="titleBn">Page Title <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                  <Input id="titleBn" name="titleBn" defaultValue={activePage?.titleBn || ""} placeholder="বাংলায় লিখুন" />
+                </div>
+                <div>
+                  <Label htmlFor="content">Content (HTML) * <span className="text-gray-400 font-normal">(English)</span></Label>
                   <textarea
                     id="content"
                     name="content"
@@ -113,6 +126,18 @@ export default function PagesManager({ pages }: { pages: Record<string, PageCont
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
                   />
                   <p className="text-xs text-gray-400 mt-1">Write HTML directly. Tags like &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;strong&gt;, &lt;a&gt; are fully supported and styled automatically.</p>
+                </div>
+                <div>
+                  <Label htmlFor="contentBn">Content (HTML) <span className="text-gray-400 font-normal">(বাংলা)</span></Label>
+                  <textarea
+                    id="contentBn"
+                    name="contentBn"
+                    rows={20}
+                    defaultValue={activePage?.contentBn || ""}
+                    placeholder="বাংলায় লিখুন"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Optional Bangla translation of the page content.</p>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">

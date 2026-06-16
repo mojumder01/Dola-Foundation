@@ -81,6 +81,19 @@
   h2 { @apply text-3xl md:text-4xl; }
   h3 { @apply text-2xl md:text-3xl; }
   h4 { @apply text-xl md:text-2xl; }
+
+  html[lang="bn"] body {
+    font-family: var(--font-bengali), var(--font-inter), sans-serif;
+  }
+
+  html[lang="bn"] h1,
+  html[lang="bn"] h2,
+  html[lang="bn"] h3,
+  html[lang="bn"] h4,
+  html[lang="bn"] h5,
+  html[lang="bn"] h6 {
+    font-family: var(--font-bengali), var(--font-poppins), sans-serif;
+  }
 }
 
 @layer components {

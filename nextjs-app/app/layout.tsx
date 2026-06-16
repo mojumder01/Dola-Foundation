@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Poppins, Inter } from "next/font/google";
+import { Poppins, Inter, Noto_Sans_Bengali } from "next/font/google";
 import "./globals.css";
 import { prisma } from "@/lib/prisma";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { getLocale } from "@/lib/locale";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -16,6 +17,13 @@ const inter = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const notoBengali = Noto_Sans_Bengali({
+  subsets: ["bengali"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-bengali",
   display: "swap",
 });
 
@@ -97,10 +105,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const faviconUrl = await getFaviconUrl();
+  const [faviconUrl, locale] = await Promise.all([getFaviconUrl(), getLocale()]);
 
   return (
-    <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
+    <html
+      lang={locale}
+      className={`${poppins.variable} ${inter.variable} ${notoBengali.variable}`}
+    >
       <head>
         {faviconUrl && (
           <>
