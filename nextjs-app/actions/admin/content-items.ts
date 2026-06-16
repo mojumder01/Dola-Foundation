@@ -9,11 +9,15 @@ const SECTION_PUBLIC_PATH: Record<string, string> = {
   "volunteer-steps": "/volunteer",
   "donate-trust": "/donate",
   "donate-why": "/donate",
+  "home-volunteer-benefits": "/",
+  "home-donation-trust": "/",
 };
 
 const SECTION_ADMIN_PATH: Record<string, string> = {
   "volunteer-benefits": "/admin/volunteer-page",
   "volunteer-steps": "/admin/volunteer-page",
+  "home-volunteer-benefits": "/admin/homepage",
+  "home-donation-trust": "/admin/homepage",
 };
 
 function revalidateSection(section: string) {

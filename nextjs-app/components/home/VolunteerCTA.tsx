@@ -2,10 +2,16 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Users, CheckCircle, ArrowRight, Heart, Globe, BookOpen } from "lucide-react";
+import { Users, CheckCircle, ArrowRight, Heart, Globe, BookOpen, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const benefits = [
+type DisplayBenefit = {
+  icon?: string | LucideIcon | null;
+  title: string;
+  description?: string | null;
+};
+
+const benefits: DisplayBenefit[] = [
   {
     icon: Heart,
     title: "Make Real Impact",
@@ -23,7 +29,42 @@ const benefits = [
   },
 ];
 
-export default function VolunteerCTA() {
+const defaultStats = [
+  { value: "500+", label: "Active Volunteers", icon: "👥" },
+  { value: "8", label: "Districts", icon: "📍" },
+  { value: "12", label: "Programs", icon: "🎯" },
+  { value: "5000+", label: "Lives Impacted", icon: "❤️" },
+];
+
+interface VolunteerCTAProps {
+  badge?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  benefits?: DisplayBenefit[];
+  stats?: { label?: string | null; value?: string | null }[];
+}
+
+export default function VolunteerCTA({
+  badge,
+  title,
+  subtitle,
+  benefits: benefitsProp,
+  stats: statsProp,
+}: VolunteerCTAProps = {}) {
+  const displayBenefits =
+    benefitsProp && benefitsProp.length > 0 ? benefitsProp : benefits;
+
+  const statIcons = ["👥", "📍", "🎯", "❤️"];
+  const displayStats = defaultStats.map((defaultStat, index) => {
+    const override = statsProp?.[index];
+    if (!override) return defaultStat;
+    return {
+      icon: statIcons[index],
+      value: override.value || defaultStat.value,
+      label: override.label || defaultStat.label,
+    };
+  });
+
   return (
     <section className="py-16 md:py-24 bg-[#F8FAFC]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -38,19 +79,19 @@ export default function VolunteerCTA() {
                 transition={{ duration: 0.6 }}
               >
                 <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-                  Join Us
+                  {badge || "Join Us"}
                 </span>
                 <h2 className="font-poppins font-bold text-3xl md:text-4xl text-white mb-4 leading-tight">
-                  Join Our Mission to Change Lives
+                  {title || "Join Our Mission to Change Lives"}
                 </h2>
                 <p className="text-white/80 text-base leading-relaxed mb-8">
-                  Become a volunteer and make a tangible difference in the lives
-                  of those who need it most. Your time and skills are invaluable.
+                  {subtitle ||
+                    "Become a volunteer and make a tangible difference in the lives of those who need it most. Your time and skills are invaluable."}
                 </p>
 
                 <div className="space-y-4 mb-8">
-                  {benefits.map((benefit, index) => {
-                    const Icon = benefit.icon;
+                  {displayBenefits.map((benefit, index) => {
+                    const Icon = typeof benefit.icon === "function" ? benefit.icon : null;
                     return (
                       <motion.div
                         key={index}
@@ -61,7 +102,11 @@ export default function VolunteerCTA() {
                         className="flex items-start gap-3"
                       >
                         <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Icon className="w-5 h-5 text-white" />
+                          {Icon ? (
+                            <Icon className="w-5 h-5 text-white" />
+                          ) : (
+                            <span className="text-lg">{(benefit.icon as string) || "❤️"}</span>
+                          )}
                         </div>
                         <div>
                           <div className="font-semibold text-white text-sm">
@@ -97,12 +142,7 @@ export default function VolunteerCTA() {
               >
                 {/* Stats cards */}
                 <div className="grid grid-cols-2 gap-4">
-                  {[
-                    { value: "500+", label: "Active Volunteers", icon: "👥" },
-                    { value: "8", label: "Districts", icon: "📍" },
-                    { value: "12", label: "Programs", icon: "🎯" },
-                    { value: "5000+", label: "Lives Impacted", icon: "❤️" },
-                  ].map((stat, i) => (
+                  {displayStats.map((stat, i) => (
                     <div
                       key={i}
                       className="bg-white/20 backdrop-blur rounded-2xl p-5 text-center border border-white/30"

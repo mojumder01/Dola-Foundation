@@ -47,10 +47,16 @@ interface SuccessStoriesProps {
     program?: string | null;
     image?: string | null;
   }[];
+  badge?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
 }
 
 export default function SuccessStories({
   testimonials: testimonialsProp,
+  badge,
+  title,
+  subtitle,
 }: SuccessStoriesProps) {
   const testimonials =
     testimonialsProp && testimonialsProp.length > 0
@@ -79,9 +85,12 @@ export default function SuccessStories({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeader
-          badge="Success Stories"
-          title="Lives We've Changed"
-          subtitle="Read the stories of real people whose lives have been transformed through our programs and your generous support."
+          badge={badge || "Success Stories"}
+          title={title || "Lives We've Changed"}
+          subtitle={
+            subtitle ||
+            "Read the stories of real people whose lives have been transformed through our programs and your generous support."
+          }
         />
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">

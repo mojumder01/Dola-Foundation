@@ -45,9 +45,11 @@ const defaultStats = [
 
 interface ImpactStatsProps {
   stats?: { label?: string | null; value?: string | null }[];
+  badge?: string | null;
+  title?: string | null;
 }
 
-export default function ImpactStats({ stats: statsProp }: ImpactStatsProps) {
+export default function ImpactStats({ stats: statsProp, badge, title }: ImpactStatsProps) {
   const stats = defaultStats.map((defaultStat, index) => {
     const override = statsProp?.[index];
     if (!override) return defaultStat;
@@ -90,7 +92,7 @@ export default function ImpactStats({ stats: statsProp }: ImpactStatsProps) {
             viewport={{ once: true }}
             className="text-gold text-sm font-semibold uppercase tracking-widest mb-3"
           >
-            Our Impact
+            {badge || "Our Impact"}
           </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -99,7 +101,7 @@ export default function ImpactStats({ stats: statsProp }: ImpactStatsProps) {
             transition={{ delay: 0.1 }}
             className="font-poppins font-bold text-3xl md:text-4xl text-white"
           >
-            Creating Real Change
+            {title || "Creating Real Change"}
           </motion.h2>
         </div>
 

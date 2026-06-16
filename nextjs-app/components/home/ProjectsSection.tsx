@@ -54,18 +54,24 @@ interface ProjectsSectionProps {
     startDate: Date | null;
     gallery: string[];
   }>;
+  badge?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
 }
 
-export default function ProjectsSection({ projects }: ProjectsSectionProps) {
+export default function ProjectsSection({ projects, badge, title, subtitle }: ProjectsSectionProps) {
   const displayProjects = projects && projects.length > 0 ? projects : featuredProjects;
 
   return (
     <section className="py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          badge="Our Work"
-          title="Featured Projects"
-          subtitle="Discover some of our impactful projects transforming lives and communities across Bangladesh."
+          badge={badge || "Our Work"}
+          title={title || "Featured Projects"}
+          subtitle={
+            subtitle ||
+            "Discover some of our impactful projects transforming lives and communities across Bangladesh."
+          }
         />
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

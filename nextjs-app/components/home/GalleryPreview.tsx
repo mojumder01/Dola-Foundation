@@ -58,9 +58,12 @@ interface GalleryPreviewProps {
     title?: string | null;
     category?: string | null;
   }[];
+  badge?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
 }
 
-export default function GalleryPreview({ images }: GalleryPreviewProps) {
+export default function GalleryPreview({ images, badge, title, subtitle }: GalleryPreviewProps) {
   const galleryImages =
     images && images.length > 0
       ? images.map((image) => ({
@@ -76,9 +79,9 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
           <SectionHeader
-            badge="Gallery"
-            title="Our Gallery"
-            subtitle="Glimpses of our work and impact across communities."
+            badge={badge || "Gallery"}
+            title={title || "Our Gallery"}
+            subtitle={subtitle || "Glimpses of our work and impact across communities."}
             centered={false}
           />
           <Link href="/gallery">

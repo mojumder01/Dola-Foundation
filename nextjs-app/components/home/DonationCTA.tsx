@@ -13,8 +13,31 @@ const amounts = [
   { value: 5000, label: "৳5,000", impact: "Sponsors a child's education for a month" },
 ];
 
-export default function DonationCTA() {
+const defaultTrustPoints = [
+  "100% of donations reach those in need",
+  "Full transparency with annual reports",
+  "Tax deductible contribution",
+  "Dedicated project tracking updates",
+];
+
+interface DonationCTAProps {
+  badge?: string | null;
+  titleLine1?: string | null;
+  titleLine2?: string | null;
+  subtitle?: string | null;
+  trustPoints?: string[];
+}
+
+export default function DonationCTA({
+  badge,
+  titleLine1,
+  titleLine2,
+  subtitle,
+  trustPoints,
+}: DonationCTAProps = {}) {
   const [selectedAmount, setSelectedAmount] = useState(1000);
+  const displayTrustPoints =
+    trustPoints && trustPoints.length > 0 ? trustPoints : defaultTrustPoints;
 
   return (
     <section className="py-16 md:py-24 bg-gradient-to-br from-primary to-[#1a4da0] relative overflow-hidden">
@@ -34,26 +57,20 @@ export default function DonationCTA() {
             transition={{ duration: 0.6 }}
           >
             <span className="inline-block bg-gold/20 border border-gold/30 text-gold text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-              Support Our Mission
+              {badge || "Support Our Mission"}
             </span>
             <h2 className="font-poppins font-bold text-3xl md:text-4xl text-white mb-5 leading-tight">
-              Your Generosity
+              {titleLine1 || "Your Generosity"}
               <br />
-              <span className="text-gold">Changes Lives</span>
+              <span className="text-gold">{titleLine2 || "Changes Lives"}</span>
             </h2>
             <p className="text-white/80 text-base leading-relaxed mb-8">
-              Every donation, big or small, makes a real difference in the lives
-              of the people we serve. Join thousands of donors who are helping us
-              build a better Bangladesh.
+              {subtitle ||
+                "Every donation, big or small, makes a real difference in the lives of the people we serve. Join thousands of donors who are helping us build a better Bangladesh."}
             </p>
 
             <div className="space-y-3">
-              {[
-                "100% of donations reach those in need",
-                "Full transparency with annual reports",
-                "Tax deductible contribution",
-                "Dedicated project tracking updates",
-              ].map((point, i) => (
+              {displayTrustPoints.map((point, i) => (
                 <div key={i} className="flex items-center gap-3 text-white/85 text-sm">
                   <CheckCircle className="w-5 h-5 text-gold flex-shrink-0" />
                   {point}

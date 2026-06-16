@@ -28,6 +28,7 @@ import {
   FolderKanban,
   LayoutGrid,
   HeartHandshake,
+  Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -70,6 +71,7 @@ const navGroups = [
     icon: BookOpen,
     items: [
       { label: "Pages", href: "/admin/pages", icon: BookMarked },
+      { label: "Homepage", href: "/admin/homepage", icon: Home },
       { label: "Volunteer Page", href: "/admin/volunteer-page", icon: HeartHandshake },
       { label: "Content Sections", href: "/admin/content", icon: LayoutGrid },
       { label: "Settings", href: "/admin/settings", icon: Settings },

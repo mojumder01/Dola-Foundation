@@ -83,6 +83,18 @@ async function getVideos() {
   }
 }
 
+async function getDBItems(section: string) {
+  try {
+    const items = await prisma.contentItem.findMany({
+      where: { section, active: true },
+      orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+    });
+    return items.length > 0 ? items : null;
+  } catch {
+    return null;
+  }
+}
+
 const DEFAULT_SECTION_ORDER = [
   "stats",
   "programs",
@@ -95,13 +107,24 @@ const DEFAULT_SECTION_ORDER = [
 ];
 
 export default async function HomePage() {
-  const [settings, galleryImages, testimonials, programs, projects, videos] = await Promise.all([
+  const [
+    settings,
+    galleryImages,
+    testimonials,
+    programs,
+    projects,
+    videos,
+    homeVolunteerBenefits,
+    homeDonationTrust,
+  ] = await Promise.all([
     getSettings(),
     getGalleryImages(),
     getTestimonials(),
     getPrograms(),
     getProjects(),
     getVideos(),
+    getDBItems("home-volunteer-benefits"),
+    getDBItems("home-donation-trust"),
   ]);
 
   const heroStats = settings
@@ -114,7 +137,14 @@ export default async function HomePage() {
     : undefined;
 
   const sections: Record<string, React.ReactNode> = {
-    stats: <ImpactStats key="stats" stats={heroStats} />,
+    stats: (
+      <ImpactStats
+        key="stats"
+        stats={heroStats}
+        badge={settings?.homeStatsBadge}
+        title={settings?.homeStatsTitle}
+      />
+    ),
     programs: (
       <ProgramsSection
         key="programs"
@@ -125,6 +155,9 @@ export default async function HomePage() {
           icon: program.icon,
           slug: program.slug,
         }))}
+        badge={settings?.programsSectionBadge}
+        title={settings?.programsSectionTitle}
+        subtitle={settings?.programsSectionSubtitle}
       />
     ),
     projects: (
@@ -140,6 +173,9 @@ export default async function HomePage() {
           startDate: p.startDate,
           gallery: p.gallery,
         }))}
+        badge={settings?.projectsSectionBadge}
+        title={settings?.projectsSectionTitle}
+        subtitle={settings?.projectsSectionSubtitle}
       />
     ),
     testimonials: (
@@ -152,6 +188,9 @@ export default async function HomePage() {
           program: testimonial.program,
           image: testimonial.image,
         }))}
+        badge={settings?.storiesSectionBadge}
+        title={settings?.storiesSectionTitle}
+        subtitle={settings?.storiesSectionSubtitle}
       />
     ),
     gallery: (
@@ -163,16 +202,44 @@ export default async function HomePage() {
           title: image.title,
           category: image.category,
         }))}
+        badge={settings?.gallerySectionBadge}
+        title={settings?.gallerySectionTitle}
+        subtitle={settings?.gallerySectionSubtitle}
       />
     ),
     video: (
       <VideoSection
         key="video"
         videos={videos.map((v) => ({ id: v.id, title: v.title, youtubeUrl: v.youtubeUrl, description: v.description }))}
+        badge={settings?.videoSectionBadge}
+        title={settings?.videoSectionTitle}
+        subtitle={settings?.videoSectionSubtitle}
       />
     ),
-    volunteer: <VolunteerCTA key="volunteer" />,
-    donation: <DonationCTA key="donation" />,
+    volunteer: (
+      <VolunteerCTA
+        key="volunteer"
+        badge={settings?.homeVolunteerCtaBadge}
+        title={settings?.homeVolunteerCtaTitle}
+        subtitle={settings?.homeVolunteerCtaSubtitle}
+        benefits={homeVolunteerBenefits?.map((item) => ({
+          icon: item.icon,
+          title: item.title || "",
+          description: item.description,
+        }))}
+        stats={heroStats}
+      />
+    ),
+    donation: (
+      <DonationCTA
+        key="donation"
+        badge={settings?.homeDonationCtaBadge}
+        titleLine1={settings?.homeDonationCtaTitleLine1}
+        titleLine2={settings?.homeDonationCtaTitleLine2}
+        subtitle={settings?.homeDonationCtaSubtitle}
+        trustPoints={homeDonationTrust?.map((item) => item.title || "").filter(Boolean)}
+      />
+    ),
   };
 
   const requestedOrder = ((settings as any)?.sectionOrder || "")

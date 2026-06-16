@@ -17,7 +17,17 @@ function getYouTubeId(url: string) {
   return match ? match[1] : null;
 }
 
-export default function VideoSection({ videos }: { videos: VideoItem[] }) {
+export default function VideoSection({
+  videos,
+  badge,
+  title,
+  subtitle,
+}: {
+  videos: VideoItem[];
+  badge?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+}) {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
   if (videos.length === 0) return null;
@@ -26,9 +36,12 @@ export default function VideoSection({ videos }: { videos: VideoItem[] }) {
     <section className="py-16 md:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          badge="Watch & Learn"
-          title="Our Videos"
-          subtitle="Watch our latest videos to learn more about our work and impact across Bangladesh."
+          badge={badge || "Watch & Learn"}
+          title={title || "Our Videos"}
+          subtitle={
+            subtitle ||
+            "Watch our latest videos to learn more about our work and impact across Bangladesh."
+          }
         />
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

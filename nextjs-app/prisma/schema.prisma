@@ -72,6 +72,30 @@ model SiteSettings {
   volunteerApplySubtitle  String?  @db.Text
   officeHours          String?
   footerMissionText    String?  @db.Text
+  homeStatsBadge          String?
+  homeStatsTitle          String?
+  programsSectionBadge    String?
+  programsSectionTitle    String?
+  programsSectionSubtitle String?  @db.Text
+  projectsSectionBadge    String?
+  projectsSectionTitle    String?
+  projectsSectionSubtitle String?  @db.Text
+  storiesSectionBadge     String?
+  storiesSectionTitle     String?
+  storiesSectionSubtitle  String?  @db.Text
+  gallerySectionBadge     String?
+  gallerySectionTitle     String?
+  gallerySectionSubtitle  String?  @db.Text
+  videoSectionBadge       String?
+  videoSectionTitle       String?
+  videoSectionSubtitle    String?  @db.Text
+  homeVolunteerCtaBadge      String?
+  homeVolunteerCtaTitle      String?
+  homeVolunteerCtaSubtitle   String?  @db.Text
+  homeDonationCtaBadge       String?
+  homeDonationCtaTitleLine1  String?
+  homeDonationCtaTitleLine2  String?
+  homeDonationCtaSubtitle    String?  @db.Text
   sectionOrder   String   @default("stats,programs,projects,testimonials,gallery,video,volunteer,donation")
   stat1Label     String   @default("Lives Impacted")
   stat1Value     String   @default("5000")

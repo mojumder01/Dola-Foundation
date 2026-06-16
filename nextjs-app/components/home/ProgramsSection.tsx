@@ -81,10 +81,16 @@ interface ProgramsSectionProps {
     icon?: string | null;
     slug: string;
   }[];
+  badge?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
 }
 
 export default function ProgramsSection({
   programs: programsProp,
+  badge,
+  title,
+  subtitle,
 }: ProgramsSectionProps) {
   const programs =
     programsProp && programsProp.length > 0
@@ -102,9 +108,12 @@ export default function ProgramsSection({
     <section className="py-16 md:py-24 bg-[#F8FAFC]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          badge="What We Do"
-          title="Our Programs"
-          subtitle="We run six comprehensive programs designed to address the most critical needs of vulnerable communities in Bangladesh."
+          badge={badge || "What We Do"}
+          title={title || "Our Programs"}
+          subtitle={
+            subtitle ||
+            "We run six comprehensive programs designed to address the most critical needs of vulnerable communities in Bangladesh."
+          }
         />
 
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
