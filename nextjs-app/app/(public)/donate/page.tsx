@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CheckCircle } from "lucide-react";
 import DonationForm from "./DonationForm";
 import { prisma } from "@/lib/prisma";
+import { getLocale, pickLocale } from "@/lib/locale";
 
 export const revalidate = 0;
 
@@ -74,14 +75,17 @@ async function getContentList(section: string, fallback: string[]) {
       where: { section, active: true },
       orderBy: [{ order: "asc" }, { createdAt: "asc" }],
     });
-    return items.length > 0 ? items.map((i) => i.title || "") : fallback;
+    return items.length > 0
+      ? items.map((i) => ({ title: i.title || "", titleBn: i.titleBn }))
+      : fallback.map((title) => ({ title, titleBn: undefined as string | undefined }));
   } catch {
-    return fallback;
+    return fallback.map((title) => ({ title, titleBn: undefined as string | undefined }));
   }
 }
 
 export default async function DonatePage() {
-  const [impactAmounts, paymentMethods, settings, trustIndicators, whyDonate] = await Promise.all([
+  const [locale, impactAmounts, paymentMethods, settings, trustIndicators, whyDonate] = await Promise.all([
+    getLocale(),
     getImpactAmounts(),
     getActivePaymentMethods(),
     getSettings(),
@@ -89,6 +93,8 @@ export default async function DonatePage() {
     getContentList("donate-why", defaultWhyDonate),
   ]);
   const bankMethod = paymentMethods.find((m) => m.type === "BANK_TRANSFER");
+
+  const t = (en?: string | null, bn?: string | null) => pickLocale(en, bn, locale);
 
   return (
     <div className="pt-20">
@@ -104,19 +110,19 @@ export default async function DonatePage() {
         {settings?.donateBannerImage && <div className="absolute inset-0 bg-primary/70" />}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-gold/20 border border-gold/30 text-gold text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            Make a Difference
+            {locale === "bn" ? "পরিবর্তন আনুন" : "Make a Difference"}
           </span>
           <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
-            {settings?.donatePageTitle || "Donate to Dola Foundation"}
+            {t(settings?.donatePageTitle, settings?.donatePageTitleBn) || "Donate to Dola Foundation"}
           </h1>
           <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            {settings?.donatePageSubtitle ||
+            {t(settings?.donatePageSubtitle, settings?.donatePageSubtitleBn) ||
               "Your generous donation directly funds our programs and creates lasting change in the lives of thousands of families across Bangladesh."}
           </p>
           <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <Link href="/" className="hover:text-white transition-colors">{locale === "bn" ? "হোম" : "Home"}</Link>
             <span>/</span>
-            <span className="text-white">Donate</span>
+            <span className="text-white">{locale === "bn" ? "দান করুন" : "Donate"}</span>
           </div>
         </div>
       </section>
@@ -125,8 +131,8 @@ export default async function DonatePage() {
       <section className="py-8 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-6">
-            {trustIndicators.map((item) => (
-              <span key={item} className="text-gray-500 text-sm">{item}</span>
+            {trustIndicators.map((item, idx) => (
+              <span key={idx} className="text-gray-500 text-sm">{t(item.title, item.titleBn)}</span>
             ))}
           </div>
         </div>
@@ -136,7 +142,7 @@ export default async function DonatePage() {
       <section className="py-12 bg-[#F8FAFC]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-poppins font-bold text-2xl text-dark text-center mb-8">
-            See Your Impact
+            {locale === "bn" ? "আপনার প্রভাব দেখুন" : "See Your Impact"}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {impactAmounts.map((item, idx) => (
@@ -148,7 +154,9 @@ export default async function DonatePage() {
                 <div className="font-poppins font-black text-xl text-primary">
                   ৳{item.amount.toLocaleString()}
                 </div>
-                <div className="text-xs text-gray-500 mt-1 leading-snug">{item.impact}</div>
+                <div className="text-xs text-gray-500 mt-1 leading-snug">
+                  {t(item.impact, (item as any).impactBn)}
+                </div>
               </div>
             ))}
           </div>
@@ -160,20 +168,26 @@ export default async function DonatePage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <DonationForm paymentMethods={paymentMethods} />
+              <DonationForm
+                paymentMethods={paymentMethods.map((m) => ({
+                  ...m,
+                  name: t(m.name, m.nameBn) || m.name,
+                  instructions: t(m.instructions, m.instructionsBn) || m.instructions,
+                }))}
+              />
             </div>
 
             {/* Sidebar */}
             <div className="space-y-5">
               <div className="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
                 <h3 className="font-poppins font-bold text-dark mb-3">
-                  Why Donate?
+                  {locale === "bn" ? "কেন দান করবেন?" : "Why Donate?"}
                 </h3>
                 <ul className="space-y-2.5">
-                  {whyDonate.map((point) => (
-                    <li key={point} className="flex items-start gap-2 text-sm text-gray-600">
+                  {whyDonate.map((point, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
                       <CheckCircle className="w-4 h-4 text-green mt-0.5 flex-shrink-0" />
-                      {point}
+                      {t(point.title, point.titleBn)}
                     </li>
                   ))}
                 </ul>
@@ -181,22 +195,24 @@ export default async function DonatePage() {
 
               {bankMethod && (
                 <div className="bg-primary rounded-2xl p-5 text-white">
-                  <h3 className="font-poppins font-bold mb-2">{bankMethod.name || "Bank Transfer"}</h3>
+                  <h3 className="font-poppins font-bold mb-2">
+                    {t(bankMethod.name, bankMethod.nameBn) || "Bank Transfer"}
+                  </h3>
                   <div className="text-sm text-white/80 space-y-1 whitespace-pre-line">
                     {bankMethod.accountInfo && (
-                      <p><span className="text-white font-medium">Account:</span> {bankMethod.accountInfo}</p>
+                      <p><span className="text-white font-medium">{locale === "bn" ? "অ্যাকাউন্ট:" : "Account:"}</span> {bankMethod.accountInfo}</p>
                     )}
-                    {bankMethod.instructions && <p>{bankMethod.instructions}</p>}
+                    {bankMethod.instructions && <p>{t(bankMethod.instructions, bankMethod.instructionsBn)}</p>}
                   </div>
                 </div>
               )}
 
               <div className="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
                 <h3 className="font-poppins font-bold text-dark mb-2">
-                  Need Help?
+                  {locale === "bn" ? "সাহায্য প্রয়োজন?" : "Need Help?"}
                 </h3>
                 <p className="text-gray-500 text-sm mb-3">
-                  For donation assistance, contact us:
+                  {locale === "bn" ? "দান সম্পর্কিত সহায়তার জন্য যোগাযোগ করুন:" : "For donation assistance, contact us:"}
                 </p>
                 <p className="text-primary font-medium text-sm">
                   info@dolafoundation.com

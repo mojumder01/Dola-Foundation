@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { getLocale, pickLocale } from "@/lib/locale";
 
 export const revalidate = 0;
 
@@ -125,7 +126,8 @@ const FALLBACK_PROGRAMS = [
   },
 ];
 
-async function getPrograms() {
+async function getPrograms(locale: Awaited<ReturnType<typeof getLocale>>) {
+  const t = (en?: string | null, bn?: string | null) => pickLocale(en, bn, locale);
   try {
     const dbPrograms = await prisma.program.findMany({
       where: { published: true },
@@ -133,15 +135,15 @@ async function getPrograms() {
     });
     if (dbPrograms.length === 0) return FALLBACK_PROGRAMS;
     return dbPrograms.map((p, i) => ({
-      title: p.title,
+      title: t(p.title, p.titleBn),
       slug: p.slug,
       icon: p.icon || "🌟",
-      description: p.description,
+      description: t(p.description, p.descriptionBn),
       objectives: p.objectives ?? [],
       stats: [
-        p.stat1Label && p.stat1Value ? { label: p.stat1Label, value: p.stat1Value } : null,
-        p.stat2Label && p.stat2Value ? { label: p.stat2Label, value: p.stat2Value } : null,
-        p.stat3Label && p.stat3Value ? { label: p.stat3Label, value: p.stat3Value } : null,
+        p.stat1Label && p.stat1Value ? { label: t(p.stat1Label, p.stat1LabelBn), value: p.stat1Value } : null,
+        p.stat2Label && p.stat2Value ? { label: t(p.stat2Label, p.stat2LabelBn), value: p.stat2Value } : null,
+        p.stat3Label && p.stat3Value ? { label: t(p.stat3Label, p.stat3LabelBn), value: p.stat3Value } : null,
       ].filter(Boolean) as { label: string; value: string }[],
       gradient: GRADIENTS[i % GRADIENTS.length].gradient,
       color: GRADIENTS[i % GRADIENTS.length].color,
@@ -160,7 +162,8 @@ async function getSettings() {
 }
 
 export default async function ProgramsPage() {
-  const [programs, settings] = await Promise.all([getPrograms(), getSettings()]);
+  const locale = await getLocale();
+  const [programs, settings] = await Promise.all([getPrograms(locale), getSettings()]);
   return (
     <div className="pt-20">
       {/* Hero */}
@@ -175,19 +178,20 @@ export default async function ProgramsPage() {
         {settings?.programsBannerImage && <div className="absolute inset-0 bg-primary/70" />}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            Our Programs
+            {locale === "bn" ? "আমাদের কার্যক্রম" : "Our Programs"}
           </span>
           <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
-            What We Do
+            {locale === "bn" ? "আমরা যা করি" : "What We Do"}
           </h1>
           <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            Six comprehensive programs designed to address the most critical
-            needs of vulnerable communities in Bangladesh.
+            {locale === "bn"
+              ? "বাংলাদেশের দুর্বল সম্প্রদায়গুলোর সবচেয়ে গুরুত্বপূর্ণ চাহিদা মেটাতে ডিজাইন করা ছয়টি ব্যাপক কার্যক্রম।"
+              : "Six comprehensive programs designed to address the most critical needs of vulnerable communities in Bangladesh."}
           </p>
           <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <Link href="/" className="hover:text-white transition-colors">{locale === "bn" ? "হোম" : "Home"}</Link>
             <span>/</span>
-            <span className="text-white">Programs</span>
+            <span className="text-white">{locale === "bn" ? "কার্যক্রম" : "Programs"}</span>
           </div>
         </div>
       </section>
@@ -228,7 +232,7 @@ export default async function ProgramsPage() {
 
                   <div className="mb-5">
                     <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">
-                      Key Objectives
+                      {locale === "bn" ? "মূল লক্ষ্য" : "Key Objectives"}
                     </h4>
                     <ul className="space-y-1.5">
                       {program.objectives.slice(0, 3).map((obj, i) => (
@@ -245,7 +249,7 @@ export default async function ProgramsPage() {
                     className="inline-flex items-center gap-1.5 font-semibold text-sm transition-all"
                     style={{ color: program.color }}
                   >
-                    Learn More About {program.title}
+                    {locale === "bn" ? `${program.title} সম্পর্কে বিস্তারিত জানুন` : `Learn More About ${program.title}`}
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </div>

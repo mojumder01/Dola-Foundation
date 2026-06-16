@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ImageIcon } from "lucide-react";
+import type { Locale } from "@/lib/locale";
 
 type GalleryImage = {
   id: string;
@@ -13,11 +14,23 @@ type GalleryImage = {
 
 const CATEGORIES = ["All", "Education", "Healthcare", "Charity", "Environment", "Youth", "Events"];
 
-export default function GalleryGrid({ images }: { images: GalleryImage[] }) {
+const CATEGORY_LABELS_BN: Record<string, string> = {
+  All: "সব",
+  Education: "শিক্ষা",
+  Healthcare: "স্বাস্থ্যসেবা",
+  Charity: "দাতব্য",
+  Environment: "পরিবেশ",
+  Youth: "যুব",
+  Events: "অনুষ্ঠান",
+};
+
+export default function GalleryGrid({ images, locale = "en" }: { images: GalleryImage[]; locale?: Locale }) {
   const [active, setActive] = useState("All");
 
   const filtered =
     active === "All" ? images : images.filter((img) => img.category === active);
+
+  const label = (cat: string) => (locale === "bn" ? CATEGORY_LABELS_BN[cat] ?? cat : cat);
 
   return (
     <>
@@ -35,7 +48,7 @@ export default function GalleryGrid({ images }: { images: GalleryImage[] }) {
                     : "bg-white border-gray-200 text-gray-600 hover:border-primary hover:text-primary"
                 }`}
               >
-                {cat}
+                {label(cat)}
               </button>
             ))}
           </div>
@@ -49,10 +62,18 @@ export default function GalleryGrid({ images }: { images: GalleryImage[] }) {
             <div className="text-center py-20">
               <ImageIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-400 text-lg font-medium">
-                {active === "All" ? "No photos yet." : `No photos in "${active}" yet.`}
+                {locale === "bn"
+                  ? active === "All"
+                    ? "এখনও কোনো ছবি নেই।"
+                    : `"${label(active)}" বিভাগে এখনও কোনো ছবি নেই।`
+                  : active === "All"
+                    ? "No photos yet."
+                    : `No photos in "${active}" yet.`}
               </p>
               <p className="text-gray-400 text-sm mt-1">
-                Photos added from the admin panel will appear here.
+                {locale === "bn"
+                  ? "অ্যাডমিন প্যানেল থেকে যোগ করা ছবি এখানে দেখা যাবে।"
+                  : "Photos added from the admin panel will appear here."}
               </p>
             </div>
           ) : (

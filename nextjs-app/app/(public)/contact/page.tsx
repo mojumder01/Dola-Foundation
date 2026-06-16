@@ -10,6 +10,7 @@ import {
 import ContactForm from "./ContactForm";
 import { FAQS } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
+import { getLocale, pickLocale } from "@/lib/locale";
 
 export const revalidate = 0;
 
@@ -42,13 +43,15 @@ function getMapEmbedSrc(embedUrl?: string | null, address?: string | null): stri
 }
 
 export default async function ContactPage() {
-  const [settings, dbFaqs] = await Promise.all([getSettings(), getDBFAQs()]);
+  const [locale, settings, dbFaqs] = await Promise.all([getLocale(), getSettings(), getDBFAQs()]);
   const faqs = dbFaqs.length > 0 ? dbFaqs : FAQS;
+
+  const t = (en?: string | null, bn?: string | null) => pickLocale(en, bn, locale);
 
   const contactInfo = [
     {
       icon: MapPin,
-      title: "Our Office",
+      title: locale === "bn" ? "আমাদের অফিস" : "Our Office",
       content:
         settings?.address || "House 12, Road 5, Dhanmondi\nDhaka 1209, Bangladesh",
       color: "text-primary",
@@ -56,14 +59,14 @@ export default async function ContactPage() {
     },
     {
       icon: Phone,
-      title: "Phone",
+      title: locale === "bn" ? "ফোন" : "Phone",
       content: settings?.phone || "+880 1700-000000\n+880 1800-000000",
       color: "text-green",
       bg: "bg-green-50",
     },
     {
       icon: Mail,
-      title: "Email",
+      title: locale === "bn" ? "ইমেইল" : "Email",
       content:
         settings?.email || "info@dolafoundation.com\ndonate@dolafoundation.com",
       color: "text-gold",
@@ -71,7 +74,7 @@ export default async function ContactPage() {
     },
     {
       icon: Clock,
-      title: "Office Hours",
+      title: locale === "bn" ? "অফিসের সময়" : "Office Hours",
       content: (settings as any)?.officeHours || "Saturday – Thursday\n9:00 AM – 5:00 PM",
       color: "text-purple-500",
       bg: "bg-purple-50",
@@ -92,18 +95,20 @@ export default async function ContactPage() {
         {settings?.contactBannerImage && <div className="absolute inset-0 bg-primary/70" />}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            Contact
+            {locale === "bn" ? "যোগাযোগ" : "Contact"}
           </span>
           <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
-            Get In Touch
+            {locale === "bn" ? "যোগাযোগ করুন" : "Get In Touch"}
           </h1>
           <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            Have a question or want to partner with us? We'd love to hear from you.
+            {locale === "bn"
+              ? "কোনো প্রশ্ন আছে বা আমাদের সাথে যুক্ত হতে চান? আমরা আপনার কথা শুনতে চাই।"
+              : "Have a question or want to partner with us? We'd love to hear from you."}
           </p>
           <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <Link href="/" className="hover:text-white transition-colors">{locale === "bn" ? "হোম" : "Home"}</Link>
             <span>/</span>
-            <span className="text-white">Contact</span>
+            <span className="text-white">{locale === "bn" ? "যোগাযোগ" : "Contact"}</span>
           </div>
         </div>
       </section>
@@ -142,7 +147,7 @@ export default async function ContactPage() {
             {/* Form */}
             <div>
               <h2 className="font-poppins font-bold text-2xl text-dark mb-6">
-                Send Us a Message
+                {locale === "bn" ? "আমাদের বার্তা পাঠান" : "Send Us a Message"}
               </h2>
               <ContactForm />
             </div>
@@ -150,7 +155,7 @@ export default async function ContactPage() {
             {/* Map */}
             <div>
               <h2 className="font-poppins font-bold text-2xl text-dark mb-6">
-                Find Us
+                {locale === "bn" ? "আমাদের খুঁজুন" : "Find Us"}
               </h2>
               <div className="rounded-2xl overflow-hidden h-80 border border-gray-200">
                 <iframe
@@ -168,7 +173,7 @@ export default async function ContactPage() {
               {/* Social links */}
               {(settings?.facebookUrl || settings?.instagramUrl || settings?.twitterUrl || settings?.youtubeUrl) && (
                 <div className="mt-6 bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
-                  <h3 className="font-semibold text-dark mb-3">Follow Us</h3>
+                  <h3 className="font-semibold text-dark mb-3">{locale === "bn" ? "ফলো করুন" : "Follow Us"}</h3>
                   <div className="flex flex-wrap gap-3">
                     {settings?.facebookUrl && (
                       <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="bg-[#1877f2] text-white text-xs font-medium px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">Facebook</a>
@@ -195,28 +200,34 @@ export default async function ContactPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h2 className="font-poppins font-bold text-3xl text-dark mb-3">
-              Frequently Asked Questions
+              {locale === "bn" ? "সচরাচর জিজ্ঞাসিত প্রশ্ন" : "Frequently Asked Questions"}
             </h2>
             <p className="text-gray-500">
-              Find answers to the most common questions about our work.
+              {locale === "bn"
+                ? "আমাদের কাজ সম্পর্কে সবচেয়ে সাধারণ প্রশ্নগুলোর উত্তর খুঁজুন।"
+                : "Find answers to the most common questions about our work."}
             </p>
           </div>
           <div className="bg-white rounded-2xl shadow-card overflow-hidden">
             <Accordion type="single" collapsible className="divide-y divide-gray-100">
-              {(faqs as any[]).map((faq: any, index: number) => (
+              {(faqs as any[]).map((faq: any, index: number) => {
+                const question = t(faq.question, faq.questionBn);
+                const answer = t(faq.answer, faq.answerBn);
+                return (
                 <AccordionItem key={faq.id || index} value={`item-${index}`} className="px-6">
                   <AccordionTrigger className="text-left font-semibold text-dark hover:no-underline">
-                    {faq.question}
+                    {question}
                   </AccordionTrigger>
                   <AccordionContent className="text-gray-500 leading-relaxed">
-                    {faq.answer?.includes("<") ? (
-                      <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
+                    {answer?.includes("<") ? (
+                      <div dangerouslySetInnerHTML={{ __html: answer }} />
                     ) : (
-                      faq.answer
+                      answer
                     )}
                   </AccordionContent>
                 </AccordionItem>
-              ))}
+                );
+              })}
             </Accordion>
           </div>
         </div>

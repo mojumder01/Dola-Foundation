@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Calendar, User, Tag, ArrowLeft, Share2, Facebook, Twitter } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
+import { getLocale, pickLocale, type Locale } from "@/lib/locale";
 
 export const dynamic = "force-dynamic";
 
@@ -44,21 +45,22 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 }
 
-async function getPost(slug: string) {
+async function getPost(slug: string, locale: Locale) {
+  const t = (en?: string | null, bn?: string | null) => pickLocale(en, bn, locale);
   // DB posts take priority; fall back to the built-in demo post, then a
   // coming-soon placeholder so the page never crashes.
   try {
     const dbPost = await prisma.blogPost.findUnique({ where: { slug } });
     if (dbPost && dbPost.published) {
       return {
-        title: dbPost.title,
-        excerpt: dbPost.excerpt || "",
+        title: t(dbPost.title, dbPost.titleBn),
+        excerpt: t(dbPost.excerpt, dbPost.excerptBn) || "",
         coverImage: dbPost.coverImage,
-        category: dbPost.category,
-        author: dbPost.author,
+        category: t(dbPost.category, dbPost.categoryBn),
+        author: t(dbPost.author, dbPost.authorBn),
         publishedAt: dbPost.publishedAt ?? dbPost.createdAt,
         tags: dbPost.tags,
-        content: dbPost.content,
+        content: t(dbPost.content, dbPost.contentBn),
       };
     }
   } catch {
@@ -67,14 +69,16 @@ async function getPost(slug: string) {
   return posts[slug] || null;
 }
 
-async function getRelatedPosts(slug: string) {
+async function getRelatedPosts(slug: string, locale: Locale) {
+  const t = (en?: string | null, bn?: string | null) => pickLocale(en, bn, locale);
   try {
-    return await prisma.blogPost.findMany({
+    const related = await prisma.blogPost.findMany({
       where: { published: true, slug: { not: slug } },
       orderBy: { publishedAt: "desc" },
       take: 2,
-      select: { title: true, slug: true },
+      select: { title: true, titleBn: true, slug: true },
     });
+    return related.map((r) => ({ title: t(r.title, r.titleBn), slug: r.slug }));
   } catch {
     return [];
   }
@@ -82,23 +86,28 @@ async function getRelatedPosts(slug: string) {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPost(slug);
+  const locale = await getLocale();
+  const post = await getPost(slug, locale);
   if (!post) return { title: "Post Not Found" };
   return { title: post.title, description: post.excerpt };
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const [dbPost, relatedPosts] = await Promise.all([getPost(slug), getRelatedPosts(slug)]);
+  const locale = await getLocale();
+  const [dbPost, relatedPosts] = await Promise.all([getPost(slug, locale), getRelatedPosts(slug, locale)]);
   const post = dbPost || {
-    title: "Blog Post Not Found",
+    title: locale === "bn" ? "ব্লগ পোস্ট পাওয়া যায়নি" : "Blog Post Not Found",
     excerpt: "",
     coverImage: null,
-    category: "General",
+    category: locale === "bn" ? "সাধারণ" : "General",
     author: "Dola Foundation",
     publishedAt: new Date(),
     tags: [],
-    content: "<p>This post is coming soon. Please check back later.</p>",
+    content:
+      locale === "bn"
+        ? "<p>এই পোস্টটি শীঘ্রই আসছে। পরে আবার দেখুন।</p>"
+        : "<p>This post is coming soon. Please check back later.</p>",
   };
 
   return (
@@ -121,7 +130,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Blog
+            {locale === "bn" ? "ব্লগে ফিরে যান" : "Back to Blog"}
           </Link>
           {post.category && (
             <span className="inline-block bg-gold text-dark text-xs font-semibold px-3 py-1 rounded-full mb-4">
@@ -176,7 +185,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               <div className="mt-6 bg-white rounded-2xl shadow-card p-6">
                 <div className="flex items-center gap-3">
                   <Share2 className="w-5 h-5 text-gray-400" />
-                  <span className="font-medium text-dark">Share this article</span>
+                  <span className="font-medium text-dark">{locale === "bn" ? "এই লেখাটি শেয়ার করুন" : "Share this article"}</span>
                   <div className="flex gap-2 ml-auto">
                     <button className="w-9 h-9 bg-[#1877f2] rounded-lg flex items-center justify-center text-white hover:opacity-90 transition-opacity">
                       <Facebook className="w-4 h-4" />
@@ -192,22 +201,26 @@ export default async function BlogPostPage({ params }: PageProps) {
             {/* Sidebar */}
             <div className="space-y-6">
               <div className="bg-primary rounded-2xl p-6 text-white">
-                <h3 className="font-poppins font-bold text-lg mb-2">Support Our Work</h3>
+                <h3 className="font-poppins font-bold text-lg mb-2">
+                  {locale === "bn" ? "আমাদের কাজে সহায়তা করুন" : "Support Our Work"}
+                </h3>
                 <p className="text-white/80 text-sm mb-4">
-                  Stories like this are made possible by generous donors like you.
+                  {locale === "bn"
+                    ? "আপনার মতো দানশীল মানুষদের কারণেই এই গল্পগুলো সম্ভব হয়।"
+                    : "Stories like this are made possible by generous donors like you."}
                 </p>
                 <Link
                   href="/donate"
                   className="block w-full bg-gold text-dark font-semibold py-2.5 rounded-xl text-center hover:bg-gold-500 transition-colors text-sm"
                 >
-                  Donate Now
+                  {locale === "bn" ? "দান করুন" : "Donate Now"}
                 </Link>
               </div>
 
               {relatedPosts.length > 0 && (
                 <div className="bg-white rounded-2xl shadow-card p-6">
                   <h3 className="font-poppins font-bold text-lg text-dark mb-3">
-                    Related Articles
+                    {locale === "bn" ? "সম্পর্কিত নিবন্ধ" : "Related Articles"}
                   </h3>
                   <div className="space-y-3">
                     {relatedPosts.map((related) => (

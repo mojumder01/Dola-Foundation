@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Calendar, User, ArrowRight, Tag } from "lucide-react";
 import { formatDateShort, truncate } from "@/lib/utils";
+import type { Locale } from "@/lib/locale";
 
 interface BlogCardProps {
   title: string;
@@ -15,6 +16,7 @@ interface BlogCardProps {
   author?: string;
   publishedAt?: Date | null;
   index?: number;
+  locale?: Locale;
 }
 
 export default function BlogCard({
@@ -26,6 +28,7 @@ export default function BlogCard({
   author = "Dola Foundation",
   publishedAt,
   index = 0,
+  locale = "en",
 }: BlogCardProps) {
   return (
     <motion.article
@@ -85,7 +88,7 @@ export default function BlogCard({
           href={`/blog/${slug}`}
           className="inline-flex items-center gap-1.5 text-primary font-medium text-sm hover:gap-2.5 transition-all group-hover:text-gold"
         >
-          Read More
+          {locale === "bn" ? "আরও পড়ুন" : "Read More"}
           <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
         </Link>
       </div>

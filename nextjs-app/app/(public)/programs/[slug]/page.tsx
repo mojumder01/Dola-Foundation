@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
+import { getLocale, pickLocale, type Locale } from "@/lib/locale";
 
 export const dynamic = "force-dynamic";
 
@@ -206,23 +207,24 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 }
 
-async function getProgram(slug: string) {
+async function getProgram(slug: string, locale: Locale) {
+  const t = (en?: string | null, bn?: string | null) => pickLocale(en, bn, locale);
   try {
     const db = await prisma.program.findUnique({ where: { slug } });
     if (db && db.published) {
       return {
-        title: db.title,
+        title: t(db.title, db.titleBn),
         icon: db.icon || "🌟",
-        description: db.description,
-        longDescription: db.longDescription || db.description,
+        description: t(db.description, db.descriptionBn),
+        longDescription: t(db.longDescription, db.longDescriptionBn) || t(db.description, db.descriptionBn),
         bannerImage: db.bannerImage || null,
         videoUrl: db.videoUrl || null,
         videoPriority: db.videoPriority || "image",
         objectives: db.objectives ?? [],
         stats: [
-          db.stat1Label && db.stat1Value ? { label: db.stat1Label, value: db.stat1Value } : null,
-          db.stat2Label && db.stat2Value ? { label: db.stat2Label, value: db.stat2Value } : null,
-          db.stat3Label && db.stat3Value ? { label: db.stat3Label, value: db.stat3Value } : null,
+          db.stat1Label && db.stat1Value ? { label: t(db.stat1Label, db.stat1LabelBn), value: db.stat1Value } : null,
+          db.stat2Label && db.stat2Value ? { label: t(db.stat2Label, db.stat2LabelBn), value: db.stat2Value } : null,
+          db.stat3Label && db.stat3Value ? { label: t(db.stat3Label, db.stat3LabelBn), value: db.stat3Value } : null,
         ].filter(Boolean),
         gallery: db.gallery ?? [],
         gradient: "from-primary to-green",
@@ -237,7 +239,8 @@ async function getProgram(slug: string) {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const program = await getProgram(slug);
+  const locale = await getLocale();
+  const program = await getProgram(slug, locale);
   if (!program) return { title: "Program Not Found" };
   return {
     title: program.title,
@@ -247,7 +250,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProgramDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const program = await getProgram(slug);
+  const locale = await getLocale();
+  const program = await getProgram(slug, locale);
   if (!program) notFound();
 
   return (
@@ -264,7 +268,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
             className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Programs
+            {locale === "bn" ? "কার্যক্রমে ফিরে যান" : "Back to Programs"}
           </Link>
           <div className="flex items-start gap-5">
             <div className="w-20 h-20 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">
@@ -306,7 +310,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-2xl shadow-card p-8 mb-6">
                 <h2 className="font-poppins font-bold text-2xl text-dark mb-4">
-                  About This Program
+                  {locale === "bn" ? "এই কার্যক্রম সম্পর্কে" : "About This Program"}
                 </h2>
                 <div className="prose-content">
                   {program.longDescription.split("\n\n").map((para: string, i: number) => (
@@ -320,7 +324,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
               {/* Gallery */}
               <div className="bg-white rounded-2xl shadow-card p-8">
                 <h2 className="font-poppins font-bold text-2xl text-dark mb-5">
-                  Photo Gallery
+                  {locale === "bn" ? "ফটো গ্যালারি" : "Photo Gallery"}
                 </h2>
                 <div className="grid grid-cols-3 gap-4">
                   {program.gallery.map((img: string, i: number) => (
@@ -341,7 +345,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
               {/* Objectives */}
               <div className="bg-white rounded-2xl shadow-card p-6">
                 <h3 className="font-poppins font-bold text-lg text-dark mb-4">
-                  Key Objectives
+                  {locale === "bn" ? "মূল লক্ষ্য" : "Key Objectives"}
                 </h3>
                 <ul className="space-y-3">
                   {program.objectives.map((obj: string, i: number) => (
@@ -356,14 +360,16 @@ export default async function ProgramDetailPage({ params }: PageProps) {
               {/* Donate CTA */}
               <div className={`bg-gradient-to-br ${program.gradient} rounded-2xl p-6 text-white`}>
                 <h3 className="font-poppins font-bold text-lg mb-2">
-                  Support This Program
+                  {locale === "bn" ? "এই কার্যক্রমে সহায়তা করুন" : "Support This Program"}
                 </h3>
                 <p className="text-white/80 text-sm mb-4">
-                  Your donation directly funds {program.title.toLowerCase()} activities and impacts real lives.
+                  {locale === "bn"
+                    ? `আপনার অনুদান সরাসরি ${program.title} কার্যক্রমে ব্যবহৃত হয় এবং বাস্তব জীবনে প্রভাব ফেলে।`
+                    : `Your donation directly funds ${program.title.toLowerCase()} activities and impacts real lives.`}
                 </p>
                 <Link href="/donate">
                   <Button variant="default" className="w-full">
-                    Donate Now
+                    {locale === "bn" ? "দান করুন" : "Donate Now"}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
@@ -372,14 +378,16 @@ export default async function ProgramDetailPage({ params }: PageProps) {
               {/* Volunteer CTA */}
               <div className="bg-[#F8FAFC] rounded-2xl border border-gray-200 p-6">
                 <h3 className="font-poppins font-bold text-lg text-dark mb-2">
-                  Volunteer With Us
+                  {locale === "bn" ? "আমাদের সাথে স্বেচ্ছাসেবক হোন" : "Volunteer With Us"}
                 </h3>
                 <p className="text-gray-500 text-sm mb-4">
-                  Help deliver this program on the ground. Your skills can change lives.
+                  {locale === "bn"
+                    ? "এই কার্যক্রম বাস্তবায়নে সহায়তা করুন। আপনার দক্ষতা জীবন বদলে দিতে পারে।"
+                    : "Help deliver this program on the ground. Your skills can change lives."}
                 </p>
                 <Link href="/volunteer">
                   <Button variant="primary" className="w-full">
-                    Apply to Volunteer
+                    {locale === "bn" ? "স্বেচ্ছাসেবক হতে আবেদন করুন" : "Apply to Volunteer"}
                   </Button>
                 </Link>
               </div>

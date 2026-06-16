@@ -4,6 +4,7 @@ import { MapPin, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDateShort } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
+import { getLocale, pickLocale, type Locale } from "@/lib/locale";
 
 export const revalidate = 0;
 
@@ -94,7 +95,8 @@ const statusConfig = {
   UPCOMING: { label: "Upcoming", variant: "upcoming" as const },
 };
 
-async function getProjects() {
+async function getProjects(locale: Locale) {
+  const t = (en?: string | null, bn?: string | null) => pickLocale(en, bn, locale);
   try {
     const dbProjects = await prisma.project.findMany({
       where: { published: true },
@@ -103,9 +105,9 @@ async function getProjects() {
     if (dbProjects.length === 0) return FALLBACK_PROJECTS;
     return dbProjects.map((p) => ({
       id: p.id,
-      title: p.title,
+      title: t(p.title, p.titleBn),
       slug: p.slug,
-      description: p.description,
+      description: t(p.description, p.descriptionBn),
       status: p.status,
       location: p.location,
       startDate: p.startDate ?? p.createdAt,
@@ -125,7 +127,8 @@ async function getSettings() {
 }
 
 export default async function ProjectsPage() {
-  const [projects, settings] = await Promise.all([getProjects(), getSettings()]);
+  const locale = await getLocale();
+  const [projects, settings] = await Promise.all([getProjects(locale), getSettings()]);
   return (
     <div className="pt-20">
       {/* Hero */}
@@ -140,18 +143,20 @@ export default async function ProjectsPage() {
         {settings?.projectsBannerImage && <div className="absolute inset-0 bg-primary/70" />}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            Our Work
+            {locale === "bn" ? "আমাদের কাজ" : "Our Work"}
           </span>
           <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
-            Our Projects
+            {locale === "bn" ? "আমাদের প্রজেক্ট" : "Our Projects"}
           </h1>
           <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            Concrete, impactful projects delivering real change in communities across Bangladesh.
+            {locale === "bn"
+              ? "বাংলাদেশের সম্প্রদায়গুলোতে বাস্তব পরিবর্তন আনতে কার্যকর প্রজেক্টসমূহ।"
+              : "Concrete, impactful projects delivering real change in communities across Bangladesh."}
           </p>
           <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <Link href="/" className="hover:text-white transition-colors">{locale === "bn" ? "হোম" : "Home"}</Link>
             <span>/</span>
-            <span className="text-white">Projects</span>
+            <span className="text-white">{locale === "bn" ? "প্রজেক্ট" : "Projects"}</span>
           </div>
         </div>
       </section>
@@ -160,8 +165,11 @@ export default async function ProjectsPage() {
       <section className="py-8 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm font-medium text-gray-500">Filter:</span>
-            {["All", "Ongoing", "Completed", "Upcoming"].map((filter) => (
+            <span className="text-sm font-medium text-gray-500">{locale === "bn" ? "ফিল্টার:" : "Filter:"}</span>
+            {(locale === "bn"
+              ? ["সব", "চলমান", "সম্পন্ন", "আসন্ন"]
+              : ["All", "Ongoing", "Completed", "Upcoming"]
+            ).map((filter) => (
               <button
                 key={filter}
                 className="px-4 py-1.5 rounded-full text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-primary hover:text-white"
@@ -179,6 +187,10 @@ export default async function ProjectsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project) => {
               const { label, variant } = statusConfig[project.status];
+              const statusLabel =
+                locale === "bn"
+                  ? { Ongoing: "চলমান", Completed: "সম্পন্ন", Upcoming: "আসন্ন" }[label] ?? label
+                  : label;
               return (
                 <div
                   key={project.id}
@@ -189,7 +201,7 @@ export default async function ProjectsPage() {
                       <span className="text-2xl">🏗️</span>
                     </div>
                     <div className="absolute top-3 right-3">
-                      <Badge variant={variant}>{label}</Badge>
+                      <Badge variant={variant}>{statusLabel}</Badge>
                     </div>
                   </div>
 
@@ -218,7 +230,7 @@ export default async function ProjectsPage() {
                       href={`/projects/${project.slug}`}
                       className="inline-flex items-center gap-1.5 text-primary font-medium text-sm hover:text-gold transition-colors"
                     >
-                      View Details →
+                      {locale === "bn" ? "বিস্তারিত দেখুন →" : "View Details →"}
                     </Link>
                   </div>
                 </div>

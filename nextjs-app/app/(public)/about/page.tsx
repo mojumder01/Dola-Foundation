@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getLocale, pickLocale } from "@/lib/locale";
 import {
   Target,
   Eye,
@@ -110,10 +111,17 @@ async function getCoreValues() {
 }
 
 export default async function AboutPage() {
-  const [settings, dbTeam, dbValues] = await Promise.all([getSettings(), getTeamMembers(), getCoreValues()]);
+  const [locale, settings, dbTeam, dbValues] = await Promise.all([
+    getLocale(),
+    getSettings(),
+    getTeamMembers(),
+    getCoreValues(),
+  ]);
   const teamMembers = dbTeam ?? FALLBACK_TEAM;
 
-  const founderName = settings?.founderName || "Dr. Ahmed Rahman";
+  const t = (en?: string | null, bn?: string | null) => pickLocale(en, bn, locale);
+
+  const founderName = t(settings?.founderName, settings?.founderNameBn) || "Dr. Ahmed Rahman";
 
   return (
     <div className="pt-20">
@@ -137,22 +145,22 @@ export default async function AboutPage() {
         </div>}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            About Us
+            {locale === "bn" ? "আমাদের কথা" : "About Us"}
           </span>
           <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
-            Who We Are
+            {locale === "bn" ? "আমরা কারা" : "Who We Are"}
           </h1>
           <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            Dola Foundation is a non-profit organization committed to creating
-            lasting positive change in the lives of vulnerable communities across
-            Bangladesh.
+            {locale === "bn"
+              ? "ডোলা ফাউন্ডেশন একটি বেসরকারি সংস্থা যা বাংলাদেশের সুবিধাবঞ্চিত জনগোষ্ঠীর জীবনে দীর্ঘস্থায়ী ইতিবাচক পরিবর্তন আনতে প্রতিশ্রুতিবদ্ধ।"
+              : "Dola Foundation is a non-profit organization committed to creating lasting positive change in the lives of vulnerable communities across Bangladesh."}
           </p>
           <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
             <Link href="/" className="hover:text-white transition-colors">
-              Home
+              {locale === "bn" ? "হোম" : "Home"}
             </Link>
             <span>/</span>
-            <span className="text-white">About</span>
+            <span className="text-white">{locale === "bn" ? "আমাদের কথা" : "About"}</span>
           </div>
         </div>
       </section>
@@ -163,49 +171,52 @@ export default async function AboutPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <span className="inline-block bg-gold/15 text-gold text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
-                Our Story
+                {locale === "bn" ? "আমাদের গল্প" : "Our Story"}
               </span>
               <h2 className="font-poppins font-bold text-3xl md:text-4xl text-dark mb-5 leading-tight">
-                A Decade of Changing Lives
+                {locale === "bn" ? "এক দশকের জীবন পরিবর্তন" : "A Decade of Changing Lives"}
               </h2>
               <div className="space-y-4 text-gray-600 leading-relaxed">
-                {settings?.aboutText ? (
-                  settings.aboutText
-                    .split(/\n+/)
-                    .filter((paragraph) => paragraph.trim().length > 0)
-                    .map((paragraph, i) => <p key={i}>{paragraph}</p>)
-                ) : (
-                  <>
-                    <p>
-                      Founded in 2015 by Dr. Ahmed Rahman, Dola Foundation began as
-                      a small initiative to provide education support to 20 children
-                      in a rural village in Sylhet. What started as a passion project
-                      has grown into a fully operational NGO serving thousands of
-                      people across 8 districts.
-                    </p>
-                    <p>
-                      The name "Dola" represents the Bangla concept of a swing — a
-                      symbol of the gentle, uplifting motion of lives being elevated
-                      from poverty and despair to dignity and hope. We believe every
-                      person deserves the opportunity to swing upward.
-                    </p>
-                    <p>
-                      Over the years, we've built schools, operated health camps,
-                      distributed relief supplies during floods and other disasters,
-                      trained thousands of youth, and provided care to hundreds of
-                      orphaned children. Our work continues to expand because the
-                      need is great and our community of supporters grows every day.
-                    </p>
-                  </>
-                )}
+                {(() => {
+                  const aboutText = t(settings?.aboutText, settings?.aboutTextBn);
+                  return aboutText ? (
+                    aboutText
+                      .split(/\n+/)
+                      .filter((paragraph) => paragraph.trim().length > 0)
+                      .map((paragraph, i) => <p key={i}>{paragraph}</p>)
+                  ) : (
+                    <>
+                      <p>
+                        Founded in 2015 by Dr. Ahmed Rahman, Dola Foundation began as
+                        a small initiative to provide education support to 20 children
+                        in a rural village in Sylhet. What started as a passion project
+                        has grown into a fully operational NGO serving thousands of
+                        people across 8 districts.
+                      </p>
+                      <p>
+                        The name "Dola" represents the Bangla concept of a swing — a
+                        symbol of the gentle, uplifting motion of lives being elevated
+                        from poverty and despair to dignity and hope. We believe every
+                        person deserves the opportunity to swing upward.
+                      </p>
+                      <p>
+                        Over the years, we've built schools, operated health camps,
+                        distributed relief supplies during floods and other disasters,
+                        trained thousands of youth, and provided care to hundreds of
+                        orphaned children. Our work continues to expand because the
+                        need is great and our community of supporters grows every day.
+                      </p>
+                    </>
+                  );
+                })()}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {[
-                { value: settings?.aboutStat1Value || "2015", label: settings?.aboutStat1Label || "Founded", icon: settings?.aboutStat1Icon || "🏛️" },
-                { value: settings?.aboutStat2Value || "5,000+", label: settings?.aboutStat2Label || "Lives Impacted", icon: settings?.aboutStat2Icon || "❤️" },
-                { value: settings?.aboutStat3Value || "8", label: settings?.aboutStat3Label || "Districts Served", icon: settings?.aboutStat3Icon || "📍" },
-                { value: settings?.aboutStat4Value || "500+", label: settings?.aboutStat4Label || "Volunteers", icon: settings?.aboutStat4Icon || "👥" },
+                { value: settings?.aboutStat1Value || "2015", label: t(settings?.aboutStat1Label, settings?.aboutStat1LabelBn) || "Founded", icon: settings?.aboutStat1Icon || "🏛️" },
+                { value: settings?.aboutStat2Value || "5,000+", label: t(settings?.aboutStat2Label, settings?.aboutStat2LabelBn) || "Lives Impacted", icon: settings?.aboutStat2Icon || "❤️" },
+                { value: settings?.aboutStat3Value || "8", label: t(settings?.aboutStat3Label, settings?.aboutStat3LabelBn) || "Districts Served", icon: settings?.aboutStat3Icon || "📍" },
+                { value: settings?.aboutStat4Value || "500+", label: t(settings?.aboutStat4Label, settings?.aboutStat4LabelBn) || "Volunteers", icon: settings?.aboutStat4Icon || "👥" },
               ].map((stat, i) => (
                 <div
                   key={i}
@@ -232,10 +243,10 @@ export default async function AboutPage() {
                 <Target className="w-7 h-7 text-white" />
               </div>
               <h3 className="font-poppins font-bold text-2xl text-white mb-3">
-                Our Mission
+                {locale === "bn" ? "আমাদের লক্ষ্য" : "Our Mission"}
               </h3>
               <p className="text-white/80 leading-relaxed">
-                {settings?.missionText ||
+                {t(settings?.missionText, settings?.missionTextBn) ||
                   "To empower vulnerable communities in Bangladesh through sustainable programs in education, healthcare, livelihood, and environmental conservation — ensuring that every individual has access to their fundamental rights and the opportunity to live with dignity."}
               </p>
             </div>
@@ -244,10 +255,10 @@ export default async function AboutPage() {
                 <Eye className="w-7 h-7 text-white" />
               </div>
               <h3 className="font-poppins font-bold text-2xl text-white mb-3">
-                Our Vision
+                {locale === "bn" ? "আমাদের দৃষ্টিভঙ্গি" : "Our Vision"}
               </h3>
               <p className="text-white/80 leading-relaxed">
-                {settings?.visionText ||
+                {t(settings?.visionText, settings?.visionTextBn) ||
                   "A Bangladesh where no child goes without education, no family suffers from preventable illness, no community is left behind in development, and where every person — regardless of their background — can live a life full of potential and hope."}
               </p>
             </div>
@@ -259,9 +270,13 @@ export default async function AboutPage() {
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
-            badge="Our Values"
-            title="What Drives Us"
-            subtitle="These core values guide everything we do — from program design to how we treat every person we serve."
+            badge={locale === "bn" ? "আমাদের মূল্যবোধ" : "Our Values"}
+            title={locale === "bn" ? "যা আমাদের চালিত করে" : "What Drives Us"}
+            subtitle={
+              locale === "bn"
+                ? "এই মূল্যবোধগুলো আমাদের প্রতিটি কাজে দিকনির্দেশনা দেয় — প্রোগ্রাম পরিকল্পনা থেকে শুরু করে প্রতিটি মানুষের সাথে আমাদের আচরণ পর্যন্ত।"
+                : "These core values guide everything we do — from program design to how we treat every person we serve."
+            }
           />
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {dbValues
@@ -274,10 +289,10 @@ export default async function AboutPage() {
                       {value.icon || "💡"}
                     </div>
                     <h3 className="font-poppins font-bold text-lg text-dark mb-2">
-                      {value.title}
+                      {t(value.title, value.titleBn)}
                     </h3>
                     <p className="text-gray-500 text-sm leading-relaxed">
-                      {value.description}
+                      {t(value.description, value.descriptionBn)}
                     </p>
                   </div>
                 ))
@@ -329,10 +344,10 @@ export default async function AboutPage() {
               )}
               <div>
                 <span className="inline-block bg-gold/15 text-gold text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
-                  Founder's Message
+                  {locale === "bn" ? "প্রতিষ্ঠাতার বার্তা" : "Founder's Message"}
                 </span>
                 <blockquote className="text-gray-600 text-base leading-relaxed mb-6 italic">
-                  "{settings?.founderMessage ||
+                  "{t(settings?.founderMessage, settings?.founderMessageBn) ||
                     "When I started Dola Foundation in 2015, I had one dream: that no child in Bangladesh would miss out on education simply because of poverty. A decade later, that dream has grown into something far greater. We now serve thousands of families, operating programs that span education, health, environment, and youth empowerment. But we have not yet finished our work. As long as there are children without schools, families without healthcare, and communities without clean water, Dola Foundation will continue to act. I invite you to join us on this journey of hope."}"
                 </blockquote>
                 <div>
@@ -340,7 +355,7 @@ export default async function AboutPage() {
                     {founderName}
                   </div>
                   <div className="text-gray-500 text-sm">
-                    Founder & Executive Director, Dola Foundation
+                    {locale === "bn" ? "প্রতিষ্ঠাতা ও নির্বাহী পরিচালক, ডোলা ফাউন্ডেশন" : "Founder & Executive Director, Dola Foundation"}
                   </div>
                 </div>
               </div>
@@ -353,12 +368,20 @@ export default async function AboutPage() {
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
-            badge="Our Team"
-            title="Meet the Team"
-            subtitle="Dedicated professionals and community leaders driving our mission forward every day."
+            badge={locale === "bn" ? "আমাদের টিম" : "Our Team"}
+            title={locale === "bn" ? "টিমের সাথে পরিচিত হোন" : "Meet the Team"}
+            subtitle={
+              locale === "bn"
+                ? "নিবেদিতপ্রাণ পেশাজীবী ও কমিউনিটি নেতারা প্রতিদিন আমাদের লক্ষ্য এগিয়ে নিয়ে যাচ্ছেন।"
+                : "Dedicated professionals and community leaders driving our mission forward every day."
+            }
           />
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {teamMembers.map((member, index) => (
+            {teamMembers.map((member, index) => {
+              const memberName = t(member.name, "nameBn" in member ? member.nameBn : undefined) || member.name;
+              const memberRole = t(member.role, "roleBn" in member ? member.roleBn : undefined) || member.role;
+              const memberBio = t(member.bio, "bioBn" in member ? member.bioBn : undefined) || member.bio;
+              return (
               <div
                 key={index}
                 className="bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover p-6 text-center transition-all duration-300 hover:-translate-y-1"
@@ -366,27 +389,28 @@ export default async function AboutPage() {
                 {member.image ? (
                   <img
                     src={member.image}
-                    alt={member.name}
+                    alt={memberName}
                     className="w-20 h-20 rounded-2xl object-cover mx-auto mb-4"
                   />
                 ) : (
                   <div
                     className={`w-20 h-20 ${MEMBER_COLORS[index % MEMBER_COLORS.length]} rounded-2xl flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4`}
                   >
-                    {member.name.charAt(0).toUpperCase()}
+                    {memberName.charAt(0).toUpperCase()}
                   </div>
                 )}
                 <h3 className="font-poppins font-bold text-dark mb-1">
-                  {member.name}
+                  {memberName}
                 </h3>
                 <div className="text-primary text-xs font-semibold mb-3">
-                  {member.role}
+                  {memberRole}
                 </div>
                 <p className="text-gray-500 text-xs leading-relaxed">
-                  {member.bio}
+                  {memberBio}
                 </p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

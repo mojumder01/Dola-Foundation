@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
+import { getLocale, pickLocale, type Locale } from "@/lib/locale";
 
 export const dynamic = "force-dynamic";
 
@@ -92,14 +93,15 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 }
 
-async function getProject(slug: string) {
+async function getProject(slug: string, locale: Locale) {
+  const t = (en?: string | null, bn?: string | null) => pickLocale(en, bn, locale);
   try {
     const db = await prisma.project.findUnique({ where: { slug } });
     if (db && db.published) {
       return {
-        title: db.title,
-        description: db.description,
-        fullDescription: db.impact || "",
+        title: t(db.title, db.titleBn),
+        description: t(db.description, db.descriptionBn),
+        fullDescription: t(db.impact, db.impactBn) || "",
         status: db.status,
         location: db.location,
         startDate: db.startDate ?? db.createdAt,
@@ -120,7 +122,8 @@ async function getProject(slug: string) {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProject(slug);
+  const locale = await getLocale();
+  const project = await getProject(slug, locale);
   if (!project) return { title: "Project Not Found" };
   return { title: project.title, description: project.description };
 }
@@ -133,10 +136,15 @@ const statusConfig: Record<string, { label: string; variant: any; color: string 
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = await getProject(slug);
+  const locale = await getLocale();
+  const project = await getProject(slug, locale);
   if (!project) notFound();
 
   const status = statusConfig[project.status];
+  const statusLabel =
+    locale === "bn"
+      ? { Ongoing: "চলমান", Completed: "সম্পন্ন", Upcoming: "আসন্ন" }[status.label] ?? status.label
+      : status.label;
 
   return (
     <div className="pt-20">
@@ -152,12 +160,12 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Projects
+            {locale === "bn" ? "প্রজেক্টে ফিরে যান" : "Back to Projects"}
           </Link>
           <div className="flex flex-wrap items-start gap-4">
             <div>
               <div className="flex items-center gap-3 mb-3">
-                <Badge variant={status.variant}>{status.label}</Badge>
+                <Badge variant={status.variant}>{statusLabel}</Badge>
               </div>
               <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-4">
                 {project.title}
@@ -173,12 +181,12 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Calendar className="w-4 h-4" />
-                  Started {formatDate(project.startDate)}
+                  {locale === "bn" ? `শুরু ${formatDate(project.startDate)}` : `Started ${formatDate(project.startDate)}`}
                 </span>
                 {project.budget && (
                   <span className="flex items-center gap-1.5">
                     <DollarSign className="w-4 h-4" />
-                    Budget: {formatCurrency(project.budget)}
+                    {locale === "bn" ? `বাজেট: ${formatCurrency(project.budget)}` : `Budget: ${formatCurrency(project.budget)}`}
                   </span>
                 )}
               </div>
@@ -195,7 +203,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             <div className="lg:col-span-2 space-y-6">
               {project.fullDescription && (
                 <div className="bg-white rounded-2xl shadow-card p-8">
-                  <h2 className="font-poppins font-bold text-2xl text-dark mb-4">About This Project</h2>
+                  <h2 className="font-poppins font-bold text-2xl text-dark mb-4">
+                    {locale === "bn" ? "এই প্রজেক্ট সম্পর্কে" : "About This Project"}
+                  </h2>
                   <div>
                     {project.fullDescription.split("\n\n").map((para: string, i: number) => (
                       <p key={i} className="text-gray-600 leading-relaxed mb-4">{para}</p>
@@ -206,14 +216,18 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
               {project.impact && (
                 <div className="bg-white rounded-2xl shadow-card p-8">
-                  <h2 className="font-poppins font-bold text-2xl text-dark mb-4">Impact</h2>
+                  <h2 className="font-poppins font-bold text-2xl text-dark mb-4">
+                    {locale === "bn" ? "প্রভাব" : "Impact"}
+                  </h2>
                   <p className="text-gray-600 leading-relaxed">{project.impact}</p>
                 </div>
               )}
 
               {project.gallery && project.gallery.length > 0 && (
                 <div className="bg-white rounded-2xl shadow-card p-8">
-                  <h2 className="font-poppins font-bold text-2xl text-dark mb-5">Gallery</h2>
+                  <h2 className="font-poppins font-bold text-2xl text-dark mb-5">
+                    {locale === "bn" ? "গ্যালারি" : "Gallery"}
+                  </h2>
                   <div className="grid grid-cols-2 gap-4">
                     {project.gallery.map((img: string, i: number) => (
                       <div key={i} className="relative aspect-video overflow-hidden rounded-xl">
@@ -230,7 +244,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               {/* Milestones */}
               {project.milestones?.length > 0 && (
                 <div className="bg-white rounded-2xl shadow-card p-6">
-                  <h3 className="font-poppins font-bold text-lg text-dark mb-4">Project Milestones</h3>
+                  <h3 className="font-poppins font-bold text-lg text-dark mb-4">
+                    {locale === "bn" ? "প্রজেক্টের মাইলফলক" : "Project Milestones"}
+                  </h3>
                   <div className="space-y-3">
                     {project.milestones.map((milestone: any, i: number) => (
                       <div key={i} className="flex items-start gap-2.5">
@@ -249,12 +265,16 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
               {/* Donate */}
               <div className="bg-gradient-to-br from-primary to-[#1a4da0] rounded-2xl p-6 text-white">
-                <h3 className="font-poppins font-bold text-lg mb-2">Support This Project</h3>
+                <h3 className="font-poppins font-bold text-lg mb-2">
+                  {locale === "bn" ? "এই প্রজেক্টে সহায়তা করুন" : "Support This Project"}
+                </h3>
                 <p className="text-white/80 text-sm mb-4">
-                  Your donation directly funds this project and its impact on the community.
+                  {locale === "bn"
+                    ? "আপনার অনুদান সরাসরি এই প্রজেক্ট এবং কমিউনিটিতে এর প্রভাবে ব্যবহৃত হয়।"
+                    : "Your donation directly funds this project and its impact on the community."}
                 </p>
                 <Link href="/donate">
-                  <Button variant="default" className="w-full">Donate Now</Button>
+                  <Button variant="default" className="w-full">{locale === "bn" ? "দান করুন" : "Donate Now"}</Button>
                 </Link>
               </div>
             </div>

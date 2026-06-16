@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CheckCircle, Clock, Users, Award, Heart } from "lucide-react";
 import { submitVolunteer } from "@/actions/volunteer";
 import { prisma } from "@/lib/prisma";
+import { getLocale, pickLocale } from "@/lib/locale";
 import VolunteerForm from "./VolunteerForm";
 
 export const revalidate = 0;
@@ -76,11 +77,14 @@ async function getDBItems(section: string) {
 }
 
 export default async function VolunteerPage() {
-  const [settings, dbBenefits, dbSteps] = await Promise.all([
+  const [locale, settings, dbBenefits, dbSteps] = await Promise.all([
+    getLocale(),
     getSettings(),
     getDBItems("volunteer-benefits"),
     getDBItems("volunteer-steps"),
   ]);
+
+  const t = (en?: string | null, bn?: string | null) => pickLocale(en, bn, locale);
 
   return (
     <div className="pt-20">
@@ -96,19 +100,19 @@ export default async function VolunteerPage() {
         {settings?.volunteerBannerImage && <div className="absolute inset-0 bg-primary/70" />}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            {settings?.volunteerPageBadge || "Get Involved"}
+            {t(settings?.volunteerPageBadge, settings?.volunteerPageBadgeBn) || "Get Involved"}
           </span>
           <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
-            {settings?.volunteerPageTitle || "Volunteer With Us"}
+            {t(settings?.volunteerPageTitle, settings?.volunteerPageTitleBn) || "Volunteer With Us"}
           </h1>
           <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            {settings?.volunteerPageSubtitle ||
+            {t(settings?.volunteerPageSubtitle, settings?.volunteerPageSubtitleBn) ||
               "Your time, skills, and passion can change lives. Join our community of 500+ volunteers working to build a better Bangladesh."}
           </p>
           <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <Link href="/" className="hover:text-white transition-colors">{locale === "bn" ? "হোম" : "Home"}</Link>
             <span>/</span>
-            <span className="text-white">Volunteer</span>
+            <span className="text-white">{locale === "bn" ? "স্বেচ্ছাসেবক" : "Volunteer"}</span>
           </div>
         </div>
       </section>
@@ -118,10 +122,10 @@ export default async function VolunteerPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="font-poppins font-bold text-3xl text-dark mb-3">
-              {settings?.volunteerWhyHeading || "Why Volunteer With Us?"}
+              {t(settings?.volunteerWhyHeading, settings?.volunteerWhyHeadingBn) || "Why Volunteer With Us?"}
             </h2>
             <p className="text-gray-500 max-w-xl mx-auto">
-              {settings?.volunteerWhyDescription ||
+              {t(settings?.volunteerWhyDescription, settings?.volunteerWhyDescriptionBn) ||
                 "Volunteering with Dola Foundation is a rewarding experience that benefits both you and the communities we serve."}
             </p>
           </div>
@@ -132,8 +136,8 @@ export default async function VolunteerPage() {
                     <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-2xl">
                       {benefit.icon || "💡"}
                     </div>
-                    <h3 className="font-poppins font-bold text-lg text-dark mb-2">{benefit.title}</h3>
-                    <p className="text-gray-500 text-sm leading-relaxed">{benefit.description}</p>
+                    <h3 className="font-poppins font-bold text-lg text-dark mb-2">{t(benefit.title, benefit.titleBn)}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">{t(benefit.description, benefit.descriptionBn)}</p>
                   </div>
                 ))
               : benefits.map((benefit, index) => {
@@ -157,7 +161,7 @@ export default async function VolunteerPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="font-poppins font-bold text-3xl text-dark mb-3">
-              {settings?.volunteerHowHeading || "How It Works"}
+              {t(settings?.volunteerHowHeading, settings?.volunteerHowHeadingBn) || "How It Works"}
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -169,9 +173,9 @@ export default async function VolunteerPage() {
                   </span>
                 </div>
                 <h3 className="font-poppins font-bold text-lg text-dark mb-2">
-                  {step.title}
+                  {t(step.title, step.titleBn)}
                 </h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{step.description}</p>
+                <p className="text-gray-500 text-sm leading-relaxed">{t(step.description, step.descriptionBn)}</p>
               </div>
             ))}
           </div>
@@ -183,10 +187,10 @@ export default async function VolunteerPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="font-poppins font-bold text-3xl text-dark mb-3">
-              {settings?.volunteerApplyHeading || "Apply to Volunteer"}
+              {t(settings?.volunteerApplyHeading, settings?.volunteerApplyHeadingBn) || "Apply to Volunteer"}
             </h2>
             <p className="text-gray-500">
-              {settings?.volunteerApplySubtitle ||
+              {t(settings?.volunteerApplySubtitle, settings?.volunteerApplySubtitleBn) ||
                 "Fill in the form below and we'll get back to you within 3-5 business days."}
             </p>
           </div>
