@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - claude/trusting-meitner-vf6k3c
+      - claude/sharp-hawking-fnam76
 
 jobs:
   deploy:
