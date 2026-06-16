@@ -96,14 +96,14 @@ export default async function VolunteerPage() {
         {settings?.volunteerBannerImage && <div className="absolute inset-0 bg-primary/70" />}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            Get Involved
+            {settings?.volunteerPageBadge || "Get Involved"}
           </span>
           <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
-            Volunteer With Us
+            {settings?.volunteerPageTitle || "Volunteer With Us"}
           </h1>
           <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            Your time, skills, and passion can change lives. Join our community
-            of 500+ volunteers working to build a better Bangladesh.
+            {settings?.volunteerPageSubtitle ||
+              "Your time, skills, and passion can change lives. Join our community of 500+ volunteers working to build a better Bangladesh."}
           </p>
           <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
@@ -118,10 +118,11 @@ export default async function VolunteerPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="font-poppins font-bold text-3xl text-dark mb-3">
-              Why Volunteer With Us?
+              {settings?.volunteerWhyHeading || "Why Volunteer With Us?"}
             </h2>
             <p className="text-gray-500 max-w-xl mx-auto">
-              Volunteering with Dola Foundation is a rewarding experience that benefits both you and the communities we serve.
+              {settings?.volunteerWhyDescription ||
+                "Volunteering with Dola Foundation is a rewarding experience that benefits both you and the communities we serve."}
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
@@ -156,7 +157,7 @@ export default async function VolunteerPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="font-poppins font-bold text-3xl text-dark mb-3">
-              How It Works
+              {settings?.volunteerHowHeading || "How It Works"}
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -182,10 +183,11 @@ export default async function VolunteerPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="font-poppins font-bold text-3xl text-dark mb-3">
-              Apply to Volunteer
+              {settings?.volunteerApplyHeading || "Apply to Volunteer"}
             </h2>
             <p className="text-gray-500">
-              Fill in the form below and we'll get back to you within 3-5 business days.
+              {settings?.volunteerApplySubtitle ||
+                "Fill in the form below and we'll get back to you within 3-5 business days."}
             </p>
           </div>
           <VolunteerForm />

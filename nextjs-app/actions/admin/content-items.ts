@@ -11,8 +11,13 @@ const SECTION_PUBLIC_PATH: Record<string, string> = {
   "donate-why": "/donate",
 };
 
+const SECTION_ADMIN_PATH: Record<string, string> = {
+  "volunteer-benefits": "/admin/volunteer-page",
+  "volunteer-steps": "/admin/volunteer-page",
+};
+
 function revalidateSection(section: string) {
-  revalidatePath("/admin/content");
+  revalidatePath(SECTION_ADMIN_PATH[section] || "/admin/content");
   const publicPath = SECTION_PUBLIC_PATH[section];
   if (publicPath) revalidatePath(publicPath);
 }
