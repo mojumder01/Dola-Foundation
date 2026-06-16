@@ -65,8 +65,22 @@ export async function updateSiteSettings(formData: FormData) {
       contactBannerImage: (formData.get("contactBannerImage") as string) || undefined,
       volunteerBannerImage: (formData.get("volunteerBannerImage") as string) || undefined,
       blogBannerImage: (formData.get("blogBannerImage") as string) || undefined,
+      galleryBannerImage: (formData.get("galleryBannerImage") as string) || undefined,
+      donateBannerImage: (formData.get("donateBannerImage") as string) || undefined,
       googleMapsEmbedUrl: (formData.get("googleMapsEmbedUrl") as string) || undefined,
       sectionOrder: (formData.get("sectionOrder") as string) || undefined,
+      aboutStat1Icon: (formData.get("aboutStat1Icon") as string) || undefined,
+      aboutStat1Value: (formData.get("aboutStat1Value") as string) || undefined,
+      aboutStat1Label: (formData.get("aboutStat1Label") as string) || undefined,
+      aboutStat2Icon: (formData.get("aboutStat2Icon") as string) || undefined,
+      aboutStat2Value: (formData.get("aboutStat2Value") as string) || undefined,
+      aboutStat2Label: (formData.get("aboutStat2Label") as string) || undefined,
+      aboutStat3Icon: (formData.get("aboutStat3Icon") as string) || undefined,
+      aboutStat3Value: (formData.get("aboutStat3Value") as string) || undefined,
+      aboutStat3Label: (formData.get("aboutStat3Label") as string) || undefined,
+      aboutStat4Icon: (formData.get("aboutStat4Icon") as string) || undefined,
+      aboutStat4Value: (formData.get("aboutStat4Value") as string) || undefined,
+      aboutStat4Label: (formData.get("aboutStat4Label") as string) || undefined,
     };
 
     const settings = existing

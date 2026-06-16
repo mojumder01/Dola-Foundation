@@ -57,6 +57,8 @@ model SiteSettings {
   contactBannerImage   String?
   volunteerBannerImage String?
   blogBannerImage      String?
+  galleryBannerImage   String?
+  donateBannerImage    String?
   googleMapsEmbedUrl   String?
   donatePageTitle      String?
   donatePageSubtitle   String?  @db.Text
@@ -69,6 +71,18 @@ model SiteSettings {
   stat3Value     String   @default("8")
   stat4Label     String   @default("Volunteers")
   stat4Value     String   @default("500")
+  aboutStat1Icon  String  @default("🏛️")
+  aboutStat1Value String  @default("2015")
+  aboutStat1Label String  @default("Founded")
+  aboutStat2Icon  String  @default("❤️")
+  aboutStat2Value String  @default("5,000+")
+  aboutStat2Label String  @default("Lives Impacted")
+  aboutStat3Icon  String  @default("📍")
+  aboutStat3Value String  @default("8")
+  aboutStat3Label String  @default("Districts Served")
+  aboutStat4Icon  String  @default("👥")
+  aboutStat4Value String  @default("500+")
+  aboutStat4Label String  @default("Volunteers")
   updatedAt      DateTime @updatedAt
 }
 

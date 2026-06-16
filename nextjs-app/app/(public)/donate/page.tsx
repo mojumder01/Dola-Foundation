@@ -44,18 +44,35 @@ async function getActivePaymentMethods() {
   }
 }
 
+async function getSettings() {
+  try {
+    return await prisma.siteSettings.findFirst();
+  } catch {
+    return null;
+  }
+}
+
 export default async function DonatePage() {
-  const [impactAmounts, paymentMethods] = await Promise.all([
+  const [impactAmounts, paymentMethods, settings] = await Promise.all([
     getImpactAmounts(),
     getActivePaymentMethods(),
+    getSettings(),
   ]);
   const bankMethod = paymentMethods.find((m) => m.type === "BANK_TRANSFER");
 
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-primary to-[#1a4da0] py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section
+        className="relative bg-gradient-to-br from-primary to-[#1a4da0] py-20 md:py-28"
+        style={settings?.donateBannerImage ? {
+          backgroundImage: `url(${settings.donateBannerImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        } : undefined}
+      >
+        {settings?.donateBannerImage && <div className="absolute inset-0 bg-primary/70" />}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-gold/20 border border-gold/30 text-gold text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Make a Difference
           </span>

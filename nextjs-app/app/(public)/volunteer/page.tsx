@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckCircle, Clock, Users, Award, Heart } from "lucide-react";
 import { submitVolunteer } from "@/actions/volunteer";
+import { prisma } from "@/lib/prisma";
 import VolunteerForm from "./VolunteerForm";
+
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Volunteer With Us",
@@ -52,12 +55,30 @@ const steps = [
   },
 ];
 
-export default function VolunteerPage() {
+async function getSettings() {
+  try {
+    return await prisma.siteSettings.findFirst();
+  } catch {
+    return null;
+  }
+}
+
+export default async function VolunteerPage() {
+  const settings = await getSettings();
+
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-green to-primary py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section
+        className="relative bg-gradient-to-br from-green to-primary py-20 md:py-28"
+        style={settings?.volunteerBannerImage ? {
+          backgroundImage: `url(${settings.volunteerBannerImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        } : undefined}
+      >
+        {settings?.volunteerBannerImage && <div className="absolute inset-0 bg-primary/70" />}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Get Involved
           </span>

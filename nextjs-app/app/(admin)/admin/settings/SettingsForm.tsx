@@ -287,6 +287,8 @@ export default function SettingsForm({ settings }: { settings: any }) {
             { name: "projectsBannerImage", label: "Projects Page Banner", page: "/projects" },
             { name: "volunteerBannerImage", label: "Volunteer Page Banner", page: "/volunteer" },
             { name: "blogBannerImage", label: "Blog Page Banner", page: "/blog" },
+            { name: "galleryBannerImage", label: "Gallery Page Banner", page: "/gallery" },
+            { name: "donateBannerImage", label: "Donate Page Banner", page: "/donate" },
             { name: "contactBannerImage", label: "Contact Page Banner", page: "/contact" },
           ].map(({ name, label, page }) => (
             <div key={name}>
@@ -392,6 +394,60 @@ export default function SettingsForm({ settings }: { settings: any }) {
             <Label className="label-base" htmlFor="visionText">Vision Statement</Label>
             <Textarea id="visionText" name="visionText" defaultValue={settings?.visionText || ""} rows={3} />
           </div>
+        </div>
+      </div>
+
+      {/* About Page Stats */}
+      <div id="about-stats" className="bg-white rounded-2xl shadow-card p-6">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-1 pb-3 border-b border-gray-100">
+          About Page Stats
+        </h2>
+        <p className="text-xs text-gray-500 mb-4 mt-2">
+          These 4 numbers appear in the "A Decade of Changing Lives" section on the <strong>About</strong> page.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[
+            { i: 1, iconEx: "🏛️", valueEx: "2015", labelEx: "Founded" },
+            { i: 2, iconEx: "❤️", valueEx: "5,000+", labelEx: "Lives Impacted" },
+            { i: 3, iconEx: "📍", valueEx: "8", labelEx: "Districts Served" },
+            { i: 4, iconEx: "👥", valueEx: "500+", labelEx: "Volunteers" },
+          ].map(({ i, iconEx, valueEx, labelEx }) => (
+            <div key={i} className="bg-[#F8FAFC] rounded-xl p-4 border border-gray-100">
+              <h3 className="font-semibold text-gray-700 mb-3 text-sm flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center font-bold">{i}</span>
+                Statistic #{i}
+              </h3>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <Label className="label-base" htmlFor={`aboutStat${i}Icon`}>Icon</Label>
+                  <Input
+                    id={`aboutStat${i}Icon`}
+                    name={`aboutStat${i}Icon`}
+                    defaultValue={(settings as any)?.[`aboutStat${i}Icon`]}
+                    placeholder={iconEx}
+                  />
+                </div>
+                <div>
+                  <Label className="label-base" htmlFor={`aboutStat${i}Value`}>Value</Label>
+                  <Input
+                    id={`aboutStat${i}Value`}
+                    name={`aboutStat${i}Value`}
+                    defaultValue={(settings as any)?.[`aboutStat${i}Value`]}
+                    placeholder={valueEx}
+                  />
+                </div>
+                <div>
+                  <Label className="label-base" htmlFor={`aboutStat${i}Label`}>Label</Label>
+                  <Input
+                    id={`aboutStat${i}Label`}
+                    name={`aboutStat${i}Label`}
+                    defaultValue={(settings as any)?.[`aboutStat${i}Label`]}
+                    placeholder={labelEx}
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

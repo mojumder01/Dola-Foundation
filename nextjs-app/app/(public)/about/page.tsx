@@ -190,10 +190,10 @@ export default async function AboutPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               {[
-                { value: "2015", label: "Founded", icon: "🏛️" },
-                { value: "5,000+", label: "Lives Impacted", icon: "❤️" },
-                { value: "8", label: "Districts Served", icon: "📍" },
-                { value: "500+", label: "Volunteers", icon: "👥" },
+                { value: settings?.aboutStat1Value || "2015", label: settings?.aboutStat1Label || "Founded", icon: settings?.aboutStat1Icon || "🏛️" },
+                { value: settings?.aboutStat2Value || "5,000+", label: settings?.aboutStat2Label || "Lives Impacted", icon: settings?.aboutStat2Icon || "❤️" },
+                { value: settings?.aboutStat3Value || "8", label: settings?.aboutStat3Label || "Districts Served", icon: settings?.aboutStat3Icon || "📍" },
+                { value: settings?.aboutStat4Value || "500+", label: settings?.aboutStat4Label || "Volunteers", icon: settings?.aboutStat4Icon || "👥" },
               ].map((stat, i) => (
                 <div
                   key={i}
