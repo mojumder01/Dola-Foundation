@@ -21,6 +21,22 @@ const defaultImpactAmounts = [
   { amount: 25000, impact: "Installs a clean water well for a village", icon: "💧" },
 ];
 
+const defaultTrustIndicators = [
+  "✓ NGO Affairs Bureau Registered",
+  "✓ Tax Deductible Donations",
+  "✓ 100% Transparent Fund Usage",
+  "✓ Secure Payment Processing",
+  "✓ Annual Audited Reports",
+];
+
+const defaultWhyDonate = [
+  "100% of donations reach programs",
+  "Full financial transparency",
+  "Tax deductible receipt provided",
+  "Regular impact updates sent",
+  "Dedicated donor support team",
+];
+
 async function getImpactAmounts() {
   try {
     const impacts = await prisma.donationImpact.findMany({
@@ -52,11 +68,25 @@ async function getSettings() {
   }
 }
 
+async function getContentList(section: string, fallback: string[]) {
+  try {
+    const items = await prisma.contentItem.findMany({
+      where: { section, active: true },
+      orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+    });
+    return items.length > 0 ? items.map((i) => i.title || "") : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export default async function DonatePage() {
-  const [impactAmounts, paymentMethods, settings] = await Promise.all([
+  const [impactAmounts, paymentMethods, settings, trustIndicators, whyDonate] = await Promise.all([
     getImpactAmounts(),
     getActivePaymentMethods(),
     getSettings(),
+    getContentList("donate-trust", defaultTrustIndicators),
+    getContentList("donate-why", defaultWhyDonate),
   ]);
   const bankMethod = paymentMethods.find((m) => m.type === "BANK_TRANSFER");
 
@@ -77,11 +107,11 @@ export default async function DonatePage() {
             Make a Difference
           </span>
           <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
-            Donate to Dola Foundation
+            {settings?.donatePageTitle || "Donate to Dola Foundation"}
           </h1>
           <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            Your generous donation directly funds our programs and creates lasting change
-            in the lives of thousands of families across Bangladesh.
+            {settings?.donatePageSubtitle ||
+              "Your generous donation directly funds our programs and creates lasting change in the lives of thousands of families across Bangladesh."}
           </p>
           <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
@@ -95,13 +125,7 @@ export default async function DonatePage() {
       <section className="py-8 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-6">
-            {[
-              "✓ NGO Affairs Bureau Registered",
-              "✓ Tax Deductible Donations",
-              "✓ 100% Transparent Fund Usage",
-              "✓ Secure Payment Processing",
-              "✓ Annual Audited Reports",
-            ].map((item) => (
+            {trustIndicators.map((item) => (
               <span key={item} className="text-gray-500 text-sm">{item}</span>
             ))}
           </div>
@@ -146,13 +170,7 @@ export default async function DonatePage() {
                   Why Donate?
                 </h3>
                 <ul className="space-y-2.5">
-                  {[
-                    "100% of donations reach programs",
-                    "Full financial transparency",
-                    "Tax deductible receipt provided",
-                    "Regular impact updates sent",
-                    "Dedicated donor support team",
-                  ].map((point) => (
+                  {whyDonate.map((point) => (
                     <li key={point} className="flex items-start gap-2 text-sm text-gray-600">
                       <CheckCircle className="w-4 h-4 text-green mt-0.5 flex-shrink-0" />
                       {point}

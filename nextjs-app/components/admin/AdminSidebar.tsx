@@ -26,6 +26,7 @@ import {
   Gift,
   ChevronDown,
   FolderKanban,
+  LayoutGrid,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -68,6 +69,7 @@ const navGroups = [
     icon: BookOpen,
     items: [
       { label: "Pages", href: "/admin/pages", icon: BookMarked },
+      { label: "Content Sections", href: "/admin/content", icon: LayoutGrid },
       { label: "Settings", href: "/admin/settings", icon: Settings },
     ],
   },

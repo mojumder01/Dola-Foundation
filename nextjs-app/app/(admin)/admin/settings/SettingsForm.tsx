@@ -311,6 +311,26 @@ export default function SettingsForm({ settings }: { settings: any }) {
         </div>
       </div>
 
+      {/* Donate Page */}
+      <div id="donate-page" className="bg-white rounded-2xl shadow-card p-6">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-1 pb-3 border-b border-gray-100">
+          Donate Page
+        </h2>
+        <p className="text-xs text-gray-500 mb-4 mt-2">
+          The headline and subtitle shown in the hero section of the <strong>/donate</strong> page.
+        </p>
+        <div className="space-y-4">
+          <div>
+            <Label className="label-base" htmlFor="donatePageTitle">Donate Page Title</Label>
+            <Input id="donatePageTitle" name="donatePageTitle" defaultValue={(settings as any)?.donatePageTitle || ""} placeholder="Donate to Dola Foundation" />
+          </div>
+          <div>
+            <Label className="label-base" htmlFor="donatePageSubtitle">Donate Page Subtitle</Label>
+            <Textarea id="donatePageSubtitle" name="donatePageSubtitle" defaultValue={(settings as any)?.donatePageSubtitle || ""} rows={2} placeholder="Your generous donation directly funds our programs..." />
+          </div>
+        </div>
+      </div>
+
       {/* Statistics */}
       <div id="stats" className="bg-white rounded-2xl shadow-card p-6">
         <h2 className="font-poppins font-semibold text-lg text-dark mb-1 pb-3 border-b border-gray-100">
@@ -490,6 +510,10 @@ export default function SettingsForm({ settings }: { settings: any }) {
             <Label className="label-base" htmlFor="email">Email</Label>
             <Input id="email" name="email" defaultValue={settings?.email || ""} />
           </div>
+          <div>
+            <Label className="label-base" htmlFor="officeHours">Office Hours</Label>
+            <Textarea id="officeHours" name="officeHours" defaultValue={(settings as any)?.officeHours || ""} rows={2} placeholder={"Saturday – Thursday\n9:00 AM – 5:00 PM"} />
+          </div>
           <div className="sm:col-span-2">
             <Label className="label-base" htmlFor="googleMapsEmbedUrl">Google Maps Embed URL</Label>
             <Input
@@ -528,6 +552,26 @@ export default function SettingsForm({ settings }: { settings: any }) {
               />
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div id="footer" className="bg-white rounded-2xl shadow-card p-6">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-1 pb-3 border-b border-gray-100">
+          Footer
+        </h2>
+        <p className="text-xs text-gray-500 mb-4 mt-2">
+          The short mission paragraph shown under the logo in the website footer.
+        </p>
+        <div>
+          <Label className="label-base" htmlFor="footerMissionText">Footer Mission Text</Label>
+          <Textarea
+            id="footerMissionText"
+            name="footerMissionText"
+            defaultValue={(settings as any)?.footerMissionText || ""}
+            rows={3}
+            placeholder="We are dedicated to empowering communities through sustainable development, education, healthcare, and social welfare programs across Bangladesh."
+          />
         </div>
       </div>
 

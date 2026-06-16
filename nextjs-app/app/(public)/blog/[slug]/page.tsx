@@ -67,6 +67,19 @@ async function getPost(slug: string) {
   return posts[slug] || null;
 }
 
+async function getRelatedPosts(slug: string) {
+  try {
+    return await prisma.blogPost.findMany({
+      where: { published: true, slug: { not: slug } },
+      orderBy: { publishedAt: "desc" },
+      take: 2,
+      select: { title: true, slug: true },
+    });
+  } catch {
+    return [];
+  }
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
@@ -76,7 +89,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = (await getPost(slug)) || {
+  const [dbPost, relatedPosts] = await Promise.all([getPost(slug), getRelatedPosts(slug)]);
+  const post = dbPost || {
     title: "Blog Post Not Found",
     excerpt: "",
     coverImage: null,
@@ -190,25 +204,24 @@ export default async function BlogPostPage({ params }: PageProps) {
                 </Link>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-card p-6">
-                <h3 className="font-poppins font-bold text-lg text-dark mb-3">
-                  Related Articles
-                </h3>
-                <div className="space-y-3">
-                  {[
-                    { title: "Youth Skills Training Program Update", slug: "sumaiya-story-business-owner" },
-                    { title: "Annual Report 2023 Released", slug: "annual-report-2023" },
-                  ].map((related) => (
-                    <Link
-                      key={related.slug}
-                      href={`/blog/${related.slug}`}
-                      className="block text-sm text-gray-600 hover:text-primary transition-colors border-b border-gray-100 pb-3 last:border-0 last:pb-0"
-                    >
-                      {related.title}
-                    </Link>
-                  ))}
+              {relatedPosts.length > 0 && (
+                <div className="bg-white rounded-2xl shadow-card p-6">
+                  <h3 className="font-poppins font-bold text-lg text-dark mb-3">
+                    Related Articles
+                  </h3>
+                  <div className="space-y-3">
+                    {relatedPosts.map((related) => (
+                      <Link
+                        key={related.slug}
+                        href={`/blog/${related.slug}`}
+                        className="block text-sm text-gray-600 hover:text-primary transition-colors border-b border-gray-100 pb-3 last:border-0 last:pb-0"
+                      >
+                        {related.title}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

@@ -38,6 +38,7 @@ interface FooterSettings {
   instagramUrl?: string | null;
   twitterUrl?: string | null;
   youtubeUrl?: string | null;
+  footerMissionText?: string | null;
 }
 
 const DEFAULT_PROGRAMS = [
@@ -129,9 +130,8 @@ export default function Footer({
               </div>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
-              We are dedicated to empowering communities through sustainable
-              development, education, healthcare, and social welfare programs
-              across Bangladesh.
+              {settings?.footerMissionText ||
+                "We are dedicated to empowering communities through sustainable development, education, healthcare, and social welfare programs across Bangladesh."}
             </p>
 
             {/* Social Links */}

@@ -11,9 +11,18 @@ interface HeroSectionProps {
   image?: string | null;
   announcementText?: string | null;
   announcementEnabled?: boolean | null;
+  stats?: { label?: string | null; value?: string | null }[];
 }
 
-export default function HeroSection({ title, subtitle, image, announcementText, announcementEnabled }: HeroSectionProps) {
+const DEFAULT_STATS = [
+  { value: "5,000+", label: "Lives Impacted" },
+  { value: "12", label: "Active Programs" },
+  { value: "8", label: "Districts" },
+  { value: "500+", label: "Volunteers" },
+];
+
+export default function HeroSection({ title, subtitle, image, announcementText, announcementEnabled, stats }: HeroSectionProps) {
+  const displayStats = stats && stats.length > 0 ? stats : DEFAULT_STATS;
   const heading = title || "Empowering Lives, Inspiring Hope";
   const commaIndex = heading.indexOf(",");
   const headingStart =
@@ -137,12 +146,7 @@ export default function HeroSection({ title, subtitle, image, announcementText, 
             transition={{ duration: 0.8, delay: 1.0 }}
             className="inline-flex flex-wrap items-center justify-center gap-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-8 py-5"
           >
-            {[
-              { value: "5,000+", label: "Lives Impacted" },
-              { value: "12", label: "Active Programs" },
-              { value: "8", label: "Districts" },
-              { value: "500+", label: "Volunteers" },
-            ].map((stat, index) => (
+            {displayStats.map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="font-poppins font-black text-2xl text-gold">
                   {stat.value}

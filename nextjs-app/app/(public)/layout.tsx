@@ -76,6 +76,7 @@ export default async function PublicLayout({
                   instagramUrl: settings.instagramUrl,
                   twitterUrl: settings.twitterUrl,
                   youtubeUrl: settings.youtubeUrl,
+                  footerMissionText: (settings as any).footerMissionText,
                 }
               : null
           }

@@ -72,7 +72,7 @@ export default async function ContactPage() {
     {
       icon: Clock,
       title: "Office Hours",
-      content: "Saturday – Thursday\n9:00 AM – 5:00 PM",
+      content: (settings as any)?.officeHours || "Saturday – Thursday\n9:00 AM – 5:00 PM",
       color: "text-purple-500",
       bg: "bg-purple-50",
     },

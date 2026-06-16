@@ -63,8 +63,24 @@ async function getSettings() {
   }
 }
 
+async function getDBItems(section: string) {
+  try {
+    const items = await prisma.contentItem.findMany({
+      where: { section, active: true },
+      orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+    });
+    return items.length > 0 ? items : null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function VolunteerPage() {
-  const settings = await getSettings();
+  const [settings, dbBenefits, dbSteps] = await Promise.all([
+    getSettings(),
+    getDBItems("volunteer-benefits"),
+    getDBItems("volunteer-steps"),
+  ]);
 
   return (
     <div className="pt-20">
@@ -109,18 +125,28 @@ export default async function VolunteerPage() {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {benefits.map((benefit, index) => {
-              const Icon = benefit.icon;
-              return (
-                <div key={index} className="bg-[#F8FAFC] rounded-2xl p-6 border border-gray-100">
-                  <div className={`w-12 h-12 ${benefit.bg} rounded-xl flex items-center justify-center mb-4`}>
-                    <Icon className={`w-6 h-6 ${benefit.color}`} />
+            {dbBenefits
+              ? dbBenefits.map((benefit) => (
+                  <div key={benefit.id} className="bg-[#F8FAFC] rounded-2xl p-6 border border-gray-100">
+                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-2xl">
+                      {benefit.icon || "💡"}
+                    </div>
+                    <h3 className="font-poppins font-bold text-lg text-dark mb-2">{benefit.title}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">{benefit.description}</p>
                   </div>
-                  <h3 className="font-poppins font-bold text-lg text-dark mb-2">{benefit.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{benefit.description}</p>
-                </div>
-              );
-            })}
+                ))
+              : benefits.map((benefit, index) => {
+                  const Icon = benefit.icon;
+                  return (
+                    <div key={index} className="bg-[#F8FAFC] rounded-2xl p-6 border border-gray-100">
+                      <div className={`w-12 h-12 ${benefit.bg} rounded-xl flex items-center justify-center mb-4`}>
+                        <Icon className={`w-6 h-6 ${benefit.color}`} />
+                      </div>
+                      <h3 className="font-poppins font-bold text-lg text-dark mb-2">{benefit.title}</h3>
+                      <p className="text-gray-500 text-sm leading-relaxed">{benefit.description}</p>
+                    </div>
+                  );
+                })}
           </div>
         </div>
       </section>
@@ -134,22 +160,17 @@ export default async function VolunteerPage() {
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {steps.map((step, index) => (
-              <div key={index} className="text-center">
+            {(dbSteps ?? steps).map((step: any, index: number) => (
+              <div key={step.id ?? index} className="text-center">
                 <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <span className="font-poppins font-black text-2xl text-gold">
-                    {step.step}
+                    {String(index + 1).padStart(2, "0")}
                   </span>
                 </div>
                 <h3 className="font-poppins font-bold text-lg text-dark mb-2">
                   {step.title}
                 </h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{step.description}</p>
-                {index < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-8 right-0 transform translate-x-1/2">
-                    →
-                  </div>
-                )}
               </div>
             ))}
           </div>

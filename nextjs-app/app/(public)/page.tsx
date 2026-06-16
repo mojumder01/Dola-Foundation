@@ -104,22 +104,17 @@ export default async function HomePage() {
     getVideos(),
   ]);
 
+  const heroStats = settings
+    ? [
+        { label: settings.stat1Label, value: settings.stat1Value },
+        { label: settings.stat2Label, value: settings.stat2Value },
+        { label: settings.stat3Label, value: settings.stat3Value },
+        { label: settings.stat4Label, value: settings.stat4Value },
+      ]
+    : undefined;
+
   const sections: Record<string, React.ReactNode> = {
-    stats: (
-      <ImpactStats
-        key="stats"
-        stats={
-          settings
-            ? [
-                { label: settings.stat1Label, value: settings.stat1Value },
-                { label: settings.stat2Label, value: settings.stat2Value },
-                { label: settings.stat3Label, value: settings.stat3Value },
-                { label: settings.stat4Label, value: settings.stat4Value },
-              ]
-            : undefined
-        }
-      />
-    ),
+    stats: <ImpactStats key="stats" stats={heroStats} />,
     programs: (
       <ProgramsSection
         key="programs"
@@ -195,6 +190,7 @@ export default async function HomePage() {
         image={settings?.heroImage}
         announcementText={(settings as any)?.announcementText}
         announcementEnabled={(settings as any)?.announcementEnabled ?? true}
+        stats={heroStats}
       />
       {order.map((key) => sections[key])}
     </>

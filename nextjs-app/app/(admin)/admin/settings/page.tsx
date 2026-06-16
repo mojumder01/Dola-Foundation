@@ -19,12 +19,14 @@ export default async function AdminSettingsPage() {
           { label: "🎨 Branding & Colors", href: "#branding" },
           { label: "🏠 Hero Section", href: "#hero" },
           { label: "🖼️ Page Banners", href: "#banners" },
+          { label: "❤️ Donate Page", href: "#donate-page" },
           { label: "📊 Homepage Stats", href: "#stats" },
           { label: "🔢 Section Order", href: "#section-order" },
           { label: "ℹ️ About & Mission", href: "#about" },
           { label: "📈 About Page Stats", href: "#about-stats" },
           { label: "👤 Founder Message", href: "#founder" },
           { label: "📞 Contact & Social", href: "#contact" },
+          { label: "🦶 Footer", href: "#footer" },
         ].map((link) => (
           <a
             key={link.href}

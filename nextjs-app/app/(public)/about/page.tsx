@@ -97,8 +97,20 @@ async function getTeamMembers() {
   }
 }
 
+async function getCoreValues() {
+  try {
+    const items = await prisma.contentItem.findMany({
+      where: { section: "about-values", active: true },
+      orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+    });
+    return items.length > 0 ? items : null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function AboutPage() {
-  const [settings, dbTeam] = await Promise.all([getSettings(), getTeamMembers()]);
+  const [settings, dbTeam, dbValues] = await Promise.all([getSettings(), getTeamMembers(), getCoreValues()]);
   const teamMembers = dbTeam ?? FALLBACK_TEAM;
 
   const founderName = settings?.founderName || "Dr. Ahmed Rahman";
@@ -252,27 +264,44 @@ export default async function AboutPage() {
             subtitle="These core values guide everything we do — from program design to how we treat every person we serve."
           />
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {values.map((value, index) => {
-              const Icon = value.icon;
-              return (
-                <div
-                  key={index}
-                  className="bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover p-6 transition-all duration-300 hover:-translate-y-1"
-                >
+            {dbValues
+              ? dbValues.map((value) => (
                   <div
-                    className={`w-12 h-12 ${value.bg} rounded-xl flex items-center justify-center mb-4`}
+                    key={value.id}
+                    className="bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover p-6 transition-all duration-300 hover:-translate-y-1"
                   >
-                    <Icon className={`w-6 h-6 ${value.color}`} />
+                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-2xl">
+                      {value.icon || "💡"}
+                    </div>
+                    <h3 className="font-poppins font-bold text-lg text-dark mb-2">
+                      {value.title}
+                    </h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">
+                      {value.description}
+                    </p>
                   </div>
-                  <h3 className="font-poppins font-bold text-lg text-dark mb-2">
-                    {value.title}
-                  </h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">
-                    {value.description}
-                  </p>
-                </div>
-              );
-            })}
+                ))
+              : values.map((value, index) => {
+                  const Icon = value.icon;
+                  return (
+                    <div
+                      key={index}
+                      className="bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover p-6 transition-all duration-300 hover:-translate-y-1"
+                    >
+                      <div
+                        className={`w-12 h-12 ${value.bg} rounded-xl flex items-center justify-center mb-4`}
+                      >
+                        <Icon className={`w-6 h-6 ${value.color}`} />
+                      </div>
+                      <h3 className="font-poppins font-bold text-lg text-dark mb-2">
+                        {value.title}
+                      </h3>
+                      <p className="text-gray-500 text-sm leading-relaxed">
+                        {value.description}
+                      </p>
+                    </div>
+                  );
+                })}
           </div>
         </div>
       </section>
