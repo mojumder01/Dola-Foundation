@@ -35,6 +35,12 @@ async function getDBFAQs() {
   }
 }
 
+function getMapEmbedSrc(embedUrl?: string | null, address?: string | null): string {
+  if (embedUrl && embedUrl.includes("/maps/embed")) return embedUrl;
+  const query = address?.trim() || "Harinakundu, Jhenaidah, Bangladesh";
+  return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+}
+
 export default async function ContactPage() {
   const [settings, dbFaqs] = await Promise.all([getSettings(), getDBFAQs()]);
   const faqs = dbFaqs.length > 0 ? dbFaqs : FAQS;
@@ -147,37 +153,16 @@ export default async function ContactPage() {
                 Find Us
               </h2>
               <div className="rounded-2xl overflow-hidden h-80 border border-gray-200">
-                {(settings as any)?.googleMapsEmbedUrl ? (
-                  <iframe
-                    src={(settings as any).googleMapsEmbedUrl}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Dola Foundation Location"
-                  />
-                ) : (
-                  <div className="bg-[#F8FAFC] h-full flex items-center justify-center">
-                    <div className="text-center text-gray-400">
-                      <MapPin className="w-12 h-12 mx-auto mb-3" />
-                      <p className="font-medium text-gray-600">Dola Foundation Office</p>
-                      <p className="text-sm mt-1">
-                        {settings?.address || "Village: Daribinni, Thana: Harinakundu, District: Jhenaidah, Division: Khulna"}
-                      </p>
-                      <a
-                        href={`https://maps.google.com/maps?q=${encodeURIComponent(settings?.address || "Harinakundu, Jhenaidah, Bangladesh")}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary text-sm mt-3 inline-block hover:underline font-medium"
-                      >
-                        View on Google Maps →
-                      </a>
-                      <p className="text-xs mt-2 text-gray-400">Add Google Maps embed URL in Admin → Settings</p>
-                    </div>
-                  </div>
-                )}
+                <iframe
+                  src={getMapEmbedSrc((settings as any)?.googleMapsEmbedUrl, settings?.address)}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Dola Foundation Location"
+                />
               </div>
 
               {/* Social links */}

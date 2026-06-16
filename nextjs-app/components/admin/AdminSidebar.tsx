@@ -22,6 +22,7 @@ import {
   HelpCircle,
   CreditCard,
   BookMarked,
+  Gift,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +35,7 @@ const navItems = [
   { label: "Blog", href: "/admin/blog", icon: FileText },
   { label: "Volunteers", href: "/admin/volunteers", icon: Users },
   { label: "Donations", href: "/admin/donations", icon: Heart },
+  { label: "Donation Impact", href: "/admin/donation-impact", icon: Gift },
   { label: "Team", href: "/admin/team", icon: UserCircle },
   { label: "Testimonials", href: "/admin/testimonials", icon: Star },
   { label: "Contacts", href: "/admin/contacts", icon: MessageSquare },

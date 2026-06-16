@@ -21,6 +21,7 @@ import {
   deleteProgram,
 } from "@/actions/admin/programs";
 import { formatDate } from "@/lib/utils";
+import ImagePicker from "@/components/admin/ImagePicker";
 
 type Program = {
   id: string;
@@ -42,22 +43,27 @@ type Program = {
   createdAt: Date;
 };
 
-export default function ProgramsManager({ programs }: { programs: Program[] }) {
+type GalleryImg = { id: string; url: string; title: string | null };
+
+export default function ProgramsManager({ programs, galleryImages = [] }: { programs: Program[]; galleryImages?: GalleryImg[] }) {
   const [showModal, setShowModal] = useState(false);
   const [editingProgram, setEditingProgram] = useState<Program | null>(null);
   const [isPending, startTransition] = useTransition();
   const [formError, setFormError] = useState<string | null>(null);
+  const [bannerImage, setBannerImage] = useState("");
   const router = useRouter();
   const publishedRef = useRef<HTMLInputElement>(null);
 
   function openNew() {
     setEditingProgram(null);
+    setBannerImage("");
     setFormError(null);
     setShowModal(true);
   }
 
   function openEdit(program: Program) {
     setEditingProgram(program);
+    setBannerImage(program.bannerImage || "");
     setFormError(null);
     setShowModal(true);
   }
@@ -268,14 +274,15 @@ export default function ProgramsManager({ programs }: { programs: Program[] }) {
               />
             </div>
             <div>
-              <Label htmlFor="bannerImage">Cover / Banner Image URL</Label>
-              <Input
-                id="bannerImage"
+              <ImagePicker
                 name="bannerImage"
-                defaultValue={editingProgram?.bannerImage || ""}
-                placeholder="https://... (paste image URL)"
+                label="Cover / Banner Image"
+                value={bannerImage}
+                onChange={setBannerImage}
+                galleryImages={galleryImages}
+                folder="programs"
+                placeholder="https://... (shown at the top of the program page)"
               />
-              <p className="text-xs text-gray-400 mt-1">Shown at the top of the program page. Free hosts: ImgBB.com, Imgur.com</p>
             </div>
             <div>
               <Label htmlFor="objectives">Objectives (one per line)</Label>

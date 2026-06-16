@@ -20,6 +20,7 @@ export default async function AdminSettingsPage() {
           { label: "🏠 Hero Section", href: "#hero" },
           { label: "🖼️ Page Banners", href: "#banners" },
           { label: "📊 Homepage Stats", href: "#stats" },
+          { label: "🔢 Section Order", href: "#section-order" },
           { label: "ℹ️ About & Mission", href: "#about" },
           { label: "👤 Founder Message", href: "#founder" },
           { label: "📞 Contact & Social", href: "#contact" },

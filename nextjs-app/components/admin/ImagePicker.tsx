@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Upload, Loader2 } from "lucide-react";
 
 interface ImagePickerProps {
   value: string;
@@ -11,6 +11,8 @@ interface ImagePickerProps {
   galleryImages: { id: string; url: string; title: string | null }[];
   label?: string;
   placeholder?: string;
+  folder?: string;
+  name?: string;
 }
 
 export default function ImagePicker({
@@ -19,19 +21,71 @@ export default function ImagePicker({
   galleryImages,
   label,
   placeholder = "https://...",
+  folder = "dola-foundation",
+  name,
 }: ImagePickerProps) {
   const [showGallery, setShowGallery] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", folder);
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (!res.ok || !data?.url) {
+        throw new Error(data?.error || "Upload failed");
+      }
+      onChange(data.url);
+    } catch (err: any) {
+      setUploadError(err?.message || "Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   return (
     <div className="space-y-2">
       {label && <Label>{label}</Label>}
       <div className="flex gap-2 items-center">
         <Input
+          name={name}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className="flex-1"
         />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFileSelect}
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          className="flex items-center gap-1.5 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg transition-colors disabled:opacity-50 flex-shrink-0"
+        >
+          {uploading ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading...
+            </>
+          ) : (
+            <>
+              <Upload className="w-3.5 h-3.5" /> Upload
+            </>
+          )}
+        </button>
         {value && (
           <img
             src={value}
@@ -43,6 +97,7 @@ export default function ImagePicker({
           />
         )}
       </div>
+      {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
 
       {galleryImages.length > 0 && (
         <div>
@@ -91,7 +146,7 @@ export default function ImagePicker({
       )}
 
       <p className="text-xs text-gray-400">
-        💡 Tip: Use free image hosts like ImgBB.com or Imgur.com to upload from your device. Recommended: WebP format, max 500KB, 1200px wide.
+        💡 Click "Upload" to upload an image directly from your device, paste an existing image URL, or pick one from your gallery below.
       </p>
     </div>
   );

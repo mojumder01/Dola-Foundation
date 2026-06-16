@@ -9,7 +9,15 @@ async function getBlogPosts() {
   }
 }
 
+async function getGalleryImages() {
+  try {
+    return await prisma.galleryImage.findMany({ orderBy: { order: "asc" } });
+  } catch {
+    return [];
+  }
+}
+
 export default async function AdminBlogPage() {
-  const posts = await getBlogPosts();
-  return <BlogManager posts={posts} />;
+  const [posts, galleryImages] = await Promise.all([getBlogPosts(), getGalleryImages()]);
+  return <BlogManager posts={posts} galleryImages={galleryImages} />;
 }

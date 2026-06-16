@@ -9,7 +9,15 @@ async function getProjects() {
   }
 }
 
+async function getGalleryImages() {
+  try {
+    return await prisma.galleryImage.findMany({ orderBy: { order: "asc" } });
+  } catch {
+    return [];
+  }
+}
+
 export default async function AdminProjectsPage() {
-  const projects = await getProjects();
-  return <ProjectsManager projects={projects} />;
+  const [projects, galleryImages] = await Promise.all([getProjects(), getGalleryImages()]);
+  return <ProjectsManager projects={projects} galleryImages={galleryImages} />;
 }

@@ -22,6 +22,33 @@ const programs = [
   { id: "orphan-care", label: "Orphan Care" },
 ];
 
+type PaymentMethodOption = {
+  id: string;
+  name: string;
+  type: string;
+  accountInfo: string | null;
+  instructions: string | null;
+};
+
+const FALLBACK_METHODS: PaymentMethodOption[] = [
+  { id: "fallback-bkash", name: "bKash", type: "BKASH", accountInfo: "01700-000000", instructions: "Send Money to this Personal number, then enter your Transaction ID below." },
+  { id: "fallback-nagad", name: "Nagad", type: "NAGAD", accountInfo: "01700-000000", instructions: "Send Money to this Personal number, then enter your Transaction ID below." },
+  { id: "fallback-rocket", name: "Rocket", type: "ROCKET", accountInfo: "01700-000000-1", instructions: "Send Money to this Personal number, then enter your Transaction ID below." },
+  { id: "fallback-bank", name: "Bank Transfer", type: "BANK_TRANSFER", accountInfo: "4601100005678", instructions: "Bank: Dutch Bangla Bank · Name: Dola Foundation · Routing: 091273461" },
+];
+
+const BD_TYPES = ["BKASH", "NAGAD", "ROCKET", "BANK_TRANSFER"];
+const INTL_TYPES = ["STRIPE", "PAYPAL"];
+
+const METHOD_STYLES: Record<string, { color: string }> = {
+  BKASH: { color: "bg-pink-50 border-pink-200" },
+  NAGAD: { color: "bg-orange-50 border-orange-200" },
+  ROCKET: { color: "bg-purple-50 border-purple-200" },
+  BANK_TRANSFER: { color: "bg-blue-50 border-blue-200" },
+  STRIPE: { color: "bg-indigo-50 border-indigo-200" },
+  PAYPAL: { color: "bg-sky-50 border-sky-200" },
+};
+
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
@@ -55,17 +82,22 @@ function Toast({ message, type, onClose }: { message: string; type: "success" | 
   );
 }
 
-export default function DonationForm() {
+export default function DonationForm({ paymentMethods = [] }: { paymentMethods?: PaymentMethodOption[] }) {
+  const methods = paymentMethods.length > 0 ? paymentMethods : FALLBACK_METHODS;
+  const bdMethods = methods.filter((m) => BD_TYPES.includes(m.type));
+  const intlMethods = methods.filter((m) => INTL_TYPES.includes(m.type));
+
   const [amount, setAmount] = useState(1000);
   const [customAmount, setCustomAmount] = useState("");
   const [frequency, setFrequency] = useState("one-time");
   const [program, setProgram] = useState("");
-  const [method, setMethod] = useState("BKASH");
+  const [method, setMethod] = useState(bdMethods[0]?.type || methods[0]?.type || "BKASH");
   const [success, setSuccess] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const finalAmount = customAmount ? Number(customAmount) : amount;
+  const selectedMethod = methods.find((m) => m.type === method);
 
   async function handleAction(formData: FormData) {
     formData.set("amount", String(finalAmount));
@@ -217,67 +249,96 @@ export default function DonationForm() {
             </TabsList>
 
             <TabsContent value="bangladesh">
-              <div className="grid grid-cols-2 gap-3 mt-3">
-                {[
-                  { id: "BKASH", label: "bKash", color: "bg-pink-50 border-pink-200", activeColor: "bg-pink-500 text-white" },
-                  { id: "NAGAD", label: "Nagad", color: "bg-orange-50 border-orange-200", activeColor: "bg-orange-500 text-white" },
-                  { id: "ROCKET", label: "Rocket", color: "bg-purple-50 border-purple-200", activeColor: "bg-purple-500 text-white" },
-                  { id: "BANK_TRANSFER", label: "Bank Transfer", color: "bg-blue-50 border-blue-200", activeColor: "bg-blue-500 text-white" },
-                ].map((m) => (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => setMethod(m.id)}
-                    className={`p-3 rounded-xl border-2 font-medium text-sm transition-all ${
-                      method === m.id
-                        ? "border-primary bg-primary text-white"
-                        : `${m.color} text-gray-700 hover:border-primary`
-                    }`}
-                  >
-                    {m.label}
-                  </button>
-                ))}
-              </div>
-
-              {method !== "BANK_TRANSFER" && (
-                <div className="mt-3 bg-gray-50 rounded-xl p-4 text-sm text-gray-600">
-                  <p className="font-medium text-dark mb-1">
-                    {method} Payment Instructions:
-                  </p>
-                  <p>Send to: <strong className="text-primary">01700-000000</strong></p>
-                  <p className="mt-1">After sending, enter your transaction ID below.</p>
+              {bdMethods.length === 0 ? (
+                <div className="mt-3 bg-gray-50 rounded-xl p-5 text-center text-sm text-gray-500">
+                  No local payment methods are configured yet. Please contact us at{" "}
+                  <a href="mailto:donate@dolafoundation.com" className="text-primary hover:underline">donate@dolafoundation.com</a>.
                 </div>
-              )}
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                    {bdMethods.map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => setMethod(m.type)}
+                        className={`p-3 rounded-xl border-2 font-medium text-sm transition-all ${
+                          method === m.type
+                            ? "border-primary bg-primary text-white"
+                            : `${METHOD_STYLES[m.type]?.color || "bg-gray-50 border-gray-200"} text-gray-700 hover:border-primary`
+                        }`}
+                      >
+                        {m.name}
+                      </button>
+                    ))}
+                  </div>
 
-              {method === "BANK_TRANSFER" && (
-                <div className="mt-3 bg-blue-50 rounded-xl p-4 text-sm text-gray-600">
-                  <p className="font-medium text-dark mb-2">Bank Transfer Details:</p>
-                  <p>Bank: Dutch Bangla Bank</p>
-                  <p>Account: 4601100005678</p>
-                  <p>Name: Dola Foundation</p>
-                </div>
-              )}
+                  {selectedMethod && BD_TYPES.includes(selectedMethod.type) && (
+                    <div className="mt-3 bg-gray-50 rounded-xl p-4 text-sm text-gray-600">
+                      <p className="font-medium text-dark mb-1">{selectedMethod.name} Payment Details:</p>
+                      {selectedMethod.accountInfo && (
+                        <p>Send to: <strong className="text-primary">{selectedMethod.accountInfo}</strong></p>
+                      )}
+                      {selectedMethod.instructions && (
+                        <p className="mt-1 whitespace-pre-line">{selectedMethod.instructions}</p>
+                      )}
+                    </div>
+                  )}
 
-              <div className="mt-3">
-                <Label className="label-base" htmlFor="transactionId">Transaction ID</Label>
-                <Input id="transactionId" name="transactionId" placeholder="Enter your transaction ID" />
-              </div>
+                  <div className="mt-3">
+                    <Label className="label-base" htmlFor="transactionId">Transaction ID</Label>
+                    <Input id="transactionId" name="transactionId" placeholder="Enter your transaction ID" />
+                  </div>
+                </>
+              )}
             </TabsContent>
 
             <TabsContent value="international">
-              <div className="mt-3 bg-gray-50 rounded-xl p-5 text-center">
-                <p className="font-medium text-dark mb-2">
-                  International Donations
-                </p>
-                <p className="text-sm text-gray-500">
-                  PayPal and Stripe integration coming soon. For now, please
-                  contact us at{" "}
-                  <a href="mailto:donate@dolafoundation.com" className="text-primary hover:underline">
-                    donate@dolafoundation.com
-                  </a>{" "}
-                  for international donation options.
-                </p>
-              </div>
+              {intlMethods.length === 0 ? (
+                <div className="mt-3 bg-gray-50 rounded-xl p-5 text-center">
+                  <p className="font-medium text-dark mb-2">International Donations</p>
+                  <p className="text-sm text-gray-500">
+                    PayPal and Stripe integration coming soon. For now, please
+                    contact us at{" "}
+                    <a href="mailto:donate@dolafoundation.com" className="text-primary hover:underline">
+                      donate@dolafoundation.com
+                    </a>{" "}
+                    for international donation options.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                    {intlMethods.map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => setMethod(m.type)}
+                        className={`p-3 rounded-xl border-2 font-medium text-sm transition-all ${
+                          method === m.type
+                            ? "border-primary bg-primary text-white"
+                            : `${METHOD_STYLES[m.type]?.color || "bg-gray-50 border-gray-200"} text-gray-700 hover:border-primary`
+                        }`}
+                      >
+                        {m.name}
+                      </button>
+                    ))}
+                  </div>
+                  {selectedMethod && INTL_TYPES.includes(selectedMethod.type) && (
+                    <div className="mt-3 bg-gray-50 rounded-xl p-4 text-sm text-gray-600">
+                      <p className="font-medium text-dark mb-1">{selectedMethod.name} Payment Details:</p>
+                      {selectedMethod.accountInfo && <p>{selectedMethod.accountInfo}</p>}
+                      {selectedMethod.instructions && (
+                        <p className="mt-1 whitespace-pre-line">{selectedMethod.instructions}</p>
+                      )}
+                    </div>
+                  )}
+                  <div className="mt-3">
+                    <Label className="label-base" htmlFor="transactionId">Transaction / Reference ID</Label>
+                    <Input id="transactionId" name="transactionId" placeholder="Enter your transaction reference" />
+                  </div>
+                </>
+              )}
             </TabsContent>
           </Tabs>
         </div>

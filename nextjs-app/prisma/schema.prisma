@@ -60,6 +60,7 @@ model SiteSettings {
   googleMapsEmbedUrl   String?
   donatePageTitle      String?
   donatePageSubtitle   String?  @db.Text
+  sectionOrder   String   @default("stats,programs,projects,testimonials,gallery,video,volunteer,donation")
   stat1Label     String   @default("Lives Impacted")
   stat1Value     String   @default("5000")
   stat2Label     String   @default("Active Programs")
@@ -302,4 +303,15 @@ model PaymentMethodConfig {
   order        Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model DonationImpact {
+  id        String   @id @default(cuid())
+  icon      String   @default("💝")
+  amount    Int
+  impact    String
+  active    Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

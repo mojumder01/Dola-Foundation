@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckCircle } from "lucide-react";
 import DonationForm from "./DonationForm";
+import { prisma } from "@/lib/prisma";
+
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Donate",
@@ -9,7 +12,7 @@ export const metadata: Metadata = {
     "Support Dola Foundation's mission to empower communities through education, healthcare, and development programs.",
 };
 
-const impactAmounts = [
+const defaultImpactAmounts = [
   { amount: 500, impact: "Feeds a family of 5 for a week", icon: "🍱" },
   { amount: 1000, impact: "Provides school supplies for one child", icon: "📚" },
   { amount: 2500, impact: "Covers a complete medical consultation", icon: "🏥" },
@@ -18,7 +21,36 @@ const impactAmounts = [
   { amount: 25000, impact: "Installs a clean water well for a village", icon: "💧" },
 ];
 
-export default function DonatePage() {
+async function getImpactAmounts() {
+  try {
+    const impacts = await prisma.donationImpact.findMany({
+      where: { active: true },
+      orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+    });
+    return impacts.length > 0 ? impacts : defaultImpactAmounts;
+  } catch {
+    return defaultImpactAmounts;
+  }
+}
+
+async function getActivePaymentMethods() {
+  try {
+    return await prisma.paymentMethodConfig.findMany({
+      where: { active: true },
+      orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+    });
+  } catch {
+    return [];
+  }
+}
+
+export default async function DonatePage() {
+  const [impactAmounts, paymentMethods] = await Promise.all([
+    getImpactAmounts(),
+    getActivePaymentMethods(),
+  ]);
+  const bankMethod = paymentMethods.find((m) => m.type === "BANK_TRANSFER");
+
   return (
     <div className="pt-20">
       {/* Hero */}
@@ -66,9 +98,9 @@ export default function DonatePage() {
             See Your Impact
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {impactAmounts.map((item) => (
+            {impactAmounts.map((item, idx) => (
               <div
-                key={item.amount}
+                key={(item as any).id || `${item.amount}-${idx}`}
                 className="bg-white rounded-2xl p-4 text-center shadow-card hover:shadow-card-hover transition-all border border-gray-100 hover:-translate-y-1 cursor-pointer"
               >
                 <div className="text-3xl mb-2">{item.icon}</div>
@@ -87,7 +119,7 @@ export default function DonatePage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <DonationForm />
+              <DonationForm paymentMethods={paymentMethods} />
             </div>
 
             {/* Sidebar */}
@@ -112,15 +144,17 @@ export default function DonatePage() {
                 </ul>
               </div>
 
-              <div className="bg-primary rounded-2xl p-5 text-white">
-                <h3 className="font-poppins font-bold mb-2">Bank Transfer</h3>
-                <div className="text-sm text-white/80 space-y-1">
-                  <p><span className="text-white font-medium">Bank:</span> Dutch Bangla Bank</p>
-                  <p><span className="text-white font-medium">Account:</span> 4601100005678</p>
-                  <p><span className="text-white font-medium">Name:</span> Dola Foundation</p>
-                  <p><span className="text-white font-medium">Routing:</span> 091273461</p>
+              {bankMethod && (
+                <div className="bg-primary rounded-2xl p-5 text-white">
+                  <h3 className="font-poppins font-bold mb-2">{bankMethod.name || "Bank Transfer"}</h3>
+                  <div className="text-sm text-white/80 space-y-1 whitespace-pre-line">
+                    {bankMethod.accountInfo && (
+                      <p><span className="text-white font-medium">Account:</span> {bankMethod.accountInfo}</p>
+                    )}
+                    {bankMethod.instructions && <p>{bankMethod.instructions}</p>}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
                 <h3 className="font-poppins font-bold text-dark mb-2">

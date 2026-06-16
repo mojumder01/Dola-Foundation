@@ -21,6 +21,7 @@ import {
   deleteBlogPost,
 } from "@/actions/admin/blog";
 import { formatDate } from "@/lib/utils";
+import ImagePicker from "@/components/admin/ImagePicker";
 
 type Post = {
   id: string;
@@ -32,26 +33,32 @@ type Post = {
   published: boolean;
   excerpt: string | null;
   content: string;
+  coverImage: string | null;
 };
 
-export default function BlogManager({ posts }: { posts: Post[] }) {
+type GalleryImg = { id: string; url: string; title: string | null };
+
+export default function BlogManager({ posts, galleryImages = [] }: { posts: Post[]; galleryImages?: GalleryImg[] }) {
   const [showModal, setShowModal] = useState(false);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [isPending, startTransition] = useTransition();
   const [formError, setFormError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [coverImage, setCoverImage] = useState("");
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const publishedRef = useRef<HTMLInputElement>(null);
 
   function openNew() {
     setEditingPost(null);
+    setCoverImage("");
     setFormError(null);
     setShowModal(true);
   }
 
   function openEdit(post: Post) {
     setEditingPost(post);
+    setCoverImage(post.coverImage || "");
     setFormError(null);
     setShowModal(true);
   }
@@ -230,6 +237,17 @@ export default function BlogManager({ posts }: { posts: Post[] }) {
                 required
                 defaultValue={editingPost?.title || ""}
                 placeholder="Post title"
+              />
+            </div>
+            <div>
+              <ImagePicker
+                name="coverImage"
+                label="Cover Image"
+                value={coverImage}
+                onChange={setCoverImage}
+                galleryImages={galleryImages}
+                folder="blog"
+                placeholder="https://... (shown on blog cards)"
               />
             </div>
             <div>

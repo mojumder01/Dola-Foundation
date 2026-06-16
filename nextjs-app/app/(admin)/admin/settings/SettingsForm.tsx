@@ -2,12 +2,94 @@
 
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
-import { CheckCircle, Loader2, Save } from "lucide-react";
+import { CheckCircle, Loader2, Save, ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { updateSiteSettings } from "@/actions/admin/settings";
+
+const DEFAULT_SECTION_ORDER = [
+  "stats",
+  "programs",
+  "projects",
+  "testimonials",
+  "gallery",
+  "video",
+  "volunteer",
+  "donation",
+];
+
+const SECTION_LABELS: Record<string, string> = {
+  stats: "📊 Impact Statistics",
+  programs: "📚 Programs",
+  projects: "🌍 Projects",
+  testimonials: "⭐ Success Stories",
+  gallery: "🖼️ Gallery Preview",
+  video: "🎬 Video Section",
+  volunteer: "🤝 Volunteer CTA",
+  donation: "❤️ Donation CTA",
+};
+
+function parseSectionOrder(raw?: string | null): string[] {
+  const keys = (raw || "").split(",").map((k) => k.trim()).filter(Boolean);
+  const valid = keys.filter((k) => DEFAULT_SECTION_ORDER.includes(k));
+  const missing = DEFAULT_SECTION_ORDER.filter((k) => !valid.includes(k));
+  return [...valid, ...missing];
+}
+
+function SectionOrderEditor({ initial }: { initial?: string | null }) {
+  const [order, setOrder] = useState<string[]>(() => parseSectionOrder(initial));
+
+  function move(index: number, direction: -1 | 1) {
+    const next = [...order];
+    const target = index + direction;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    setOrder(next);
+  }
+
+  return (
+    <div>
+      <input type="hidden" name="sectionOrder" value={order.join(",")} />
+      <div className="space-y-2">
+        {order.map((key, index) => (
+          <div
+            key={key}
+            className="flex items-center justify-between bg-[#F8FAFC] border border-gray-100 rounded-xl px-4 py-2.5"
+          >
+            <span className="text-sm font-medium text-gray-700">
+              {index + 1}. {SECTION_LABELS[key] || key}
+            </span>
+            <div className="flex gap-1">
+              <button
+                type="button"
+                onClick={() => move(index, -1)}
+                disabled={index === 0}
+                className="p-1.5 text-gray-400 hover:text-primary hover:bg-white rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                title="Move up"
+              >
+                <ChevronUp className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => move(index, 1)}
+                disabled={index === order.length - 1}
+                className="p-1.5 text-gray-400 hover:text-primary hover:bg-white rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                title="Move down"
+              >
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-gray-400 mt-3">
+        The Hero section always appears first and isn't reorderable. Changes apply after you click "Save Changes" below.
+      </p>
+    </div>
+  );
+}
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -281,6 +363,17 @@ export default function SettingsForm({ settings }: { settings: any }) {
         </div>
       </div>
 
+      {/* Homepage Section Order */}
+      <div id="section-order" className="bg-white rounded-2xl shadow-card p-6">
+        <h2 className="font-poppins font-semibold text-lg text-dark mb-1 pb-3 border-b border-gray-100">
+          Homepage Section Order
+        </h2>
+        <p className="text-xs text-gray-500 mb-4 mt-2">
+          Use the arrows to move sections up or down. This controls the order they appear in on the homepage.
+        </p>
+        <SectionOrderEditor initial={(settings as any)?.sectionOrder} />
+      </div>
+
       {/* About */}
       <div id="about" className="bg-white rounded-2xl shadow-card p-6">
         <h2 className="font-poppins font-semibold text-lg text-dark mb-4 pb-3 border-b border-gray-100">
@@ -350,7 +443,8 @@ export default function SettingsForm({ settings }: { settings: any }) {
               placeholder="https://www.google.com/maps/embed?pb=..."
             />
             <p className="text-xs text-gray-400 mt-1">
-              Go to Google Maps → search your address → Share → Embed a map → copy the <code className="bg-gray-100 px-1 rounded">src</code> URL from the iframe code.
+              Go to Google Maps → search your address → Share → Embed a map → copy the <code className="bg-gray-100 px-1 rounded">src</code> URL from the iframe code (must contain <code className="bg-gray-100 px-1 rounded">/maps/embed</code>).
+              If left empty or pasted incorrectly, the Contact page automatically shows a map generated from your Address above instead.
             </p>
           </div>
         </div>

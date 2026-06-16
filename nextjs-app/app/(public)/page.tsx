@@ -83,6 +83,17 @@ async function getVideos() {
   }
 }
 
+const DEFAULT_SECTION_ORDER = [
+  "stats",
+  "programs",
+  "projects",
+  "testimonials",
+  "gallery",
+  "video",
+  "volunteer",
+  "donation",
+];
+
 export default async function HomePage() {
   const [settings, galleryImages, testimonials, programs, projects, videos] = await Promise.all([
     getSettings(),
@@ -93,16 +104,10 @@ export default async function HomePage() {
     getVideos(),
   ]);
 
-  return (
-    <>
-      <HeroSection
-        title={settings?.heroTitle}
-        subtitle={settings?.heroSubtitle}
-        image={settings?.heroImage}
-        announcementText={(settings as any)?.announcementText}
-        announcementEnabled={(settings as any)?.announcementEnabled ?? true}
-      />
+  const sections: Record<string, React.ReactNode> = {
+    stats: (
       <ImpactStats
+        key="stats"
         stats={
           settings
             ? [
@@ -114,7 +119,10 @@ export default async function HomePage() {
             : undefined
         }
       />
+    ),
+    programs: (
       <ProgramsSection
+        key="programs"
         programs={programs.map((program) => ({
           id: program.id,
           title: program.title,
@@ -123,7 +131,11 @@ export default async function HomePage() {
           slug: program.slug,
         }))}
       />
-      <ProjectsSection projects={projects.map((p) => ({
+    ),
+    projects: (
+      <ProjectsSection
+        key="projects"
+        projects={projects.map((p) => ({
           id: p.id,
           title: p.title,
           slug: p.slug,
@@ -132,8 +144,12 @@ export default async function HomePage() {
           location: p.location,
           startDate: p.startDate,
           gallery: p.gallery,
-        }))} />
+        }))}
+      />
+    ),
+    testimonials: (
       <SuccessStories
+        key="testimonials"
         testimonials={testimonials.map((testimonial) => ({
           id: testimonial.id,
           name: testimonial.name,
@@ -142,7 +158,10 @@ export default async function HomePage() {
           image: testimonial.image,
         }))}
       />
+    ),
+    gallery: (
       <GalleryPreview
+        key="gallery"
         images={galleryImages.map((image) => ({
           id: image.id,
           url: image.url,
@@ -150,9 +169,34 @@ export default async function HomePage() {
           category: image.category,
         }))}
       />
-      <VideoSection videos={videos.map((v) => ({ id: v.id, title: v.title, youtubeUrl: v.youtubeUrl, description: v.description }))} />
-      <VolunteerCTA />
-      <DonationCTA />
+    ),
+    video: (
+      <VideoSection
+        key="video"
+        videos={videos.map((v) => ({ id: v.id, title: v.title, youtubeUrl: v.youtubeUrl, description: v.description }))}
+      />
+    ),
+    volunteer: <VolunteerCTA key="volunteer" />,
+    donation: <DonationCTA key="donation" />,
+  };
+
+  const requestedOrder = ((settings as any)?.sectionOrder || "")
+    .split(",")
+    .map((k: string) => k.trim())
+    .filter((k: string) => sections[k]);
+  const remaining = DEFAULT_SECTION_ORDER.filter((k) => !requestedOrder.includes(k));
+  const order = [...requestedOrder, ...remaining];
+
+  return (
+    <>
+      <HeroSection
+        title={settings?.heroTitle}
+        subtitle={settings?.heroSubtitle}
+        image={settings?.heroImage}
+        announcementText={(settings as any)?.announcementText}
+        announcementEnabled={(settings as any)?.announcementEnabled ?? true}
+      />
+      {order.map((key) => sections[key])}
     </>
   );
 }

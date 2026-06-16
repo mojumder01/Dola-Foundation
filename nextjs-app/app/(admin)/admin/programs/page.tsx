@@ -9,7 +9,15 @@ async function getPrograms() {
   }
 }
 
+async function getGalleryImages() {
+  try {
+    return await prisma.galleryImage.findMany({ orderBy: { order: "asc" } });
+  } catch {
+    return [];
+  }
+}
+
 export default async function AdminProgramsPage() {
-  const programs = await getPrograms();
-  return <ProgramsManager programs={programs} />;
+  const [programs, galleryImages] = await Promise.all([getPrograms(), getGalleryImages()]);
+  return <ProgramsManager programs={programs} galleryImages={galleryImages} />;
 }

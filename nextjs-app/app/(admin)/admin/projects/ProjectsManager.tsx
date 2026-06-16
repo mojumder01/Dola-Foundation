@@ -21,6 +21,7 @@ import {
   deleteProject,
 } from "@/actions/admin/projects";
 import { formatDate } from "@/lib/utils";
+import ImagePicker from "@/components/admin/ImagePicker";
 
 type Project = {
   id: string;
@@ -37,6 +38,8 @@ type Project = {
   startDate?: Date | null;
 };
 
+type GalleryImg = { id: string; url: string; title: string | null };
+
 const statusVariant: Record<string, any> = {
   ONGOING: "ongoing",
   COMPLETED: "completed",
@@ -45,26 +48,39 @@ const statusVariant: Record<string, any> = {
 
 export default function ProjectsManager({
   projects,
+  galleryImages = [],
 }: {
   projects: Project[];
+  galleryImages?: GalleryImg[];
 }) {
   const [showModal, setShowModal] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isPending, startTransition] = useTransition();
   const [formError, setFormError] = useState<string | null>(null);
+  const [galleryUrls, setGalleryUrls] = useState<string[]>(["", "", "", ""]);
   const router = useRouter();
   const publishedRef = useRef<HTMLInputElement>(null);
 
   function openNew() {
     setEditingProject(null);
+    setGalleryUrls(["", "", "", ""]);
     setFormError(null);
     setShowModal(true);
   }
 
   function openEdit(project: Project) {
     setEditingProject(project);
+    setGalleryUrls([0, 1, 2, 3].map((i) => project.gallery?.[i] || ""));
     setFormError(null);
     setShowModal(true);
+  }
+
+  function setGalleryUrl(index: number, url: string) {
+    setGalleryUrls((prev) => {
+      const next = [...prev];
+      next[index] = url;
+      return next;
+    });
   }
 
   function handleDelete(project: Project) {
@@ -274,26 +290,38 @@ export default function ProjectsManager({
             </div>
             <div>
               <Label>Gallery Images</Label>
-              <p className="text-xs text-gray-400 mb-2">Cover image appears on project cards. Add up to 4 images. Free hosts: ImgBB.com, Imgur.com</p>
+              <p className="text-xs text-gray-400 mb-2">Cover image appears on project cards. Add up to 4 images.</p>
               <div className="space-y-2">
-                <Input
+                <ImagePicker
                   name="gallery1"
-                  defaultValue={editingProject?.gallery?.[0] || ""}
+                  value={galleryUrls[0]}
+                  onChange={(url) => setGalleryUrl(0, url)}
+                  galleryImages={galleryImages}
+                  folder="projects"
                   placeholder="Cover image URL (required for card thumbnail)"
                 />
-                <Input
+                <ImagePicker
                   name="gallery2"
-                  defaultValue={editingProject?.gallery?.[1] || ""}
+                  value={galleryUrls[1]}
+                  onChange={(url) => setGalleryUrl(1, url)}
+                  galleryImages={galleryImages}
+                  folder="projects"
                   placeholder="Additional image URL (optional)"
                 />
-                <Input
+                <ImagePicker
                   name="gallery3"
-                  defaultValue={editingProject?.gallery?.[2] || ""}
+                  value={galleryUrls[2]}
+                  onChange={(url) => setGalleryUrl(2, url)}
+                  galleryImages={galleryImages}
+                  folder="projects"
                   placeholder="Additional image URL (optional)"
                 />
-                <Input
+                <ImagePicker
                   name="gallery4"
-                  defaultValue={editingProject?.gallery?.[3] || ""}
+                  value={galleryUrls[3]}
+                  onChange={(url) => setGalleryUrl(3, url)}
+                  galleryImages={galleryImages}
+                  folder="projects"
                   placeholder="Additional image URL (optional)"
                 />
               </div>
