@@ -110,9 +110,16 @@ function SubmitButton() {
   );
 }
 
+const BANNER_OVERLAY_PREFIXES = ["about", "programs", "projects", "volunteer", "blog", "gallery", "donate", "contact"];
+
 export default function SettingsForm({ settings }: { settings: any }) {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [overlayOpacities, setOverlayOpacities] = useState<Record<string, number>>(() =>
+    Object.fromEntries(
+      BANNER_OVERLAY_PREFIXES.map((prefix) => [prefix, (settings as any)?.[`${prefix}BannerOverlayOpacity`] ?? 80])
+    )
+  );
 
   async function handleAction(formData: FormData) {
     const result = await updateSiteSettings(formData);
@@ -280,34 +287,74 @@ export default function SettingsForm({ settings }: { settings: any }) {
           Optional full-width banner image for each page's hero section. If empty, the default color gradient is shown.
           <br/><span className="text-primary font-medium">Free image hosts: ImgBB.com, Imgur.com · Recommended: 1920×600px, WebP/JPG, max 500KB</span>
         </p>
-        <div className="space-y-4">
+        <div className="space-y-6">
           {[
-            { name: "aboutBannerImage", label: "About Page Banner", page: "/about" },
-            { name: "programsBannerImage", label: "Programs Page Banner", page: "/programs" },
-            { name: "projectsBannerImage", label: "Projects Page Banner", page: "/projects" },
-            { name: "volunteerBannerImage", label: "Volunteer Page Banner", page: "/volunteer" },
-            { name: "blogBannerImage", label: "Blog Page Banner", page: "/blog" },
-            { name: "galleryBannerImage", label: "Gallery Page Banner", page: "/gallery" },
-            { name: "donateBannerImage", label: "Donate Page Banner", page: "/donate" },
-            { name: "contactBannerImage", label: "Contact Page Banner", page: "/contact" },
-          ].map(({ name, label, page }) => (
-            <div key={name}>
-              <Label className="label-base" htmlFor={name}>
-                {label} <span className="text-gray-400 font-normal text-xs">({page})</span>
-              </Label>
-              <div className="flex gap-2">
-                <Input
-                  id={name}
-                  name={name}
-                  defaultValue={(settings as any)?.[name] || ""}
-                  placeholder="https://... leave empty for color gradient"
-                />
-                {(settings as any)?.[name] && (
-                  <img src={(settings as any)[name]} alt="" className="h-10 w-16 object-cover rounded-lg border border-gray-200 flex-shrink-0" />
-                )}
+            { prefix: "about", name: "aboutBannerImage", label: "About Page Banner", page: "/about" },
+            { prefix: "programs", name: "programsBannerImage", label: "Programs Page Banner", page: "/programs" },
+            { prefix: "projects", name: "projectsBannerImage", label: "Projects Page Banner", page: "/projects" },
+            { prefix: "volunteer", name: "volunteerBannerImage", label: "Volunteer Page Banner", page: "/volunteer" },
+            { prefix: "blog", name: "blogBannerImage", label: "Blog Page Banner", page: "/blog" },
+            { prefix: "gallery", name: "galleryBannerImage", label: "Gallery Page Banner", page: "/gallery" },
+            { prefix: "donate", name: "donateBannerImage", label: "Donate Page Banner", page: "/donate" },
+            { prefix: "contact", name: "contactBannerImage", label: "Contact Page Banner", page: "/contact" },
+          ].map(({ prefix, name, label, page }) => {
+            const overlayColorName = `${prefix}BannerOverlayColor`;
+            const overlayOpacityName = `${prefix}BannerOverlayOpacity`;
+            const overlayColor = (settings as any)?.[overlayColorName] || "#0F3D8C";
+            const overlayOpacity = overlayOpacities[prefix] ?? 80;
+            return (
+              <div key={name} className="border border-gray-100 rounded-xl p-4">
+                <Label className="label-base" htmlFor={name}>
+                  {label} <span className="text-gray-400 font-normal text-xs">({page})</span>
+                </Label>
+                <div className="flex gap-2">
+                  <Input
+                    id={name}
+                    name={name}
+                    defaultValue={(settings as any)?.[name] || ""}
+                    placeholder="https://... leave empty for color gradient"
+                  />
+                  {(settings as any)?.[name] && (
+                    <img src={(settings as any)[name]} alt="" className="h-10 w-16 object-cover rounded-lg border border-gray-200 flex-shrink-0" />
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-end gap-4 mt-3 pt-3 border-t border-gray-50">
+                  <div>
+                    <Label className="label-base text-xs" htmlFor={overlayColorName}>Overlay Color</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <input
+                        type="color"
+                        id={overlayColorName}
+                        name={overlayColorName}
+                        defaultValue={overlayColor}
+                        className="h-9 w-14 rounded-lg cursor-pointer border border-gray-200"
+                      />
+                      <span className="text-xs text-gray-500 font-mono">{overlayColor}</span>
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-[160px]">
+                    <Label className="label-base text-xs" htmlFor={overlayOpacityName}>
+                      Overlay Brightness/Darkness ({overlayOpacity}% dark)
+                    </Label>
+                    <input
+                      type="range"
+                      id={overlayOpacityName}
+                      name={overlayOpacityName}
+                      min={0}
+                      max={100}
+                      value={overlayOpacity}
+                      onChange={(e) =>
+                        setOverlayOpacities((prev) => ({ ...prev, [prefix]: Number(e.target.value) }))
+                      }
+                      className="w-full mt-2 accent-primary"
+                    />
+                    <p className="text-[11px] text-gray-400 mt-1">0% = fully bright image, 100% = fully solid overlay color</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

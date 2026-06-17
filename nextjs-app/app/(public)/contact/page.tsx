@@ -89,7 +89,15 @@ export default async function ContactPage() {
           backgroundPosition: 'center',
         } : undefined}
       >
-        {settings?.contactBannerImage && <div className="absolute inset-0 bg-primary/80" />}
+        {settings?.contactBannerImage && (
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: (settings as any).contactBannerOverlayColor || "#0F3D8C",
+              opacity: ((settings as any).contactBannerOverlayOpacity ?? 80) / 100,
+            }}
+          />
+        )}
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Contact

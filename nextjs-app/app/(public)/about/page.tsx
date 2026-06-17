@@ -126,7 +126,15 @@ export default async function AboutPage() {
           backgroundPosition: 'center',
         } : undefined}
       >
-        {settings?.aboutBannerImage && <div className="absolute inset-0 bg-primary/80" />}
+        {settings?.aboutBannerImage && (
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: (settings as any).aboutBannerOverlayColor || "#0F3D8C",
+              opacity: ((settings as any).aboutBannerOverlayOpacity ?? 80) / 100,
+            }}
+          />
+        )}
         {!settings?.aboutBannerImage && <div className="absolute inset-0 opacity-10">
           <div
             className="absolute inset-0"

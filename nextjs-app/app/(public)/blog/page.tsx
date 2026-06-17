@@ -44,7 +44,15 @@ export default async function BlogPage() {
           backgroundPosition: 'center',
         } : undefined}
       >
-        {settings?.blogBannerImage && <div className="absolute inset-0 bg-primary/80" />}
+        {settings?.blogBannerImage && (
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: (settings as any).blogBannerOverlayColor || "#0F3D8C",
+              opacity: ((settings as any).blogBannerOverlayOpacity ?? 80) / 100,
+            }}
+          />
+        )}
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Blog
