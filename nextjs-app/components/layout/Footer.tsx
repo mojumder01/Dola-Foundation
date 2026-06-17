@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -12,7 +11,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  Send,
   ArrowRight,
 } from "lucide-react";
 
@@ -55,10 +53,6 @@ export default function Footer({
   programs?: { label: string; href: string }[];
 }) {
   const programs = dbPrograms && dbPrograms.length > 0 ? dbPrograms : DEFAULT_PROGRAMS;
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-  const [subError, setSubError] = useState(false);
-  const [subLoading, setSubLoading] = useState(false);
 
   const siteName = settings?.siteName || "Dola Foundation";
   const tagline = settings?.tagline || "Empowering Lives";
@@ -77,31 +71,6 @@ export default function Footer({
         .filter((social) => social.href)
         .map((social) => ({ ...social, href: social.href as string }))
     : configuredSocials.map((social) => ({ ...social, href: "#" }));
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || subLoading) return;
-    setSubLoading(true);
-    setSubError(false);
-    try {
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setSubscribed(true);
-        setEmail("");
-      } else {
-        setSubError(true);
-      }
-    } catch {
-      setSubError(true);
-    } finally {
-      setSubLoading(false);
-    }
-  };
 
   return (
     <footer className="bg-dark text-white">
@@ -222,43 +191,6 @@ export default function Footer({
                 </a>
               </li>
             </ul>
-
-            {/* Newsletter */}
-            <h4 className="font-poppins font-semibold text-white mb-3 text-sm">
-              Newsletter
-            </h4>
-            {subscribed ? (
-              <p className="text-green-400 text-sm flex items-center gap-1.5">
-                <span>✓</span> Thank you for subscribing!
-              </p>
-            ) : (
-              <>
-                <form onSubmit={handleSubscribe} className="flex gap-2">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    required
-                    className="flex-1 bg-white/10 border border-white/20 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-gold transition-colors"
-                  />
-                  <button
-                    type="submit"
-                    disabled={subLoading}
-                    className="bg-gold hover:bg-gold-500 text-dark rounded-xl p-2.5 transition-colors flex-shrink-0 disabled:opacity-60"
-                  >
-                    {subLoading ? (
-                      <span className="w-4 h-4 border-2 border-dark/30 border-t-dark rounded-full animate-spin block" />
-                    ) : (
-                      <Send className="w-4 h-4" />
-                    )}
-                  </button>
-                </form>
-                {subError && (
-                  <p className="text-red-400 text-xs mt-1.5">Failed to subscribe. Please try again.</p>
-                )}
-              </>
-            )}
           </div>
         </div>
 
