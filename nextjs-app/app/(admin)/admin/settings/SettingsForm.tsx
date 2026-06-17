@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { CheckCircle, Loader2, Save, ChevronUp, ChevronDown } from "lucide-react";
+import { CheckCircle, Loader2, Save, ChevronUp, ChevronDown, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -115,33 +115,54 @@ const BANNER_OVERLAY_PREFIXES = ["about", "programs", "projects", "volunteer", "
 export default function SettingsForm({ settings }: { settings: any }) {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const [overlayOpacities, setOverlayOpacities] = useState<Record<string, number>>(() =>
     Object.fromEntries(
       BANNER_OVERLAY_PREFIXES.map((prefix) => [prefix, (settings as any)?.[`${prefix}BannerOverlayOpacity`] ?? 80])
     )
   );
 
+  useEffect(() => {
+    if (!saved) return;
+    const timer = setTimeout(() => setSaved(false), 3000);
+    return () => clearTimeout(timer);
+  }, [saved]);
+
   async function handleAction(formData: FormData) {
+    setError(null);
     const result = await updateSiteSettings(formData);
     if (result?.success) {
       setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
     } else {
       setError(result?.error || "Failed to save — is the database connected? Check /api/health");
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }
 
   return (
-    <form action={handleAction} className="space-y-6">
-      {saved && (
-        <div className="bg-green-50 border border-green-200 text-green-700 rounded-xl p-4 flex items-center gap-2">
-          <CheckCircle className="w-5 h-5" />
-          Settings saved successfully!
-        </div>
-      )}
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-4">
-          {error}
+    <form ref={formRef} action={handleAction} className="space-y-6 pb-24">
+      {(saved || error) && (
+        <div className="fixed top-5 right-5 z-[100] max-w-sm animate-in fade-in slide-in-from-top-2">
+          {saved && (
+            <div className="bg-white border border-green-200 shadow-lg rounded-xl p-4 flex items-center gap-2 text-green-700">
+              <CheckCircle className="w-5 h-5 flex-shrink-0" />
+              Settings saved successfully!
+            </div>
+          )}
+          {error && (
+            <div className="bg-white border border-red-200 shadow-lg rounded-xl p-4 flex items-start gap-2 text-red-600">
+              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">{error}</div>
+              <button
+                type="button"
+                onClick={() => setError(null)}
+                className="text-red-400 hover:text-red-600 text-sm flex-shrink-0"
+              >
+                ✕
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -706,7 +727,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
         </div>
       </div>
 
-      <div className="flex justify-end">
+      <div className="fixed bottom-6 right-6 z-40 shadow-xl rounded-xl">
         <SubmitButton />
       </div>
     </form>
