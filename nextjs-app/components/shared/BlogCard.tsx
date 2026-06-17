@@ -36,12 +36,13 @@ export default function BlogCard({
       className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden hover:-translate-y-1"
     >
       {/* Cover Image */}
-      <div className="relative h-52 bg-gradient-to-br from-primary/10 to-green/10 overflow-hidden">
+      <div className="relative h-44 sm:h-52 bg-gradient-to-br from-primary/10 to-green/10 overflow-hidden">
         {coverImage ? (
           <Image
             src={coverImage}
             alt={title}
             fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (

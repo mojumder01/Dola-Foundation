@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDateShort } from "@/lib/utils";
@@ -179,15 +180,26 @@ export default async function ProjectsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project) => {
               const { label, variant } = statusConfig[project.status];
+              const coverImage = project.gallery?.[0];
               return (
                 <div
                   key={project.id}
                   className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden hover:-translate-y-1"
                 >
-                  <div className="relative h-48 bg-gradient-to-br from-primary/10 to-green/10 flex items-center justify-center">
-                    <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
-                      <span className="text-2xl">🏗️</span>
-                    </div>
+                  <div className="relative h-40 sm:h-48 bg-gradient-to-br from-primary/10 to-green/10 overflow-hidden flex items-center justify-center">
+                    {coverImage ? (
+                      <Image
+                        src={coverImage}
+                        alt={project.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
+                        <span className="text-2xl">🏗️</span>
+                      </div>
+                    )}
                     <div className="absolute top-3 right-3">
                       <Badge variant={variant}>{label}</Badge>
                     </div>

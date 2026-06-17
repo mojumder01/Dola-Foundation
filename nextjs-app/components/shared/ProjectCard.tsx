@@ -48,12 +48,13 @@ export default function ProjectCard({
       className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden hover:-translate-y-1"
     >
       {/* Image */}
-      <div className="relative h-48 bg-gradient-to-br from-primary/10 to-green/10 overflow-hidden">
+      <div className="relative h-40 sm:h-48 bg-gradient-to-br from-primary/10 to-green/10 overflow-hidden">
         {coverImage ? (
           <Image
             src={coverImage}
             alt={title}
             fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
