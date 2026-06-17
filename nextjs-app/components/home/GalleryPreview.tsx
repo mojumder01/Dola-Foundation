@@ -89,7 +89,7 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {galleryImages.map((image, index) => (
             <motion.div
               key={image.id}
@@ -97,16 +97,12 @@ export default function GalleryPreview({ images }: GalleryPreviewProps) {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.08 }}
-              className={`relative overflow-hidden rounded-2xl group cursor-pointer ${
-                index === 0 ? "row-span-2" : ""
-              }`}
-              style={{ aspectRatio: index === 0 ? "1/2" : "4/3" }}
+              className="relative aspect-square overflow-hidden rounded-2xl group cursor-pointer"
             >
               <img
                 src={image.src}
                 alt={image.alt}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                style={{ height: "100%" }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
