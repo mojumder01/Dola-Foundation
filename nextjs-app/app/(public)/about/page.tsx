@@ -119,14 +119,14 @@ export default async function AboutPage() {
     <div className="pt-20">
       {/* Hero */}
       <section
-        className="relative bg-gradient-to-br from-primary via-[#0d3578] to-green py-20 md:py-28"
+        className="relative bg-gradient-to-br from-primary via-[#0d3578] to-green min-h-[280px] md:min-h-[360px] lg:min-h-[420px] flex items-center py-16"
         style={settings?.aboutBannerImage ? {
           backgroundImage: `url(${settings.aboutBannerImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         } : undefined}
       >
-        {settings?.aboutBannerImage && <div className="absolute inset-0 bg-primary/70" />}
+        {settings?.aboutBannerImage && <div className="absolute inset-0 bg-primary/80" />}
         {!settings?.aboutBannerImage && <div className="absolute inset-0 opacity-10">
           <div
             className="absolute inset-0"
@@ -135,7 +135,7 @@ export default async function AboutPage() {
             }}
           />
         </div>}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             About Us
           </span>

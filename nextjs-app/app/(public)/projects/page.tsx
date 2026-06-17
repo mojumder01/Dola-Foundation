@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { MapPin, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDateShort } from "@/lib/utils";
@@ -131,15 +130,15 @@ export default async function ProjectsPage() {
     <div className="pt-20">
       {/* Hero */}
       <section
-        className="relative bg-gradient-to-br from-primary to-[#1a4da0] py-20 md:py-28"
+        className="relative bg-gradient-to-br from-primary to-[#1a4da0] min-h-[280px] md:min-h-[360px] lg:min-h-[420px] flex items-center py-16"
         style={settings?.projectsBannerImage ? {
           backgroundImage: `url(${settings.projectsBannerImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         } : undefined}
       >
-        {settings?.projectsBannerImage && <div className="absolute inset-0 bg-primary/70" />}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        {settings?.projectsBannerImage && <div className="absolute inset-0 bg-primary/80" />}
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Our Work
           </span>
@@ -188,12 +187,11 @@ export default async function ProjectsPage() {
                 >
                   <div className="relative h-40 sm:h-48 bg-gradient-to-br from-primary/10 to-green/10 overflow-hidden flex items-center justify-center">
                     {coverImage ? (
-                      <Image
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
                         src={coverImage}
                         alt={project.title}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
                       <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">

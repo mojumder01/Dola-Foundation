@@ -86,15 +86,15 @@ export default async function VolunteerPage() {
     <div className="pt-20">
       {/* Hero */}
       <section
-        className="relative bg-gradient-to-br from-green to-primary py-20 md:py-28"
+        className="relative bg-gradient-to-br from-green to-primary min-h-[280px] md:min-h-[360px] lg:min-h-[420px] flex items-center py-16"
         style={settings?.volunteerBannerImage ? {
           backgroundImage: `url(${settings.volunteerBannerImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         } : undefined}
       >
-        {settings?.volunteerBannerImage && <div className="absolute inset-0 bg-primary/70" />}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        {settings?.volunteerBannerImage && <div className="absolute inset-0 bg-primary/80" />}
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Get Involved
           </span>
