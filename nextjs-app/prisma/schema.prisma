@@ -75,6 +75,37 @@ model SiteSettings {
   galleryBannerOverlayOpacity  Int     @default(80)
   donateBannerOverlayColor     String  @default("#0F3D8C")
   donateBannerOverlayOpacity   Int     @default(80)
+  aboutBannerBadge      String?
+  aboutBannerTitle      String?
+  aboutBannerSubtitle   String?  @db.Text
+  aboutBannerTextColor  String  @default("#FFFFFF")
+  programsBannerBadge      String?
+  programsBannerTitle      String?
+  programsBannerSubtitle   String?  @db.Text
+  programsBannerTextColor  String  @default("#FFFFFF")
+  projectsBannerBadge      String?
+  projectsBannerTitle      String?
+  projectsBannerSubtitle   String?  @db.Text
+  projectsBannerTextColor  String  @default("#FFFFFF")
+  contactBannerBadge      String?
+  contactBannerTitle      String?
+  contactBannerSubtitle   String?  @db.Text
+  contactBannerTextColor  String  @default("#FFFFFF")
+  volunteerBannerBadge      String?
+  volunteerBannerTitle      String?
+  volunteerBannerSubtitle   String?  @db.Text
+  volunteerBannerTextColor  String  @default("#FFFFFF")
+  blogBannerBadge      String?
+  blogBannerTitle      String?
+  blogBannerSubtitle   String?  @db.Text
+  blogBannerTextColor  String  @default("#FFFFFF")
+  galleryBannerBadge      String?
+  galleryBannerTitle      String?
+  galleryBannerSubtitle   String?  @db.Text
+  galleryBannerTextColor  String  @default("#FFFFFF")
+  donateBannerBadge      String?
+  donateBannerTextColor  String  @default("#FFFFFF")
+  bannerHeadingFont      String  @default("poppins")
   googleMapsEmbedUrl   String?
   donatePageTitle      String?
   donatePageSubtitle   String?  @db.Text

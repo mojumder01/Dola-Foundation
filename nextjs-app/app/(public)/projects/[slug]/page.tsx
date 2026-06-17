@@ -141,51 +141,97 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-primary to-[#1a4da0] py-20 md:py-28 relative">
-        {project.coverImage && (
-          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${project.coverImage})` }} />
-        )}
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <Link
-            href="/projects"
-            className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Projects
-          </Link>
-          <div className="flex flex-wrap items-start gap-4">
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                <Badge variant={status.variant}>{status.label}</Badge>
-              </div>
-              <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-4">
-                {project.title}
-              </h1>
-              <p className="text-white/80 text-lg max-w-2xl">
-                {project.description}
-              </p>
+      {project.coverImage ? (
+        <section className="bg-gradient-to-br from-primary to-[#1a4da0] relative overflow-hidden min-h-[220px] md:min-h-[260px]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={project.coverImage} alt="" className="w-full h-auto block" />
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 flex items-center py-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+              <Link
+                href="/projects"
+                className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Projects
+              </Link>
+              <div className="flex flex-wrap items-start gap-4">
+                <div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <Badge variant={status.variant}>{status.label}</Badge>
+                  </div>
+                  <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-4">
+                    {project.title}
+                  </h1>
+                  <p className="text-white/80 text-lg max-w-2xl">
+                    {project.description}
+                  </p>
 
-              <div className="flex flex-wrap items-center gap-5 mt-5 text-white/70 text-sm">
-                <span className="flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4" />
-                  {project.location}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4" />
-                  Started {formatDate(project.startDate)}
-                </span>
-                {project.budget && (
-                  <span className="flex items-center gap-1.5">
-                    <DollarSign className="w-4 h-4" />
-                    Budget: {formatCurrency(project.budget)}
-                  </span>
-                )}
+                  <div className="flex flex-wrap items-center gap-5 mt-5 text-white/70 text-sm">
+                    <span className="flex items-center gap-1.5">
+                      <MapPin className="w-4 h-4" />
+                      {project.location}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Calendar className="w-4 h-4" />
+                      Started {formatDate(project.startDate)}
+                    </span>
+                    {project.budget && (
+                      <span className="flex items-center gap-1.5">
+                        <DollarSign className="w-4 h-4" />
+                        Budget: {formatCurrency(project.budget)}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <section className="bg-gradient-to-br from-primary to-[#1a4da0] py-20 md:py-28 relative">
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <Link
+              href="/projects"
+              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Projects
+            </Link>
+            <div className="flex flex-wrap items-start gap-4">
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <Badge variant={status.variant}>{status.label}</Badge>
+                </div>
+                <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-4">
+                  {project.title}
+                </h1>
+                <p className="text-white/80 text-lg max-w-2xl">
+                  {project.description}
+                </p>
+
+                <div className="flex flex-wrap items-center gap-5 mt-5 text-white/70 text-sm">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4" />
+                    {project.location}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="w-4 h-4" />
+                    Started {formatDate(project.startDate)}
+                  </span>
+                  {project.budget && (
+                    <span className="flex items-center gap-1.5">
+                      <DollarSign className="w-4 h-4" />
+                      Budget: {formatCurrency(project.budget)}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Content */}
       <section className="py-16 md:py-24 bg-[#F8FAFC]">

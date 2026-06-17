@@ -81,6 +81,13 @@ export default async function VolunteerPage() {
     getDBItems("volunteer-benefits"),
     getDBItems("volunteer-steps"),
   ]);
+  const headingFont = (settings as any)?.bannerHeadingFont === "inter" ? "font-inter" : "font-poppins";
+  const bannerTextColor = (settings as any)?.volunteerBannerTextColor || "#FFFFFF";
+  const bannerBadge = (settings as any)?.volunteerBannerBadge || "Get Involved";
+  const bannerTitle = (settings as any)?.volunteerBannerTitle || "Volunteer With Us";
+  const bannerSubtitle =
+    (settings as any)?.volunteerBannerSubtitle ||
+    "Your time, skills, and passion can change lives. Join our community of 500+ volunteers working to build a better Bangladesh.";
 
   return (
     <div className="pt-20">
@@ -98,20 +105,19 @@ export default async function VolunteerPage() {
           />
           <div className="absolute inset-0 flex items-center py-10">
             <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            Get Involved
+          <span className="inline-block bg-white/20 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6" style={{ color: bannerTextColor }}>
+            {bannerBadge}
           </span>
-          <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
-            Volunteer With Us
+          <h1 className={`${headingFont} font-black text-4xl md:text-5xl mb-5`} style={{ color: bannerTextColor }}>
+            {bannerTitle}
           </h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            Your time, skills, and passion can change lives. Join our community
-            of 500+ volunteers working to build a better Bangladesh.
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: bannerTextColor, opacity: 0.8 }}>
+            {bannerSubtitle}
           </p>
-          <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+          <div className="flex items-center justify-center gap-2 mt-6 text-sm" style={{ color: bannerTextColor, opacity: 0.6 }}>
+            <Link href="/" className="hover:opacity-100 transition-opacity">Home</Link>
             <span>/</span>
-            <span className="text-white">Volunteer</span>
+            <span style={{ opacity: 1 }}>Volunteer</span>
           </div>
         </div>
           </div>
@@ -119,20 +125,19 @@ export default async function VolunteerPage() {
       ) : (
         <section className="relative bg-gradient-to-br from-green to-primary min-h-[280px] md:min-h-[360px] lg:min-h-[420px] flex items-center py-16">
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            Get Involved
+          <span className="inline-block bg-white/20 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6" style={{ color: bannerTextColor }}>
+            {bannerBadge}
           </span>
-          <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
-            Volunteer With Us
+          <h1 className={`${headingFont} font-black text-4xl md:text-5xl mb-5`} style={{ color: bannerTextColor }}>
+            {bannerTitle}
           </h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            Your time, skills, and passion can change lives. Join our community
-            of 500+ volunteers working to build a better Bangladesh.
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: bannerTextColor, opacity: 0.8 }}>
+            {bannerSubtitle}
           </p>
-          <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+          <div className="flex items-center justify-center gap-2 mt-6 text-sm" style={{ color: bannerTextColor, opacity: 0.6 }}>
+            <Link href="/" className="hover:opacity-100 transition-opacity">Home</Link>
             <span>/</span>
-            <span className="text-white">Volunteer</span>
+            <span style={{ opacity: 1 }}>Volunteer</span>
           </div>
         </div>
         </section>

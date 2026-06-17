@@ -228,6 +228,19 @@ export default function SettingsForm({ settings }: { settings: any }) {
             </div>
           </div>
         </div>
+        <div className="mt-4">
+          <Label className="label-base" htmlFor="bannerHeadingFont">Banner Heading Font</Label>
+          <select
+            id="bannerHeadingFont"
+            name="bannerHeadingFont"
+            defaultValue={(settings as any)?.bannerHeadingFont || "poppins"}
+            className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white"
+          >
+            <option value="poppins">Poppins</option>
+            <option value="inter">Inter</option>
+          </select>
+          <p className="text-xs text-gray-400 mt-1">Font used for the bold heading text on every page banner.</p>
+        </div>
       </div>
 
       {/* Hero Section */}
@@ -302,6 +315,11 @@ export default function SettingsForm({ settings }: { settings: any }) {
             const overlayOpacityName = `${prefix}BannerOverlayOpacity`;
             const overlayColor = (settings as any)?.[overlayColorName] || "#0F3D8C";
             const overlayOpacity = overlayOpacities[prefix] ?? 80;
+            const badgeName = `${prefix}BannerBadge`;
+            const titleName = `${prefix}BannerTitle`;
+            const subtitleName = `${prefix}BannerSubtitle`;
+            const textColorName = `${prefix}BannerTextColor`;
+            const textColor = (settings as any)?.[textColorName] || "#FFFFFF";
             return (
               <div key={name} className="border border-gray-100 rounded-xl p-4">
                 <Label className="label-base" htmlFor={name}>
@@ -351,6 +369,54 @@ export default function SettingsForm({ settings }: { settings: any }) {
                     />
                     <p className="text-[11px] text-gray-400 mt-1">0% = fully bright image, 100% = fully solid overlay color</p>
                   </div>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-3 mt-3 pt-3 border-t border-gray-50">
+                  <div>
+                    <Label className="label-base text-xs" htmlFor={badgeName}>Badge Text</Label>
+                    <Input
+                      id={badgeName}
+                      name={badgeName}
+                      defaultValue={(settings as any)?.[badgeName] || ""}
+                      placeholder="e.g. About Us"
+                    />
+                  </div>
+                  <div>
+                    <Label className="label-base text-xs" htmlFor={textColorName}>Text Color</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <input
+                        type="color"
+                        id={textColorName}
+                        name={textColorName}
+                        defaultValue={textColor}
+                        className="h-9 w-14 rounded-lg cursor-pointer border border-gray-200"
+                      />
+                      <span className="text-xs text-gray-500 font-mono">{textColor}</span>
+                    </div>
+                  </div>
+                  {prefix !== "donate" && (
+                    <>
+                      <div className="sm:col-span-2">
+                        <Label className="label-base text-xs" htmlFor={titleName}>Heading Text</Label>
+                        <Input
+                          id={titleName}
+                          name={titleName}
+                          defaultValue={(settings as any)?.[titleName] || ""}
+                          placeholder="Leave empty to use the default page heading"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <Label className="label-base text-xs" htmlFor={subtitleName}>Subtitle Text</Label>
+                        <Textarea
+                          id={subtitleName}
+                          name={subtitleName}
+                          rows={2}
+                          defaultValue={(settings as any)?.[subtitleName] || ""}
+                          placeholder="Leave empty to use the default page subtitle"
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             );

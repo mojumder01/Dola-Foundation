@@ -253,34 +253,63 @@ export default async function ProgramDetailPage({ params }: PageProps) {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className={`bg-gradient-to-br ${program.gradient} py-20 md:py-28 relative`}>
-        {program.bannerImage && (
-          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${program.bannerImage})` }} />
-        )}
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <Link
-            href="/programs"
-            className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Programs
-          </Link>
-          <div className="flex items-start gap-5">
-            <div className="w-20 h-20 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">
-              {program.icon}
-            </div>
-            <div>
-              <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-3">
-                {program.title}
-              </h1>
-              <p className="text-white/80 text-lg max-w-2xl">
-                {program.description}
-              </p>
+      {program.bannerImage ? (
+        <section className={`bg-gradient-to-br ${program.gradient} relative overflow-hidden min-h-[220px] md:min-h-[260px]`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={program.bannerImage} alt="" className="w-full h-auto block" />
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 flex items-center py-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+              <Link
+                href="/programs"
+                className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Programs
+              </Link>
+              <div className="flex items-start gap-5">
+                <div className="w-20 h-20 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">
+                  {program.icon}
+                </div>
+                <div>
+                  <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-3">
+                    {program.title}
+                  </h1>
+                  <p className="text-white/80 text-lg max-w-2xl">
+                    {program.description}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <section className={`bg-gradient-to-br ${program.gradient} py-20 md:py-28 relative`}>
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <Link
+              href="/programs"
+              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Programs
+            </Link>
+            <div className="flex items-start gap-5">
+              <div className="w-20 h-20 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">
+                {program.icon}
+              </div>
+              <div>
+                <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-3">
+                  {program.title}
+                </h1>
+                <p className="text-white/80 text-lg max-w-2xl">
+                  {program.description}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Stats */}
       <section className="py-10 bg-white border-b border-gray-100">
