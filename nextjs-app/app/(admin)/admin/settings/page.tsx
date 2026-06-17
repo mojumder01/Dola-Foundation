@@ -1,8 +1,23 @@
 import { getSiteSettings } from "@/actions/admin/settings";
+import { prisma } from "@/lib/prisma";
 import SettingsForm from "./SettingsForm";
 
+async function getGalleryImages() {
+  try {
+    return await prisma.galleryImage.findMany({
+      orderBy: { order: "asc" },
+      select: { id: true, url: true, title: true },
+    });
+  } catch {
+    return [];
+  }
+}
+
 export default async function AdminSettingsPage() {
-  const { settings } = await getSiteSettings();
+  const [{ settings }, galleryImages] = await Promise.all([
+    getSiteSettings(),
+    getGalleryImages(),
+  ]);
 
   return (
     <div>
@@ -38,7 +53,7 @@ export default async function AdminSettingsPage() {
         ))}
       </div>
 
-      <SettingsForm settings={settings} />
+      <SettingsForm settings={settings} galleryImages={galleryImages} />
     </div>
   );
 }

@@ -38,10 +38,7 @@ export default function Navbar({ logoUrl, siteName, tagline, programs, donations
   const brandName = siteName || "Dola Foundation";
   const brandTagline = tagline || "Empowering Lives";
   const pathname = usePathname();
-  const isHome = pathname === "/";
 
-  // Always start solid to prevent flash of transparent+white-text on light pages
-  const [isScrolled, setIsScrolled] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
@@ -53,17 +50,8 @@ export default function Navbar({ logoUrl, siteName, tagline, programs, donations
   ];
 
   useEffect(() => {
-    if (!isHome) { setIsScrolled(true); return; }
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isHome]);
-
-  useEffect(() => {
     setMobileOpen(false);
     setActiveDropdown(null);
-    if (!isHome) setIsScrolled(true);
   }, [pathname]);
 
   useEffect(() => {
@@ -83,12 +71,7 @@ export default function Navbar({ logoUrl, siteName, tagline, programs, donations
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          isScrolled
-            ? "bg-white/95 backdrop-blur-md shadow-lg py-2"
-            : "bg-transparent py-4"
-        )}
+        className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-lg py-2"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center justify-between">
@@ -106,20 +89,10 @@ export default function Navbar({ logoUrl, siteName, tagline, programs, donations
                 </div>
               )}
               <div>
-                <span
-                  className={cn(
-                    "font-poppins font-bold text-lg leading-none block transition-colors",
-                    isScrolled ? "text-dark" : "text-white"
-                  )}
-                >
+                <span className="font-poppins font-bold text-lg leading-none block text-dark">
                   {brandName}
                 </span>
-                <span
-                  className={cn(
-                    "text-xs leading-none transition-colors",
-                    isScrolled ? "text-gray-500" : "text-white/70"
-                  )}
-                >
+                <span className="text-xs leading-none text-gray-500">
                   {brandTagline}
                 </span>
               </div>
@@ -133,14 +106,8 @@ export default function Navbar({ logoUrl, siteName, tagline, programs, donations
                     <Link
                       href={link.href}
                       className={cn(
-                        "flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                        isScrolled
-                          ? "text-gray-700 hover:text-primary hover:bg-blue-50"
-                          : "text-white/90 hover:text-white hover:bg-white/10",
-                        pathname.startsWith(link.href) &&
-                          (isScrolled
-                            ? "text-primary bg-blue-50"
-                            : "text-white bg-white/10")
+                        "flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:text-primary hover:bg-blue-50",
+                        pathname.startsWith(link.href) && "text-primary bg-blue-50"
                       )}
                       onMouseEnter={() => setActiveDropdown(link.label)}
                       onMouseLeave={() => setActiveDropdown(null)}
@@ -152,14 +119,8 @@ export default function Navbar({ logoUrl, siteName, tagline, programs, donations
                     <Link
                       href={link.href}
                       className={cn(
-                        "flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                        isScrolled
-                          ? "text-gray-700 hover:text-primary hover:bg-blue-50"
-                          : "text-white/90 hover:text-white hover:bg-white/10",
-                        pathname === link.href &&
-                          (isScrolled
-                            ? "text-primary bg-blue-50"
-                            : "text-white bg-white/10")
+                        "flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:text-primary hover:bg-blue-50",
+                        pathname === link.href && "text-primary bg-blue-50"
                       )}
                     >
                       {link.label}
@@ -207,12 +168,7 @@ export default function Navbar({ logoUrl, siteName, tagline, programs, donations
 
               <button
                 onClick={() => setMobileOpen(true)}
-                className={cn(
-                  "lg:hidden p-2 rounded-lg transition-colors",
-                  isScrolled
-                    ? "text-gray-700 hover:bg-gray-100"
-                    : "text-white hover:bg-white/10"
-                )}
+                className="lg:hidden p-2 rounded-lg transition-colors text-gray-700 hover:bg-gray-100"
               >
                 <Menu className="w-6 h-6" />
               </button>

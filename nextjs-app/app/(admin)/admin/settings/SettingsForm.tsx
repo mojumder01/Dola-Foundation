@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { updateSiteSettings } from "@/actions/admin/settings";
+import ImagePicker from "@/components/admin/ImagePicker";
 
 const DEFAULT_SECTION_ORDER = [
   "stats",
@@ -112,10 +113,11 @@ function SubmitButton() {
 
 const BANNER_OVERLAY_PREFIXES = ["about", "programs", "projects", "volunteer", "blog", "gallery", "donate", "contact"];
 
-export default function SettingsForm({ settings }: { settings: any }) {
+export default function SettingsForm({ settings, galleryImages = [] }: { settings: any; galleryImages?: { id: string; url: string; title: string | null }[] }) {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const [heroImage, setHeroImage] = useState(settings?.heroImage || "");
   const [overlayOpacities, setOverlayOpacities] = useState<Record<string, number>>(() =>
     Object.fromEntries(
       BANNER_OVERLAY_PREFIXES.map((prefix) => [prefix, (settings as any)?.[`${prefix}BannerOverlayOpacity`] ?? 80])
@@ -278,10 +280,15 @@ export default function SettingsForm({ settings }: { settings: any }) {
             <Label className="label-base" htmlFor="heroSubtitle">Hero Subtitle</Label>
             <Textarea id="heroSubtitle" name="heroSubtitle" defaultValue={settings?.heroSubtitle} rows={2} />
           </div>
-          <div>
-            <Label className="label-base" htmlFor="heroImage">Hero Background Image URL</Label>
-            <Input id="heroImage" name="heroImage" defaultValue={settings?.heroImage || ""} placeholder="https://..." />
-          </div>
+          <ImagePicker
+            name="heroImage"
+            label="Hero Image"
+            value={heroImage}
+            onChange={setHeroImage}
+            galleryImages={galleryImages}
+            folder="hero"
+            placeholder="https://..."
+          />
           <div className="border border-gray-100 rounded-xl p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div>
