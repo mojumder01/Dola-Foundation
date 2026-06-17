@@ -93,15 +93,10 @@ export default async function DonatePage() {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section
-        className="relative bg-gradient-to-br from-primary to-[#1a4da0] min-h-[280px] md:min-h-[360px] lg:min-h-[420px] flex items-center py-16"
-        style={settings?.donateBannerImage ? {
-          backgroundImage: `url(${settings.donateBannerImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        } : undefined}
-      >
-        {settings?.donateBannerImage && (
+      {settings?.donateBannerImage ? (
+        <section className="relative bg-gradient-to-br from-primary to-[#1a4da0] min-h-[180px] md:min-h-[220px] overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={settings.donateBannerImage} alt="" className="w-full h-auto block" />
           <div
             className="absolute inset-0"
             style={{
@@ -109,8 +104,8 @@ export default async function DonatePage() {
               opacity: ((settings as any).donateBannerOverlayOpacity ?? 80) / 100,
             }}
           />
-        )}
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="absolute inset-0 flex items-center py-10">
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-gold/20 border border-gold/30 text-gold text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Make a Difference
           </span>
@@ -127,7 +122,29 @@ export default async function DonatePage() {
             <span className="text-white">Donate</span>
           </div>
         </div>
-      </section>
+          </div>
+        </section>
+      ) : (
+        <section className="relative bg-gradient-to-br from-primary to-[#1a4da0] min-h-[280px] md:min-h-[360px] lg:min-h-[420px] flex items-center py-16">
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <span className="inline-block bg-gold/20 border border-gold/30 text-gold text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+            Make a Difference
+          </span>
+          <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
+            {settings?.donatePageTitle || "Donate to Dola Foundation"}
+          </h1>
+          <p className="text-white/80 text-lg max-w-2xl mx-auto">
+            {settings?.donatePageSubtitle ||
+              "Your generous donation directly funds our programs and creates lasting change in the lives of thousands of families across Bangladesh."}
+          </p>
+          <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-white">Donate</span>
+          </div>
+        </div>
+        </section>
+      )}
 
       {/* Trust indicators */}
       <section className="py-8 bg-white border-b border-gray-100">

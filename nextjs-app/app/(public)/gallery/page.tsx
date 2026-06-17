@@ -35,15 +35,10 @@ export default async function GalleryPage() {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section
-        className="relative bg-gradient-to-br from-primary to-green min-h-[280px] md:min-h-[360px] lg:min-h-[420px] flex items-center py-16"
-        style={settings?.galleryBannerImage ? {
-          backgroundImage: `url(${settings.galleryBannerImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        } : undefined}
-      >
-        {settings?.galleryBannerImage && (
+      {settings?.galleryBannerImage ? (
+        <section className="relative bg-gradient-to-br from-primary to-green min-h-[180px] md:min-h-[220px] overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={settings.galleryBannerImage} alt="" className="w-full h-auto block" />
           <div
             className="absolute inset-0"
             style={{
@@ -51,8 +46,8 @@ export default async function GalleryPage() {
               opacity: ((settings as any).galleryBannerOverlayOpacity ?? 80) / 100,
             }}
           />
-        )}
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="absolute inset-0 flex items-center py-10">
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Gallery
           </span>
@@ -68,7 +63,28 @@ export default async function GalleryPage() {
             <span className="text-white">Gallery</span>
           </div>
         </div>
-      </section>
+          </div>
+        </section>
+      ) : (
+        <section className="relative bg-gradient-to-br from-primary to-green min-h-[280px] md:min-h-[360px] lg:min-h-[420px] flex items-center py-16">
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+            Gallery
+          </span>
+          <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
+            Our Gallery
+          </h1>
+          <p className="text-white/80 text-lg max-w-2xl mx-auto">
+            Glimpses of our work and impact — moments that capture the spirit of change.
+          </p>
+          <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-white">Gallery</span>
+          </div>
+        </div>
+        </section>
+      )}
 
       <GalleryGrid images={images} />
     </div>

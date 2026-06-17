@@ -118,15 +118,10 @@ export default async function AboutPage() {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section
-        className="relative bg-gradient-to-br from-primary via-[#0d3578] to-green min-h-[280px] md:min-h-[360px] lg:min-h-[420px] flex items-center py-16"
-        style={settings?.aboutBannerImage ? {
-          backgroundImage: `url(${settings.aboutBannerImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        } : undefined}
-      >
-        {settings?.aboutBannerImage && (
+      {settings?.aboutBannerImage ? (
+        <section className="relative bg-gradient-to-br from-primary via-[#0d3578] to-green min-h-[180px] md:min-h-[220px] overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={settings.aboutBannerImage} alt="" className="w-full h-auto block" />
           <div
             className="absolute inset-0"
             style={{
@@ -134,36 +129,61 @@ export default async function AboutPage() {
               opacity: ((settings as any).aboutBannerOverlayOpacity ?? 80) / 100,
             }}
           />
-        )}
-        {!settings?.aboutBannerImage && <div className="absolute inset-0 opacity-10">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            }}
-          />
-        </div>}
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            About Us
-          </span>
-          <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
-            Who We Are
-          </h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            Dola Foundation is a non-profit organization committed to creating
-            lasting positive change in the lives of vulnerable communities across
-            Bangladesh.
-          </p>
-          <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
-            <Link href="/" className="hover:text-white transition-colors">
-              Home
-            </Link>
-            <span>/</span>
-            <span className="text-white">About</span>
+          <div className="absolute inset-0 flex items-center py-10">
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+              <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+                About Us
+              </span>
+              <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
+                Who We Are
+              </h1>
+              <p className="text-white/80 text-lg max-w-2xl mx-auto">
+                Dola Foundation is a non-profit organization committed to creating
+                lasting positive change in the lives of vulnerable communities across
+                Bangladesh.
+              </p>
+              <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
+                <Link href="/" className="hover:text-white transition-colors">
+                  Home
+                </Link>
+                <span>/</span>
+                <span className="text-white">About</span>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <section className="relative bg-gradient-to-br from-primary via-[#0d3578] to-green min-h-[280px] md:min-h-[360px] lg:min-h-[420px] flex items-center py-16">
+          <div className="absolute inset-0 opacity-10">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              }}
+            />
+          </div>
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+              About Us
+            </span>
+            <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
+              Who We Are
+            </h1>
+            <p className="text-white/80 text-lg max-w-2xl mx-auto">
+              Dola Foundation is a non-profit organization committed to creating
+              lasting positive change in the lives of vulnerable communities across
+              Bangladesh.
+            </p>
+            <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
+              <Link href="/" className="hover:text-white transition-colors">
+                Home
+              </Link>
+              <span>/</span>
+              <span className="text-white">About</span>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Our Story */}
       <section className="py-16 md:py-24 bg-white">

@@ -36,15 +36,10 @@ export default async function BlogPage() {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section
-        className="relative bg-gradient-to-br from-dark to-primary min-h-[280px] md:min-h-[360px] lg:min-h-[420px] flex items-center py-16"
-        style={settings?.blogBannerImage ? {
-          backgroundImage: `url(${settings.blogBannerImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        } : undefined}
-      >
-        {settings?.blogBannerImage && (
+      {settings?.blogBannerImage ? (
+        <section className="relative bg-gradient-to-br from-dark to-primary min-h-[180px] md:min-h-[220px] overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={settings.blogBannerImage} alt="" className="w-full h-auto block" />
           <div
             className="absolute inset-0"
             style={{
@@ -52,8 +47,8 @@ export default async function BlogPage() {
               opacity: ((settings as any).blogBannerOverlayOpacity ?? 80) / 100,
             }}
           />
-        )}
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="absolute inset-0 flex items-center py-10">
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             Blog
           </span>
@@ -69,7 +64,28 @@ export default async function BlogPage() {
             <span className="text-white">Blog</span>
           </div>
         </div>
-      </section>
+          </div>
+        </section>
+      ) : (
+        <section className="relative bg-gradient-to-br from-dark to-primary min-h-[280px] md:min-h-[360px] lg:min-h-[420px] flex items-center py-16">
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+            Blog
+          </span>
+          <h1 className="font-poppins font-black text-4xl md:text-5xl text-white mb-5">
+            Stories & Insights
+          </h1>
+          <p className="text-white/80 text-lg max-w-2xl mx-auto">
+            Read about the work we do, the lives we touch, and the lessons we learn along the way.
+          </p>
+          <div className="flex items-center justify-center gap-2 mt-6 text-white/60 text-sm">
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-white">Blog</span>
+          </div>
+        </div>
+        </section>
+      )}
 
       {/* Posts */}
       <section className="py-16 md:py-24 bg-[#F8FAFC]">
