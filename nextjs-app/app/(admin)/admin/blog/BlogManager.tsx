@@ -22,6 +22,7 @@ import {
 } from "@/actions/admin/blog";
 import { formatDate } from "@/lib/utils";
 import ImagePicker from "@/components/admin/ImagePicker";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 
 type Post = {
   id: string;
@@ -45,6 +46,7 @@ export default function BlogManager({ posts, galleryImages = [] }: { posts: Post
   const [formError, setFormError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState("");
+  const [content, setContent] = useState("");
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const publishedRef = useRef<HTMLInputElement>(null);
@@ -52,6 +54,7 @@ export default function BlogManager({ posts, galleryImages = [] }: { posts: Post
   function openNew() {
     setEditingPost(null);
     setCoverImage("");
+    setContent("");
     setFormError(null);
     setShowModal(true);
   }
@@ -59,6 +62,7 @@ export default function BlogManager({ posts, galleryImages = [] }: { posts: Post
   function openEdit(post: Post) {
     setEditingPost(post);
     setCoverImage(post.coverImage || "");
+    setContent(post.content || "");
     setFormError(null);
     setShowModal(true);
   }
@@ -84,8 +88,13 @@ export default function BlogManager({ posts, galleryImages = [] }: { posts: Post
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
+    if (!content.trim()) {
+      setFormError("Content is required.");
+      return;
+    }
     const fd = new FormData(form);
     fd.set("published", publishedRef.current?.checked ? "true" : "false");
+    fd.set("content", content);
     setFormError(null);
     startTransition(async () => {
       let result;
@@ -262,14 +271,15 @@ export default function BlogManager({ posts, galleryImages = [] }: { posts: Post
             </div>
             <div>
               <Label htmlFor="content">Content *</Label>
-              <Textarea
-                id="content"
-                name="content"
-                required
-                rows={5}
-                defaultValue={editingPost?.content || ""}
-                placeholder="Post content..."
+              <RichTextEditor
+                key={editingPost?.id || "new"}
+                content={content}
+                onChange={setContent}
+                placeholder="Write your post content..."
               />
+              {!content && (
+                <p className="text-xs text-red-500 mt-1">Content is required.</p>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

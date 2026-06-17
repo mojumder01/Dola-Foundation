@@ -29,6 +29,17 @@ export async function getBlogPost(slug: string) {
   }
 }
 
+async function uniqueSlug(title: string) {
+  const base = slugify(title);
+  let slug = base;
+  let i = 2;
+  while (await prisma.blogPost.findUnique({ where: { slug } })) {
+    slug = `${base}-${i}`;
+    i++;
+  }
+  return slug;
+}
+
 export async function createBlogPost(formData: FormData) {
   try {
     await requireAdmin();
@@ -36,7 +47,7 @@ export async function createBlogPost(formData: FormData) {
     const post = await prisma.blogPost.create({
       data: {
         title,
-        slug: slugify(title),
+        slug: await uniqueSlug(title),
         excerpt: (formData.get("excerpt") as string) || undefined,
         content: formData.get("content") as string,
         coverImage: (formData.get("coverImage") as string) || undefined,
