@@ -142,6 +142,28 @@ export default function HeroSection({ title, subtitle, image, announcementText, 
           </motion.div>
         </div>
       </div>
+
+      {/* Layered carve transition into the next section */}
+      <div className="absolute bottom-0 left-0 right-0 leading-[0]">
+        <svg
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
+          className="w-full h-[50px] md:h-[90px]"
+        >
+          <path
+            d="M0,40 C360,100 1080,0 1440,55 L1440,120 L0,120 Z"
+            className="fill-green/10"
+          />
+          <path
+            d="M0,60 C360,120 1080,25 1440,80 L1440,120 L0,120 Z"
+            className="fill-green/25"
+          />
+          <path
+            d="M0,85 C360,135 1080,45 1440,105 L1440,120 L0,120 Z"
+            className="fill-primary"
+          />
+        </svg>
+      </div>
     </section>
   );
 }
