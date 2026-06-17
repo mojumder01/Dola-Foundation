@@ -36,7 +36,10 @@ async function getDBFAQs() {
 }
 
 function getMapEmbedSrc(embedUrl?: string | null, address?: string | null): string {
-  if (embedUrl && embedUrl.includes("/maps/embed")) return embedUrl;
+  const trimmed = embedUrl?.trim();
+  if (trimmed && /^https:\/\/(www\.)?google\.com\/maps\/embed/i.test(trimmed)) {
+    return trimmed;
+  }
   const query = address?.trim() || "Harinakundu, Jhenaidah, Bangladesh";
   return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
 }
