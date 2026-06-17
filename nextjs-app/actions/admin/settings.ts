@@ -38,6 +38,7 @@ export async function updateSiteSettings(formData: FormData) {
       heroImage: (formData.get("heroImage") as string) || undefined,
       announcementText: (formData.get("announcementText") as string) || undefined,
       announcementEnabled: formData.get("announcementEnabled") === "true",
+      donationsEnabled: formData.get("donationsEnabled") === "true",
       aboutText: (formData.get("aboutText") as string) || undefined,
       missionText: (formData.get("missionText") as string) || undefined,
       visionText: (formData.get("visionText") as string) || undefined,

@@ -32,6 +32,7 @@ model SiteSettings {
   faviconUrl          String?
   announcementText    String?
   announcementEnabled Boolean  @default(true)
+  donationsEnabled    Boolean  @default(true)
   heroTitle      String   @default("Empowering Lives, Inspiring Hope")
   heroSubtitle   String   @default("We work to uplift communities through education, healthcare, and sustainable development across Bangladesh.")
   heroImage      String?

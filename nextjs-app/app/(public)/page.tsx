@@ -113,6 +113,8 @@ export default async function HomePage() {
       ]
     : undefined;
 
+  const donationsEnabled = (settings as any)?.donationsEnabled ?? true;
+
   const sections: Record<string, React.ReactNode> = {
     stats: <ImpactStats key="stats" stats={heroStats} />,
     programs: (
@@ -172,7 +174,7 @@ export default async function HomePage() {
       />
     ),
     volunteer: <VolunteerCTA key="volunteer" />,
-    donation: <DonationCTA key="donation" />,
+    ...(donationsEnabled ? { donation: <DonationCTA key="donation" /> } : {}),
   };
 
   const requestedOrder = ((settings as any)?.sectionOrder || "")
@@ -191,6 +193,7 @@ export default async function HomePage() {
         announcementText={(settings as any)?.announcementText}
         announcementEnabled={(settings as any)?.announcementEnabled ?? true}
         stats={heroStats}
+        donationsEnabled={donationsEnabled}
       />
       {order.map((key) => sections[key])}
     </>

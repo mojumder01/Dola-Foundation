@@ -59,6 +59,7 @@ export default async function PublicLayout({
           siteName={settings?.siteName}
           tagline={settings?.tagline}
           programs={navPrograms}
+          donationsEnabled={(settings as any)?.donationsEnabled ?? true}
         />
         <main className="flex-1">{children}</main>
         <Footer

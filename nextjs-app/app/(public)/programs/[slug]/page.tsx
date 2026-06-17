@@ -245,9 +245,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+async function getDonationsEnabled() {
+  try {
+    const settings = await prisma.siteSettings.findFirst();
+    return (settings as any)?.donationsEnabled ?? true;
+  } catch {
+    return true;
+  }
+}
+
 export default async function ProgramDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const program = await getProgram(slug);
+  const [program, donationsEnabled] = await Promise.all([getProgram(slug), getDonationsEnabled()]);
   if (!program) notFound();
 
   return (
@@ -383,20 +392,22 @@ export default async function ProgramDetailPage({ params }: PageProps) {
               </div>
 
               {/* Donate CTA */}
-              <div className={`bg-gradient-to-br ${program.gradient} rounded-2xl p-6 text-white`}>
-                <h3 className="font-poppins font-bold text-lg mb-2">
-                  Support This Program
-                </h3>
-                <p className="text-white/80 text-sm mb-4">
-                  Your donation directly funds {program.title.toLowerCase()} activities and impacts real lives.
-                </p>
-                <Link href="/donate">
-                  <Button variant="default" className="w-full">
-                    Donate Now
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-              </div>
+              {donationsEnabled && (
+                <div className={`bg-gradient-to-br ${program.gradient} rounded-2xl p-6 text-white`}>
+                  <h3 className="font-poppins font-bold text-lg mb-2">
+                    Support This Program
+                  </h3>
+                  <p className="text-white/80 text-sm mb-4">
+                    Your donation directly funds {program.title.toLowerCase()} activities and impacts real lives.
+                  </p>
+                  <Link href="/donate">
+                    <Button variant="default" className="w-full">
+                      Donate Now
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
+              )}
 
               {/* Volunteer CTA */}
               <div className="bg-[#F8FAFC] rounded-2xl border border-gray-200 p-6">

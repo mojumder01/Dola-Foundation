@@ -87,9 +87,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return { title: post.title, description: post.excerpt };
 }
 
+async function getDonationsEnabled() {
+  try {
+    const settings = await prisma.siteSettings.findFirst();
+    return (settings as any)?.donationsEnabled ?? true;
+  } catch {
+    return true;
+  }
+}
+
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const [dbPost, relatedPosts] = await Promise.all([getPost(slug), getRelatedPosts(slug)]);
+  const [dbPost, relatedPosts, donationsEnabled] = await Promise.all([
+    getPost(slug),
+    getRelatedPosts(slug),
+    getDonationsEnabled(),
+  ]);
   const post = dbPost || {
     title: "Blog Post Not Found",
     excerpt: "",
@@ -191,18 +204,20 @@ export default async function BlogPostPage({ params }: PageProps) {
 
             {/* Sidebar */}
             <div className="space-y-6">
-              <div className="bg-primary rounded-2xl p-6 text-white">
-                <h3 className="font-poppins font-bold text-lg mb-2">Support Our Work</h3>
-                <p className="text-white/80 text-sm mb-4">
-                  Stories like this are made possible by generous donors like you.
-                </p>
-                <Link
-                  href="/donate"
-                  className="block w-full bg-gold text-dark font-semibold py-2.5 rounded-xl text-center hover:bg-gold-500 transition-colors text-sm"
-                >
-                  Donate Now
-                </Link>
-              </div>
+              {donationsEnabled && (
+                <div className="bg-primary rounded-2xl p-6 text-white">
+                  <h3 className="font-poppins font-bold text-lg mb-2">Support Our Work</h3>
+                  <p className="text-white/80 text-sm mb-4">
+                    Stories like this are made possible by generous donors like you.
+                  </p>
+                  <Link
+                    href="/donate"
+                    className="block w-full bg-gold text-dark font-semibold py-2.5 rounded-xl text-center hover:bg-gold-500 transition-colors text-sm"
+                  >
+                    Donate Now
+                  </Link>
+                </div>
+              )}
 
               {relatedPosts.length > 0 && (
                 <div className="bg-white rounded-2xl shadow-card p-6">

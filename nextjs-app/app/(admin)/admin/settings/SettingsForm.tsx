@@ -433,6 +433,24 @@ export default function SettingsForm({ settings }: { settings: any }) {
           The headline and subtitle shown in the hero section of the <strong>/donate</strong> page.
         </p>
         <div className="space-y-4">
+          <div className="border border-gray-100 rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <Label className="label-base mb-0">Accept Donations</Label>
+              <p className="text-xs text-gray-400">
+                Turn off to hide donation forms and "Donate Now" buttons site-wide and show a "currently not accepting donations" notice on the /donate page.
+              </p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-4">
+              <input
+                type="checkbox"
+                name="donationsEnabled"
+                value="true"
+                defaultChecked={(settings as any)?.donationsEnabled ?? true}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+            </label>
+          </div>
           <div>
             <Label className="label-base" htmlFor="donatePageTitle">Donate Page Title</Label>
             <Input id="donatePageTitle" name="donatePageTitle" defaultValue={(settings as any)?.donatePageTitle || ""} placeholder="Donate to Dola Foundation" />

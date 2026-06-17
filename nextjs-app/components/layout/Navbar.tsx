@@ -26,9 +26,10 @@ interface NavbarProps {
   siteName?: string | null;
   tagline?: string | null;
   programs?: { label: string; href: string }[];
+  donationsEnabled?: boolean;
 }
 
-export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarProps) {
+export default function Navbar({ logoUrl, siteName, tagline, programs, donationsEnabled = true }: NavbarProps) {
   const programChildren = programs && programs.length > 0 ? programs : [
     { label: "Education", href: "/programs/education" },
     { label: "Healthcare", href: "/programs/healthcare" },
@@ -191,16 +192,18 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
 
             {/* CTA + Mobile Toggle */}
             <div className="flex items-center gap-3">
-              <Link href="/donate" className="hidden sm:block">
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="font-semibold text-sm"
-                >
-                  <Heart className="w-4 h-4 mr-2" />
-                  Donate Now
-                </Button>
-              </Link>
+              {donationsEnabled && (
+                <Link href="/donate" className="hidden sm:block">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="font-semibold text-sm"
+                  >
+                    <Heart className="w-4 h-4 mr-2" />
+                    Donate Now
+                  </Button>
+                </Link>
+              )}
 
               <button
                 onClick={() => setMobileOpen(true)}
@@ -302,24 +305,26 @@ export default function Navbar({ logoUrl, siteName, tagline, programs }: NavbarP
                   </motion.div>
                 ))}
 
-                <div className="mt-6 p-4 bg-gradient-to-br from-primary to-green rounded-2xl text-white">
-                  <p className="font-poppins font-semibold text-lg mb-1">
-                    Make a Difference
-                  </p>
-                  <p className="text-sm text-white/80 mb-4">
-                    Your donation changes lives
-                  </p>
-                  <Link href="/donate">
-                    <Button
-                      variant="default"
-                      className="w-full"
-                      size="sm"
-                    >
-                      <Heart className="w-4 h-4 mr-2" />
-                      Donate Now
-                    </Button>
-                  </Link>
-                </div>
+                {donationsEnabled && (
+                  <div className="mt-6 p-4 bg-gradient-to-br from-primary to-green rounded-2xl text-white">
+                    <p className="font-poppins font-semibold text-lg mb-1">
+                      Make a Difference
+                    </p>
+                    <p className="text-sm text-white/80 mb-4">
+                      Your donation changes lives
+                    </p>
+                    <Link href="/donate">
+                      <Button
+                        variant="default"
+                        className="w-full"
+                        size="sm"
+                      >
+                        <Heart className="w-4 h-4 mr-2" />
+                        Donate Now
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </nav>
             </motion.div>
           </>

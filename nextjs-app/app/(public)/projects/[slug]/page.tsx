@@ -131,9 +131,18 @@ const statusConfig: Record<string, { label: string; variant: any; color: string 
   UPCOMING: { label: "Upcoming", variant: "upcoming", color: "#f59e0b" },
 };
 
+async function getDonationsEnabled() {
+  try {
+    const settings = await prisma.siteSettings.findFirst();
+    return (settings as any)?.donationsEnabled ?? true;
+  } catch {
+    return true;
+  }
+}
+
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = await getProject(slug);
+  const [project, donationsEnabled] = await Promise.all([getProject(slug), getDonationsEnabled()]);
   if (!project) notFound();
 
   const status = statusConfig[project.status];
@@ -294,15 +303,17 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               )}
 
               {/* Donate */}
-              <div className="bg-gradient-to-br from-primary to-[#1a4da0] rounded-2xl p-6 text-white">
-                <h3 className="font-poppins font-bold text-lg mb-2">Support This Project</h3>
-                <p className="text-white/80 text-sm mb-4">
-                  Your donation directly funds this project and its impact on the community.
-                </p>
-                <Link href="/donate">
-                  <Button variant="default" className="w-full">Donate Now</Button>
-                </Link>
-              </div>
+              {donationsEnabled && (
+                <div className="bg-gradient-to-br from-primary to-[#1a4da0] rounded-2xl p-6 text-white">
+                  <h3 className="font-poppins font-bold text-lg mb-2">Support This Project</h3>
+                  <p className="text-white/80 text-sm mb-4">
+                    Your donation directly funds this project and its impact on the community.
+                  </p>
+                  <Link href="/donate">
+                    <Button variant="default" className="w-full">Donate Now</Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>

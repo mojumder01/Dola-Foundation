@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, HeartHandshake } from "lucide-react";
 import DonationForm from "./DonationForm";
 import { prisma } from "@/lib/prisma";
 
@@ -92,6 +92,7 @@ export default async function DonatePage() {
   const headingFont = (settings as any)?.bannerHeadingFont === "inter" ? "font-inter" : "font-poppins";
   const bannerTextColor = (settings as any)?.donateBannerTextColor || "#FFFFFF";
   const bannerBadge = (settings as any)?.donateBannerBadge || "Make a Difference";
+  const donationsEnabled = (settings as any)?.donationsEnabled ?? true;
 
   return (
     <div className="pt-20">
@@ -160,81 +161,101 @@ export default async function DonatePage() {
         </div>
       </section>
 
-      {/* Impact Amounts */}
-      <section className="py-12 bg-[#F8FAFC]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-poppins font-bold text-2xl text-dark text-center mb-8">
-            See Your Impact
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {impactAmounts.map((item, idx) => (
-              <div
-                key={(item as any).id || `${item.amount}-${idx}`}
-                className="bg-white rounded-2xl p-4 text-center shadow-card hover:shadow-card-hover transition-all border border-gray-100 hover:-translate-y-1 cursor-pointer"
-              >
-                <div className="text-3xl mb-2">{item.icon}</div>
-                <div className="font-poppins font-black text-xl text-primary">
-                  ৳{item.amount.toLocaleString()}
-                </div>
-                <div className="text-xs text-gray-500 mt-1 leading-snug">{item.impact}</div>
+      {donationsEnabled ? (
+        <>
+          {/* Impact Amounts */}
+          <section className="py-12 bg-[#F8FAFC]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="font-poppins font-bold text-2xl text-dark text-center mb-8">
+                See Your Impact
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {impactAmounts.map((item, idx) => (
+                  <div
+                    key={(item as any).id || `${item.amount}-${idx}`}
+                    className="bg-white rounded-2xl p-4 text-center shadow-card hover:shadow-card-hover transition-all border border-gray-100 hover:-translate-y-1 cursor-pointer"
+                  >
+                    <div className="text-3xl mb-2">{item.icon}</div>
+                    <div className="font-poppins font-black text-xl text-primary">
+                      ৳{item.amount.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1 leading-snug">{item.impact}</div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Donation Form */}
-      <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <DonationForm paymentMethods={paymentMethods} />
             </div>
+          </section>
 
-            {/* Sidebar */}
-            <div className="space-y-5">
-              <div className="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
-                <h3 className="font-poppins font-bold text-dark mb-3">
-                  Why Donate?
-                </h3>
-                <ul className="space-y-2.5">
-                  {whyDonate.map((point) => (
-                    <li key={point} className="flex items-start gap-2 text-sm text-gray-600">
-                      <CheckCircle className="w-4 h-4 text-green mt-0.5 flex-shrink-0" />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          {/* Donation Form */}
+          <section className="py-12 md:py-16 bg-white">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2">
+                  <DonationForm paymentMethods={paymentMethods} />
+                </div>
 
-              {bankMethod && (
-                <div className="bg-primary rounded-2xl p-5 text-white">
-                  <h3 className="font-poppins font-bold mb-2">{bankMethod.name || "Bank Transfer"}</h3>
-                  <div className="text-sm text-white/80 space-y-1 whitespace-pre-line">
-                    {bankMethod.accountInfo && (
-                      <p><span className="text-white font-medium">Account:</span> {bankMethod.accountInfo}</p>
-                    )}
-                    {bankMethod.instructions && <p>{bankMethod.instructions}</p>}
+                {/* Sidebar */}
+                <div className="space-y-5">
+                  <div className="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
+                    <h3 className="font-poppins font-bold text-dark mb-3">
+                      Why Donate?
+                    </h3>
+                    <ul className="space-y-2.5">
+                      {whyDonate.map((point) => (
+                        <li key={point} className="flex items-start gap-2 text-sm text-gray-600">
+                          <CheckCircle className="w-4 h-4 text-green mt-0.5 flex-shrink-0" />
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {bankMethod && (
+                    <div className="bg-primary rounded-2xl p-5 text-white">
+                      <h3 className="font-poppins font-bold mb-2">{bankMethod.name || "Bank Transfer"}</h3>
+                      <div className="text-sm text-white/80 space-y-1 whitespace-pre-line">
+                        {bankMethod.accountInfo && (
+                          <p><span className="text-white font-medium">Account:</span> {bankMethod.accountInfo}</p>
+                        )}
+                        {bankMethod.instructions && <p>{bankMethod.instructions}</p>}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
+                    <h3 className="font-poppins font-bold text-dark mb-2">
+                      Need Help?
+                    </h3>
+                    <p className="text-gray-500 text-sm mb-3">
+                      For donation assistance, contact us:
+                    </p>
+                    <p className="text-primary font-medium text-sm">
+                      info@dolafoundation.com
+                    </p>
+                    <p className="text-gray-500 text-sm">+880 1700-000000</p>
                   </div>
                 </div>
-              )}
-
-              <div className="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100">
-                <h3 className="font-poppins font-bold text-dark mb-2">
-                  Need Help?
-                </h3>
-                <p className="text-gray-500 text-sm mb-3">
-                  For donation assistance, contact us:
-                </p>
-                <p className="text-primary font-medium text-sm">
-                  info@dolafoundation.com
-                </p>
-                <p className="text-gray-500 text-sm">+880 1700-000000</p>
               </div>
             </div>
+          </section>
+        </>
+      ) : (
+        <section className="py-20 bg-white">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <HeartHandshake className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="font-poppins font-bold text-2xl text-dark mb-3">
+              We're Not Accepting Donations Right Now
+            </h2>
+            <p className="text-gray-500 leading-relaxed mb-6">
+              Online donations are temporarily paused. Please check back soon, or reach out to us directly if you'd like to support our work.
+            </p>
+            <p className="text-primary font-medium text-sm">info@dolafoundation.com</p>
+            <p className="text-gray-500 text-sm">+880 1700-000000</p>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

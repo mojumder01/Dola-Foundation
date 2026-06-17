@@ -12,6 +12,7 @@ interface HeroSectionProps {
   announcementText?: string | null;
   announcementEnabled?: boolean | null;
   stats?: { label?: string | null; value?: string | null }[];
+  donationsEnabled?: boolean;
 }
 
 const DEFAULT_STATS = [
@@ -21,7 +22,7 @@ const DEFAULT_STATS = [
   { value: "500+", label: "Volunteers" },
 ];
 
-export default function HeroSection({ title, subtitle, image, announcementText, announcementEnabled, stats }: HeroSectionProps) {
+export default function HeroSection({ title, subtitle, image, announcementText, announcementEnabled, stats, donationsEnabled = true }: HeroSectionProps) {
   const displayStats = stats && stats.length > 0 ? stats : DEFAULT_STATS;
   const heading = title || "Empowering Lives, Inspiring Hope";
   const commaIndex = heading.indexOf(",");
@@ -125,12 +126,14 @@ export default function HeroSection({ title, subtitle, image, announcementText, 
             transition={{ duration: 0.8, delay: 0.8 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
           >
-            <Link href="/donate">
-              <Button variant="default" size="xl" className="group">
-                <Heart className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-                Donate Now
-              </Button>
-            </Link>
+            {donationsEnabled && (
+              <Link href="/donate">
+                <Button variant="default" size="xl" className="group">
+                  <Heart className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                  Donate Now
+                </Button>
+              </Link>
+            )}
             <Link href="/volunteer">
               <Button variant="outline-white" size="xl">
                 <Users className="w-5 h-5 mr-2" />
