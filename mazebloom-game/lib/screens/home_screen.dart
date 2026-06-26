@@ -3,9 +3,11 @@ import '../utils/difficulty_config.dart';
 import '../utils/daily_challenge_manager.dart';
 import '../utils/shape_factory.dart';
 import '../utils/coin_manager.dart';
+import '../utils/lives_manager.dart';
 import '../utils/app_language.dart';
 import '../utils/profile_manager.dart';
 import '../utils/login_streak_manager.dart';
+import '../services/ad_service.dart';
 import 'game_screen.dart';
 import 'level_select_screen.dart';
 import 'story_mode_screen.dart';
@@ -26,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _dailyDone = false;
   int _streak = 0;
   int _coins = 0;
+  int _bankedLives = 0;
   String _avatar = ProfileManager.defaultAvatar;
   String? _name;
 
@@ -71,12 +74,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final done = await DailyChallengeManager.isCompletedToday();
     final streak = await DailyChallengeManager.getStreak();
     final coins = await CoinManager.getCoins();
+    final lives = await LivesManager.getBankedLives();
     final avatar = await ProfileManager.getAvatar();
     final name = await ProfileManager.getName();
     setState(() {
       _dailyDone = done;
       _streak = streak;
       _coins = coins;
+      _bankedLives = lives;
       _avatar = avatar;
       _name = name;
     });
@@ -115,6 +120,21 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => GameScreen(shape: shape, mode: GameMode.unlimited),
+      ),
+    );
+  }
+
+  void _openLifeQuickBuy() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _LifeQuickBuySheet(
+        bankedLives: _bankedLives,
+        onChanged: _loadData,
+        onOpenRewards: () {
+          Navigator.pop(context);
+          _openRewards();
+        },
       ),
     );
   }
@@ -231,6 +251,26 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 6),
               Text('$_coins', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        GestureDetector(
+          onTap: _openLifeQuickBuy,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                const Text('❤️', style: TextStyle(fontSize: 16)),
+                const SizedBox(width: 6),
+                Text('$_bankedLives', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                const SizedBox(width: 4),
+                const Icon(Icons.add_circle, color: Colors.white70, size: 16),
+              ],
+            ),
           ),
         ),
         const Spacer(),
@@ -390,6 +430,136 @@ class _HomeScreenState extends State<HomeScreen> {
             const Icon(Icons.chevron_right, color: Colors.white),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// Home থেকেই সরাসরি extra life নেওয়ার ছোট quick-buy sheet — পুরো Rewards screen এ যেতে হয় না
+class _LifeQuickBuySheet extends StatefulWidget {
+  final int bankedLives;
+  final VoidCallback onChanged;
+  final VoidCallback onOpenRewards;
+
+  const _LifeQuickBuySheet({
+    required this.bankedLives,
+    required this.onChanged,
+    required this.onOpenRewards,
+  });
+
+  @override
+  State<_LifeQuickBuySheet> createState() => _LifeQuickBuySheetState();
+}
+
+class _LifeQuickBuySheetState extends State<_LifeQuickBuySheet> {
+  static const int lifeCoinCost = 15;
+  bool _busy = false;
+
+  Future<void> _watchAd() async {
+    setState(() => _busy = true);
+    AdService.showRewardedAd(
+      onRewarded: () async {
+        await LivesManager.addBankedLife();
+        widget.onChanged();
+        if (mounted) Navigator.pop(context);
+      },
+      onFailed: (reason) {
+        if (mounted) {
+          setState(() => _busy = false);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(reason)));
+        }
+      },
+    );
+  }
+
+  Future<void> _buyWithCoins() async {
+    if (widget.bankedLives >= LivesManager.maxBankedLives) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('ব্যাংক পূর্ণ — আর লাইফ ধরে না', 'Bank is full — no room for more lives'))),
+      );
+      return;
+    }
+    final spent = await CoinManager.spendCoins(lifeCoinCost);
+    if (!spent) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
+      );
+      return;
+    }
+    await LivesManager.addBankedLife();
+    widget.onChanged();
+    if (mounted) Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+      decoration: const BoxDecoration(
+        color: Color(0xFF1A1A2E),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '❤️ ${tr('Extra Life নাও', 'Get an Extra Life')}',
+            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            tr('ব্যাংকে: ${widget.bankedLives} / ${LivesManager.maxBankedLives}',
+                'Banked: ${widget.bankedLives} / ${LivesManager.maxBankedLives}'),
+            style: const TextStyle(color: Colors.white60, fontSize: 12),
+          ),
+          const SizedBox(height: 20),
+          GestureDetector(
+            onTap: _busy ? null : _watchAd,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFF8F00)]),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Center(
+                child: Text(
+                  tr('📺 বিজ্ঞাপন দেখে নাও', '📺 Watch an ad'),
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: _buyWithCoins,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [Color(0xFFEF5350), Color(0xFFB71C1C)]),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Center(
+                child: Text(
+                  tr('🪙 $lifeCoinCost কয়েন দিয়ে নাও', '🪙 Buy for $lifeCoinCost coins'),
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: widget.onOpenRewards,
+            child: Center(
+              child: Text(
+                tr('আরও সুবিধার জন্য Rewards দেখো ➜', 'See more perks in Rewards ➜'),
+                style: const TextStyle(color: Colors.white54, fontSize: 12),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
