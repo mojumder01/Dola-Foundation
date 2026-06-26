@@ -16,7 +16,7 @@ dependencies:
   shared_preferences: ^2.2.3
 
   # AdMob rewarded ads — coins/extra life/continue এর জন্য (Part 4)
-  google_mobile_ads: ^5.1.0
+  google_mobile_ads: ^7.0.0
 
   cupertino_icons: ^1.0.8
 
