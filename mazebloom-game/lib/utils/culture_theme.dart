@@ -1,0 +1,103 @@
+import 'package:flutter/material.dart';
+
+// বাংলা সংস্কৃতির থিম — গল্প/journey mode এবং উৎসব-ভিত্তিক daily challenge এর জন্য।
+// শেপ সবসময় ShapeFactory দিয়ে procedurally generate হয় (তাই solvability guaranteed),
+// কিন্তু নাম, রঙ, ইমোজি আর cell-size দিয়ে প্রতিটাকে আলাদা সাংস্কৃতিক রূপ দেওয়া হয়।
+class CultureTheme {
+  final String id;
+  final String title;
+  final String emoji;
+  final String description;
+  final List<Color> colors;
+  final int targetCells;
+  final int seed;
+
+  const CultureTheme({
+    required this.id,
+    required this.title,
+    required this.emoji,
+    required this.description,
+    required this.colors,
+    required this.targetCells,
+    required this.seed,
+  });
+}
+
+// Story/Journey mode — বাংলাদেশের সংস্কৃতি ঘুরে দেখার একটা ধারাবাহিক যাত্রা
+class StoryJourney {
+  static const List<CultureTheme> chapters = [
+    CultureTheme(
+      id: 'rickshaw',
+      title: 'ঢাকার রিকশা',
+      emoji: '🛺',
+      description: 'রঙ-বেরঙের রিকশায় শহর ঘোরার গল্প',
+      colors: [Color(0xFFFFC107), Color(0xFFFF8F00)],
+      targetCells: 12,
+      seed: 501,
+    ),
+    CultureTheme(
+      id: 'shapla',
+      title: 'শাপলার বিল',
+      emoji: '🌼',
+      description: 'জাতীয় ফুল শাপলায় ভরা গ্রামের বিল',
+      colors: [Color(0xFF26C6DA), Color(0xFF00838F)],
+      targetCells: 16,
+      seed: 502,
+    ),
+    CultureTheme(
+      id: 'ilish',
+      title: 'ইলিশের দেশ',
+      emoji: '🐟',
+      description: 'পদ্মার ইলিশ আর জেলেদের নৌকা',
+      colors: [Color(0xFF42A5F5), Color(0xFF1565C0)],
+      targetCells: 20,
+      seed: 503,
+    ),
+    CultureTheme(
+      id: 'boishakh',
+      title: 'বৈশাখী মেলা',
+      emoji: '🎉',
+      description: 'পহেলা বৈশাখের মঙ্গল শোভাযাত্রা',
+      colors: [Color(0xFFEF5350), Color(0xFFB71C1C)],
+      targetCells: 24,
+      seed: 504,
+    ),
+    CultureTheme(
+      id: 'nakshi',
+      title: 'নকশী কাঁথা',
+      emoji: '🧵',
+      description: 'হাতে সেলাই করা ঐতিহ্যবাহী নকশী কাঁথার নকশা',
+      colors: [Color(0xFFAB47BC), Color(0xFF6A1B9A)],
+      targetCells: 28,
+      seed: 505,
+    ),
+    CultureTheme(
+      id: 'shadhinota',
+      title: 'বিজয়ের দিন',
+      emoji: '🇧🇩',
+      description: 'লাল-সবুজ পতাকা আর বিজয়ের গর্ব',
+      colors: [Color(0xFF66BB6A), Color(0xFF2E7D32)],
+      targetCells: 32,
+      seed: 506,
+    ),
+  ];
+}
+
+// বছরের নির্দিষ্ট তারিখে বিশেষ উৎসব থিম — daily challenge কে সেদিন এই থিমে সাজানো হয়
+class FestivalCalendar {
+  static CultureTheme? themeForDate(DateTime date) {
+    final key = '${date.month}-${date.day}';
+    switch (key) {
+      case '4-14': // পহেলা বৈশাখ
+        return StoryJourney.chapters[3];
+      case '3-26': // স্বাধীনতা দিবস
+        return StoryJourney.chapters[5];
+      case '12-16': // বিজয় দিবস
+        return StoryJourney.chapters[5];
+      case '2-21': // ভাষা শহীদ দিবস (নকশী কাঁথা থিমে শ্রদ্ধা)
+        return StoryJourney.chapters[4];
+      default:
+        return null;
+    }
+  }
+}

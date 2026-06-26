@@ -6,10 +6,11 @@ import '../utils/shape_factory.dart';
 import '../utils/difficulty_config.dart';
 import '../utils/progress_manager.dart';
 import '../utils/daily_challenge_manager.dart';
+import '../utils/culture_theme.dart';
 import '../widgets/maze_board.dart';
 
-// গেম তিনভাবে খেলা যায় — fixed level, daily challenge, অথবা unlimited (endless)
-enum GameMode { level, daily, unlimited }
+// গেম চারভাবে খেলা যায় — fixed level, daily challenge, unlimited (endless), অথবা story chapter
+enum GameMode { level, daily, unlimited, story }
 
 // মূল gameplay screen — শেপ দেখায়, drag করে path আঁকতে হয়
 class GameScreen extends StatefulWidget {
@@ -17,6 +18,8 @@ class GameScreen extends StatefulWidget {
   final GameMode mode;
   final Difficulty? difficulty; // mode == level হলে লাগবে
   final int? levelIndex; // mode == level হলে লাগবে
+  final CultureTheme? theme; // mode == story/festival daily হলে — নাম, রঙ, ইমোজি দেখানোর জন্য
+  final int? storyChapterIndex; // mode == story হলে লাগবে
 
   const GameScreen({
     super.key,
@@ -24,6 +27,8 @@ class GameScreen extends StatefulWidget {
     this.mode = GameMode.level,
     this.difficulty,
     this.levelIndex,
+    this.theme,
+    this.storyChapterIndex,
   });
 
   @override
@@ -137,6 +142,15 @@ class _GameScreenState extends State<GameScreen> {
         setState(() => _unlimitedStreak++);
         _showUnlimitedWinDialog();
         break;
+      case GameMode.story:
+        if (widget.storyChapterIndex != null) {
+          await ProgressManager.unlockNextStoryChapter(
+            widget.storyChapterIndex!,
+            StoryJourney.chapters.length,
+          );
+        }
+        _showWinDialog();
+        break;
     }
   }
 
@@ -155,13 +169,17 @@ class _GameScreenState extends State<GameScreen> {
 
   void _showWinDialog() {
     final elapsed = DateTime.now().difference(_startTime!).inSeconds;
+    final theme = widget.theme;
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('🎉 সমাধান হয়েছে!', style: TextStyle(color: Colors.white)),
+        title: Text(
+          theme != null ? '${theme.emoji} ${theme.title} সম্পন্ন!' : '🎉 সমাধান হয়েছে!',
+          style: const TextStyle(color: Colors.white),
+        ),
         content: Text(
           'সময় লেগেছে: $elapsed সেকেন্ড',
           style: const TextStyle(color: Color(0xFFB0BEC5)),
@@ -325,6 +343,16 @@ class _GameScreenState extends State<GameScreen> {
           ),
 
           const SizedBox(width: 10),
+
+          // Theme title — story chapter বা festival daily challenge হলে দেখায়
+          if (widget.theme != null)
+            Expanded(
+              child: Text(
+                '${widget.theme!.emoji} ${widget.theme!.title}',
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
 
           // Unlimited mode streak counter
           if (widget.mode == GameMode.unlimited)

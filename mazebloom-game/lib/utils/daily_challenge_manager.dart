@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/grid_shape.dart';
 import 'shape_factory.dart';
+import 'culture_theme.dart';
 
 // প্রতিদিন একটা fixed shape — তারিখ থেকে seed বানানো হয় বলে সবার phone এ একই shape আসে
 class DailyChallengeManager {
@@ -13,8 +14,18 @@ class DailyChallengeManager {
   static String _dateKey(DateTime date) =>
       '${date.year}-${date.month}-${date.day}';
 
+  // আজ কোনো উৎসব থাকলে সেই থিম দেওয়া হয় — না থাকলে null (সাধারণ daily challenge)
+  static CultureTheme? todaysFestivalTheme() {
+    return FestivalCalendar.themeForDate(DateTime.now());
+  }
+
   static GridShape todaysShape() {
     final now = DateTime.now();
+    final festival = todaysFestivalTheme();
+    if (festival != null) {
+      // উৎসবের দিনে থিমের seed/size দিয়ে শেপ বানানো হয় — তাও deterministic, সবার জন্য একই
+      return ShapeFactory.generate(targetCells: festival.targetCells, seed: festival.seed);
+    }
     final seed = _seedForDate(now);
     // দিনের cell সংখ্যা একটু ঘোরাফেরা করে যাতে প্রতিদিন আলাদা অনুভূতি হয়
     final targetCells = 14 + (seed % 12);

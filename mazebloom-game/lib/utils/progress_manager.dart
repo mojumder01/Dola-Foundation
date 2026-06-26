@@ -26,4 +26,21 @@ class ProgressManager {
     final unlocked = await getUnlockedCount(d);
     return levelIndex < unlocked;
   }
+
+  // Story/Journey mode এর chapter unlock — difficulty এর বাইরে আলাদা progression
+  static const _storyKey = 'mazebloom_unlocked_story';
+
+  static Future<int> getUnlockedStoryCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_storyKey) ?? 1;
+  }
+
+  static Future<void> unlockNextStoryChapter(int completedChapterIndex, int totalChapters) async {
+    final prefs = await SharedPreferences.getInstance();
+    final unlocked = await getUnlockedStoryCount();
+    final nextUnlocked = completedChapterIndex + 2;
+    if (nextUnlocked > unlocked) {
+      await prefs.setInt(_storyKey, nextUnlocked.clamp(1, totalChapters));
+    }
+  }
 }

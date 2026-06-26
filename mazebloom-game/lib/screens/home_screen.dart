@@ -4,6 +4,7 @@ import '../utils/daily_challenge_manager.dart';
 import '../utils/shape_factory.dart';
 import 'game_screen.dart';
 import 'level_select_screen.dart';
+import 'story_mode_screen.dart';
 
 // মূল মেনু — Levels (৩টা difficulty), Daily Challenge, Unlimited mode বেছে নেওয়ার জায়গা
 class HomeScreen extends StatefulWidget {
@@ -34,12 +35,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _openDailyChallenge() {
     final shape = DailyChallengeManager.todaysShape();
+    final festivalTheme = DailyChallengeManager.todaysFestivalTheme();
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => GameScreen(shape: shape, mode: GameMode.daily),
+        builder: (_) => GameScreen(shape: shape, mode: GameMode.daily, theme: festivalTheme),
       ),
     ).then((_) => _loadDailyStatus());
+  }
+
+  void _openStoryMode() {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const StoryModeScreen()));
   }
 
   void _openUnlimited() {
@@ -98,6 +104,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 14),
 
                 _modeButton(
+                  '🇧🇩 সংস্কৃতির যাত্রা',
+                  'বাংলাদেশের রিকশা, ইলিশ, শাপলা ঘুরে আসো',
+                  const [Color(0xFF26A69A), Color(0xFF00695C)],
+                  _openStoryMode,
+                ),
+                const SizedBox(height: 14),
+
+                _modeButton(
                   '♾️ Unlimited Mode',
                   'যতদূর পারো খেলো, লাইফ ফুরালে শেষ',
                   const [Color(0xFFFF7043), Color(0xFFFF5252)],
@@ -139,26 +153,34 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _dailyChallengeCard() {
+    final festival = DailyChallengeManager.todaysFestivalTheme();
     return GestureDetector(
       onTap: _openDailyChallenge,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)]),
+          gradient: LinearGradient(
+            colors: festival?.colors ?? const [Color(0xFF4CAF50), Color(0xFF2E7D32)],
+          ),
           borderRadius: BorderRadius.circular(18),
-          boxShadow: [BoxShadow(color: const Color(0xFF4CAF50).withOpacity(0.4), blurRadius: 20)],
+          boxShadow: [
+            BoxShadow(
+              color: (festival?.colors.first ?? const Color(0xFF4CAF50)).withOpacity(0.4),
+              blurRadius: 20,
+            ),
+          ],
         ),
         child: Row(
           children: [
-            Text(_dailyDone ? '✅' : '📅', style: const TextStyle(fontSize: 28)),
+            Text(_dailyDone ? '✅' : (festival?.emoji ?? '📅'), style: const TextStyle(fontSize: 28)),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Daily Challenge',
+                    festival != null ? '${festival.title} স্পেশাল!' : 'Daily Challenge',
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   Text(
