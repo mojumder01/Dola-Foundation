@@ -13,6 +13,7 @@ import '../utils/lives_manager.dart';
 import '../utils/achievement_manager.dart';
 import '../utils/app_language.dart';
 import '../utils/path_color_manager.dart';
+import '../utils/hint_manager.dart';
 import '../services/ad_service.dart';
 import '../widgets/maze_board.dart';
 
@@ -55,6 +56,7 @@ class _GameScreenState extends State<GameScreen> {
   bool _perfectRun = true; // এই attempt এ একবারও dead-end এ পড়েনি কিনা
   int _lastCoinsEarned = 0;
   Color _pathColor = const Color(0xFF7C4DFF);
+  bool _freeHintAvailable = true;
 
   @override
   void initState() {
@@ -63,11 +65,17 @@ class _GameScreenState extends State<GameScreen> {
     _startTime = DateTime.now();
     _checkSolvable();
     _loadPathColor();
+    _loadHintStatus();
   }
 
   Future<void> _loadPathColor() async {
     final color = await PathColorManager.getSelectedColor();
     if (mounted) setState(() => _pathColor = color);
+  }
+
+  Future<void> _loadHintStatus() async {
+    final hasFree = await HintManager.hasFreeHintToday();
+    if (mounted) setState(() => _freeHintAvailable = hasFree);
   }
 
   void _checkSolvable() {
@@ -111,8 +119,71 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
-  // Hint button — বর্তমান path থেকে পরের সঠিক move দেখায়
-  void _useHint() {
+  // Hint button — দিনে একটা ফ্রি, তারপর ad দেখে বা coin দিয়ে নিতে হয়
+  Future<void> _useHint() async {
+    if (_freeHintAvailable) {
+      await HintManager.consumeFreeHint();
+      setState(() => _freeHintAvailable = false);
+      _revealHint();
+      return;
+    }
+    _showHintPaywall();
+  }
+
+  void _showHintPaywall() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        title: Text(
+          tr('আজকের ফ্রি hint শেষ', "Today's free hint is used up"),
+          style: const TextStyle(color: Colors.white),
+        ),
+        content: Text(
+          tr('বিজ্ঞাপন দেখে বা ${HintManager.hintCoinCost} কয়েন দিয়ে আরেকটা hint নাও',
+              'Watch an ad or spend ${HintManager.hintCoinCost} coins for another hint'),
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(tr('বাতিল', 'Cancel'), style: const TextStyle(color: Colors.white54)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              final spent = await CoinManager.spendCoins(HintManager.hintCoinCost);
+              if (spent) {
+                _revealHint();
+              } else if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
+                );
+              }
+            },
+            child: Text(
+              '🪙 ${HintManager.hintCoinCost} ${tr('কয়েন দিয়ে নাও', 'Use coins')}',
+              style: const TextStyle(color: Color(0xFF7C4DFF)),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              AdService.showRewardedAd(
+                onRewarded: _revealHint,
+                onFailed: (reason) {
+                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(reason)));
+                },
+              );
+            },
+            child: Text('📺 ${tr('বিজ্ঞাপন দেখো', 'Watch ad')}', style: const TextStyle(color: Colors.amber)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _revealHint() {
     if (_path.isEmpty) {
       // path শুরুই হয়নি — solvable হলে যেকোনো cell থেকেই শুরু করা যায়,
       // তাই hint হিসেবে generate করা solution এর প্রথম cell দেখাও
@@ -513,11 +584,14 @@ class _GameScreenState extends State<GameScreen> {
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: Colors.amber.withOpacity(0.5)),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.lightbulb, color: Colors.amber, size: 16),
-                  SizedBox(width: 6),
-                  Text('Hint', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 13)),
+                  const Icon(Icons.lightbulb, color: Colors.amber, size: 16),
+                  const SizedBox(width: 6),
+                  Text(
+                    _freeHintAvailable ? tr('ফ্রি Hint', 'Free Hint') : '🪙${HintManager.hintCoinCost}',
+                    style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
                 ],
               ),
             ),
