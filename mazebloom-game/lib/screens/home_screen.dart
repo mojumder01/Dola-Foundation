@@ -5,6 +5,7 @@ import '../utils/shape_factory.dart';
 import '../utils/coin_manager.dart';
 import '../utils/app_language.dart';
 import '../utils/profile_manager.dart';
+import '../utils/login_streak_manager.dart';
 import 'game_screen.dart';
 import 'level_select_screen.dart';
 import 'story_mode_screen.dart';
@@ -32,6 +33,38 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadData();
+    _checkLoginReward();
+  }
+
+  // রোজ অ্যাপ খোলার জন্য — শুধু খোলার জন্যই — coin reward, ৭ দিনের চক্রে বাড়তে থাকে
+  Future<void> _checkLoginReward() async {
+    final reward = await LoginStreakManager.claimIfDue();
+    if (reward == null) return;
+    await CoinManager.addCoins(reward.coins);
+    await _loadData();
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        title: Text(
+          tr('🔥 দৈনিক বোনাস!', '🔥 Daily Login Bonus!'),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          tr('${reward.streak} দিনের streak! 🪙${reward.coins} পেয়েছো।',
+              '${reward.streak}-day streak! You got 🪙${reward.coins}.'),
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(tr('ঠিক আছে', 'OK'), style: const TextStyle(color: Color(0xFF7C4DFF))),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _loadData() async {

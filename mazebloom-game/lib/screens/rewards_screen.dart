@@ -10,6 +10,7 @@ import '../utils/app_language.dart';
 import '../utils/app_links.dart';
 import '../utils/path_color_manager.dart';
 import '../widgets/app_background.dart';
+import 'spin_wheel_screen.dart';
 
 // Coins, banked lives, আর referral code শেয়ার/redeem করার জায়গা
 class RewardsScreen extends StatefulWidget {
@@ -137,6 +138,10 @@ class _RewardsScreenState extends State<RewardsScreen> {
     await launchUrl(uri);
   }
 
+  void _openSpinWheel() {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const SpinWheelScreen())).then((_) => _load());
+  }
+
   void _watchAdForLife() {
     AdService.showRewardedAd(
       onRewarded: () async {
@@ -222,6 +227,25 @@ class _RewardsScreenState extends State<RewardsScreen> {
                           child: Center(
                             child: Text(
                               tr('📺 বিজ্ঞাপন দেখে Extra Life নাও', '📺 Watch an ad for Extra Life'),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      GestureDetector(
+                        onTap: _openSpinWheel,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(colors: [Color(0xFF7C4DFF), Color(0xFF512DA8)]),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Center(
+                            child: Text(
+                              tr('🎡 দৈনিক স্পিন হুইল', '🎡 Daily Spin Wheel'),
                               style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                           ),
