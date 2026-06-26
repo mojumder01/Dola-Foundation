@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../utils/coin_manager.dart';
+import '../utils/gem_manager.dart';
 import '../utils/lives_manager.dart';
 import '../utils/referral_manager.dart';
 import '../services/ad_service.dart';
@@ -22,8 +24,11 @@ class RewardsScreen extends StatefulWidget {
 
 class _RewardsScreenState extends State<RewardsScreen> {
   static const int lifeCoinCost = 15;
+  static const int lifeBundleGemCost = 8;
+  static const int lifeBundleAmount = 3;
 
   int _coins = 0;
+  int _gems = 0;
   int _bankedLives = 0;
   String _myCode = '';
   bool _redeemed = false;
@@ -53,6 +58,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
       await PathColorManager.unlockPremium(PathColorManager.diamondId);
     }
     final coins = await CoinManager.getCoins();
+    final gems = await GemManager.getGems();
     final lives = await LivesManager.getBankedLives();
     final code = await ReferralManager.getMyCode();
     final redeemed = await ReferralManager.hasRedeemed();
@@ -60,6 +66,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
     final unlockedColorIds = await PathColorManager.getUnlockedIds();
     setState(() {
       _coins = coins;
+      _gems = gems;
       _bankedLives = lives;
       _myCode = code;
       _redeemed = redeemed;
@@ -138,6 +145,33 @@ class _RewardsScreenState extends State<RewardsScreen> {
     await launchUrl(uri);
   }
 
+  Future<void> _buyLifeBundleWithGems() async {
+    final roomLeft = LivesManager.maxBankedLives - _bankedLives;
+    if (roomLeft <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('ব্যাংক পূর্ণ — আর লাইফ ধরে না', 'Bank is full — no room for more lives'))),
+      );
+      return;
+    }
+    final spent = await GemManager.spendGems(lifeBundleGemCost);
+    if (!spent) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('যথেষ্ট জেম নেই', 'Not enough gems'))),
+      );
+      return;
+    }
+    final toAdd = min(lifeBundleAmount, roomLeft);
+    for (var i = 0; i < toAdd; i++) {
+      await LivesManager.addBankedLife();
+    }
+    await _load();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('💎 $toAdd টা extra life পেয়েছো!', '💎 You got $toAdd extra lives!'))),
+      );
+    }
+  }
+
   void _openSpinWheel() {
     Navigator.push(context, MaterialPageRoute(builder: (_) => const SpinWheelScreen())).then((_) => _load());
   }
@@ -210,6 +244,8 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         children: [
                           Expanded(child: _statCard('🪙', '$_coins', tr('কয়েন', 'Coins'))),
                           const SizedBox(width: 12),
+                          Expanded(child: _statCard('💎', '$_gems', tr('জেম', 'Gems'))),
+                          const SizedBox(width: 12),
                           Expanded(child: _statCard('❤️', '$_bankedLives / ${LivesManager.maxBankedLives}', tr('ব্যাংক করা লাইফ', 'Banked Lives'))),
                         ],
                       ),
@@ -265,6 +301,26 @@ class _RewardsScreenState extends State<RewardsScreen> {
                           child: Center(
                             child: Text(
                               tr('❤️ $lifeCoinCost কয়েন দিয়ে Extra Life কিনো', '❤️ Buy an Extra Life for $lifeCoinCost coins'),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      GestureDetector(
+                        onTap: _buyLifeBundleWithGems,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(colors: [Color(0xFF26C6DA), Color(0xFF00838F)]),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Center(
+                            child: Text(
+                              tr('💎 $lifeBundleGemCost জেম দিয়ে $lifeBundleAmountটা Extra Life কিনো',
+                                  '💎 Buy $lifeBundleAmount Extra Lives for $lifeBundleGemCost gems'),
                               style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                           ),

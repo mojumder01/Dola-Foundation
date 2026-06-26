@@ -8,6 +8,7 @@ import '../utils/progress_manager.dart';
 import '../utils/daily_challenge_manager.dart';
 import '../utils/culture_theme.dart';
 import '../utils/coin_manager.dart';
+import '../utils/gem_manager.dart';
 import '../utils/reward_calculator.dart';
 import '../utils/lives_manager.dart';
 import '../utils/achievement_manager.dart';
@@ -225,9 +226,9 @@ class _GameScreenState extends State<GameScreen> {
     await CoinManager.addCoins(coins);
     _lastCoinsEarned = coins;
 
-    await AchievementManager.unlock('first_bloom');
-    if (elapsed <= 10) await AchievementManager.unlock('speed_bloom');
-    if (_perfectRun) await AchievementManager.unlock('perfect_bloom');
+    await _unlockAchievement('first_bloom');
+    if (elapsed <= 10) await _unlockAchievement('speed_bloom');
+    if (_perfectRun) await _unlockAchievement('perfect_bloom');
 
     AdService.maybeShowInterstitial();
 
@@ -241,12 +242,12 @@ class _GameScreenState extends State<GameScreen> {
       case GameMode.daily:
         await DailyChallengeManager.markCompletedToday();
         final streak = await DailyChallengeManager.getStreak();
-        if (streak >= 7) await AchievementManager.unlock('streak_master');
+        if (streak >= 7) await _unlockAchievement('streak_master');
         _showWinDialog();
         break;
       case GameMode.unlimited:
         setState(() => _unlimitedStreak++);
-        if (_unlimitedStreak >= 10) await AchievementManager.unlock('unlimited_legend');
+        if (_unlimitedStreak >= 10) await _unlockAchievement('unlimited_legend');
         _showUnlimitedWinDialog();
         break;
       case GameMode.story:
@@ -255,7 +256,7 @@ class _GameScreenState extends State<GameScreen> {
         if (chapterIndex != null) {
           await ProgressManager.unlockNextStoryChapter(chapterIndex, StoryJourney.chapters.length);
           hasNext = chapterIndex < StoryJourney.chapters.length - 1;
-          if (!hasNext) await AchievementManager.unlock('culture_explorer');
+          if (!hasNext) await _unlockAchievement('culture_explorer');
         }
         _showWinDialog(
           onNext: hasNext ? _loadNextStoryChapter : null,
@@ -263,6 +264,12 @@ class _GameScreenState extends State<GameScreen> {
         );
         break;
     }
+  }
+
+  // নতুন achievement unlock হলে বিরল gem currency reward দেয়
+  Future<void> _unlockAchievement(String id) async {
+    final isNew = await AchievementManager.unlock(id);
+    if (isNew) await GemManager.addGems(5);
   }
 
   // Unlimited mode এ — পরের shape টা একটু কঠিন আকারে generate করে in-place চালিয়ে যাওয়া হয়
