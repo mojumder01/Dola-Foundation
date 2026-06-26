@@ -16,6 +16,7 @@ import '../utils/path_color_manager.dart';
 import '../utils/hint_manager.dart';
 import '../services/ad_service.dart';
 import '../widgets/maze_board.dart';
+import '../widgets/app_background.dart';
 
 // গেম চারভাবে খেলা যায় — fixed level, daily challenge, unlimited (endless), অথবা story chapter
 enum GameMode { level, daily, unlimited, story }
@@ -227,6 +228,8 @@ class _GameScreenState extends State<GameScreen> {
     await AchievementManager.unlock('first_bloom');
     if (elapsed <= 10) await AchievementManager.unlock('speed_bloom');
     if (_perfectRun) await AchievementManager.unlock('perfect_bloom');
+
+    AdService.maybeShowInterstitial();
 
     switch (widget.mode) {
       case GameMode.level:
@@ -499,14 +502,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460)],
-          ),
-        ),
+      body: AppBackground(
         child: SafeArea(
           child: Column(
             children: [

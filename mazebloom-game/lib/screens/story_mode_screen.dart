@@ -4,6 +4,7 @@ import '../utils/culture_theme.dart';
 import '../utils/progress_manager.dart';
 import '../utils/shape_factory.dart';
 import 'game_screen.dart';
+import '../widgets/app_background.dart';
 
 // বাংলাদেশের সংস্কৃতি ঘুরে দেখার journey — chapter ধরে ধরে unlock হয়
 class StoryModeScreen extends StatefulWidget {
@@ -50,14 +51,7 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460)],
-          ),
-        ),
+      body: AppBackground(
         child: SafeArea(
           child: Column(
             children: [

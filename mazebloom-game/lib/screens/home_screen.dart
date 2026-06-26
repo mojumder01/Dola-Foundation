@@ -11,6 +11,7 @@ import 'story_mode_screen.dart';
 import 'gallery_screen.dart';
 import 'rewards_screen.dart';
 import 'profile_screen.dart';
+import '../widgets/app_background.dart';
 
 // মূল মেনু — Levels (৩টা difficulty), Daily Challenge, Unlimited mode বেছে নেওয়ার জায়গা
 class HomeScreen extends StatefulWidget {
@@ -95,14 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460)],
-          ),
-        ),
+      body: AppBackground(
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -265,47 +259,72 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _dailyChallengeCard() {
     final festival = DailyChallengeManager.todaysFestivalTheme();
+    // আজকেরটা শেষ হয়ে গেলে — সোনালি "completed" look, না হলে festival/সবুজ gradient
+    final doneColors = const [Color(0xFFFFD54F), Color(0xFFFF8F00)];
+    final colors = _dailyDone ? doneColors : (festival?.colors ?? const [Color(0xFF4CAF50), Color(0xFF2E7D32)]);
     return GestureDetector(
       onTap: _openDailyChallenge,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: festival?.colors ?? const [Color(0xFF4CAF50), Color(0xFF2E7D32)],
-          ),
+          gradient: LinearGradient(colors: colors),
           borderRadius: BorderRadius.circular(18),
+          border: _dailyDone ? Border.all(color: Colors.white.withOpacity(0.5), width: 1.5) : null,
           boxShadow: [
-            BoxShadow(
-              color: (festival?.colors.first ?? const Color(0xFF4CAF50)).withOpacity(0.4),
-              blurRadius: 20,
-            ),
+            BoxShadow(color: colors.first.withOpacity(0.45), blurRadius: 22, spreadRadius: _dailyDone ? 1 : 0),
           ],
         ),
         child: Row(
           children: [
-            Text(_dailyDone ? '✅' : (festival?.emoji ?? '📅'), style: const TextStyle(fontSize: 28)),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(_dailyDone ? 0.25 : 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Text(_dailyDone ? '🏆' : (festival?.emoji ?? '📅'), style: const TextStyle(fontSize: 26)),
+            ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    festival != null
-                        ? tr('${festival.displayTitle} স্পেশাল!', '${festival.displayTitle} Special!')
-                        : tr('দৈনিক চ্যালেঞ্জ', 'Daily Challenge'),
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                  Row(
+                    children: [
+                      Text(
+                        festival != null
+                            ? tr('${festival.displayTitle} স্পেশাল!', '${festival.displayTitle} Special!')
+                            : tr('দৈনিক চ্যালেঞ্জ', 'Daily Challenge'),
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      if (_dailyDone) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.25),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            tr('✓ সম্পন্ন', '✓ Done'),
+                            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     _dailyDone
-                        ? tr('আজকেরটা সমাধান হয়েছে! 🔥 $_streak দিনের streak', "Today's done! 🔥 $_streak day streak")
+                        ? tr('🔥 $_streak দিনের streak — কালকে আবার আসো!', '🔥 $_streak day streak — come back tomorrow!')
                         : tr('🔥 $_streak দিনের streak — আজকে খেলো', '🔥 $_streak day streak — play today'),
                     style: const TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: Colors.white),
+            Icon(_dailyDone ? Icons.replay : Icons.chevron_right, color: Colors.white),
           ],
         ),
       ),

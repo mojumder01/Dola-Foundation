@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/achievement_manager.dart';
 import '../utils/app_language.dart';
+import '../widgets/app_background.dart';
 
 // Mosaic Gallery — অর্জন করা সব badge পাশাপাশি দেখা যায়, ফাঁকা গুলো lock করা থাকে
 class GalleryScreen extends StatefulWidget {
@@ -31,14 +32,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460)],
-          ),
-        ),
+      body: AppBackground(
         child: SafeArea(
           child: Column(
             children: [

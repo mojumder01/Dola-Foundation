@@ -1,10 +1,15 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../utils/coin_manager.dart';
 import '../utils/lives_manager.dart';
 import '../utils/referral_manager.dart';
 import '../services/ad_service.dart';
+import '../services/iap_service.dart';
 import '../utils/app_language.dart';
+import '../utils/app_links.dart';
 import '../utils/path_color_manager.dart';
+import '../widgets/app_background.dart';
 
 // Coins, banked lives, আর referral code শেয়ার/redeem করার জায়গা
 class RewardsScreen extends StatefulWidget {
@@ -25,20 +30,27 @@ class _RewardsScreenState extends State<RewardsScreen> {
   String _selectedColorId = PathColorManager.defaultId;
   Set<String> _unlockedColorIds = {};
   final _codeController = TextEditingController();
+  StreamSubscription<void>? _iapSubscription;
 
   @override
   void initState() {
     super.initState();
     _load();
+    // Real-money purchase সফল হলে IapService event পাঠায় — তখন রিফ্রেশ করো
+    _iapSubscription = IapService.changes.listen((_) => _load());
   }
 
   @override
   void dispose() {
     _codeController.dispose();
+    _iapSubscription?.cancel();
     super.dispose();
   }
 
   Future<void> _load() async {
+    if (IapService.diamondColorUnlocked) {
+      await PathColorManager.unlockPremium(PathColorManager.diamondId);
+    }
     final coins = await CoinManager.getCoins();
     final lives = await LivesManager.getBankedLives();
     final code = await ReferralManager.getMyCode();
@@ -81,6 +93,17 @@ class _RewardsScreenState extends State<RewardsScreen> {
 
   Future<void> _buyOrSelectColor(PathColorOption option) async {
     final alreadyUnlocked = _unlockedColorIds.contains(option.id);
+
+    if (option.isPremium && !alreadyUnlocked) {
+      final started = await IapService.buy(IapService.diamondColorProductId);
+      if (!started && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(tr('এই মুহূর্তে কেনা যাচ্ছে না — পরে চেষ্টা করো', 'Purchase unavailable right now — try again later'))),
+        );
+      }
+      return;
+    }
+
     if (!alreadyUnlocked && _coins < option.cost) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
@@ -89,6 +112,29 @@ class _RewardsScreenState extends State<RewardsScreen> {
     }
     final ok = await PathColorManager.purchase(option.id);
     if (ok) await _load();
+  }
+
+  Future<void> _buyRemoveAds() async {
+    final started = await IapService.buy(IapService.removeAdsProductId);
+    if (!started && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('এই মুহূর্তে কেনা যাচ্ছে না — পরে চেষ্টা করো', 'Purchase unavailable right now — try again later'))),
+      );
+    }
+  }
+
+  Future<void> _rateUs() async {
+    final uri = Uri.parse(AppLinks.playStoreUrl);
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  Future<void> _contactUs() async {
+    final uri = Uri(
+      scheme: 'mailto',
+      path: AppLinks.supportEmail,
+      query: 'subject=${Uri.encodeComponent('Maze Bloom Feedback')}',
+    );
+    await launchUrl(uri);
   }
 
   void _watchAdForLife() {
@@ -124,14 +170,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460)],
-          ),
-        ),
+      body: AppBackground(
         child: SafeArea(
           child: _loading
               ? const Center(child: CircularProgressIndicator())
@@ -217,6 +256,14 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         children: PathColorManager.options.map((option) {
                           final unlocked = _unlockedColorIds.contains(option.id);
                           final selected = option.id == _selectedColorId;
+                          String priceLabel;
+                          if (unlocked) {
+                            priceLabel = selected ? tr('বাছা হয়েছে', 'Selected') : tr('আনলকড', 'Unlocked');
+                          } else if (option.isPremium) {
+                            priceLabel = IapService.productFor(IapService.diamondColorProductId)?.price ?? tr('প্রিমিয়াম', 'Premium');
+                          } else {
+                            priceLabel = '🪙${option.cost}';
+                          }
                           return GestureDetector(
                             onTap: () => _buyOrSelectColor(option),
                             child: Container(
@@ -224,7 +271,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.06),
                                 borderRadius: BorderRadius.circular(14),
-                                border: selected ? Border.all(color: Colors.white, width: 2) : null,
+                                border: selected
+                                    ? Border.all(color: Colors.white, width: 2)
+                                    : (option.isPremium ? Border.all(color: const Color(0xFF00E5FF).withOpacity(0.5), width: 1.5) : null),
                               ),
                               child: Column(
                                 children: [
@@ -232,10 +281,13 @@ class _RewardsScreenState extends State<RewardsScreen> {
                                     width: 32,
                                     height: 32,
                                     decoration: BoxDecoration(color: option.color, shape: BoxShape.circle),
+                                    child: option.isPremium && !unlocked
+                                        ? const Icon(Icons.diamond, color: Colors.white, size: 16)
+                                        : null,
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
-                                    unlocked ? (selected ? tr('বাছা হয়েছে', 'Selected') : tr('আনলকড', 'Unlocked')) : '🪙${option.cost}',
+                                    priceLabel,
                                     style: const TextStyle(color: Colors.white70, fontSize: 10),
                                   ),
                                 ],
@@ -243,6 +295,79 @@ class _RewardsScreenState extends State<RewardsScreen> {
                             ),
                           );
                         }).toList(),
+                      ),
+                      const SizedBox(height: 28),
+
+                      Text(tr('🛍️ আরও সুবিধা', '🛍️ More Perks'), style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 12),
+                      if (IapService.adsRemoved)
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Center(
+                            child: Text(tr('✅ বিজ্ঞাপন সরানো হয়েছে', '✅ Ads removed'), style: const TextStyle(color: Colors.white70)),
+                          ),
+                        )
+                      else
+                        GestureDetector(
+                          onTap: _buyRemoveAds,
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(colors: [Color(0xFF42A5F5), Color(0xFF1565C0)]),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Center(
+                              child: Text(
+                                IapService.productFor(IapService.removeAdsProductId) != null
+                                    ? tr('🚫 বিজ্ঞাপন সরাও — ${IapService.productFor(IapService.removeAdsProductId)!.price}',
+                                        '🚫 Remove Ads — ${IapService.productFor(IapService.removeAdsProductId)!.price}')
+                                    : tr('🚫 বিজ্ঞাপন সরাও', '🚫 Remove Ads'),
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: _rateUs,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Center(
+                                  child: Text(tr('⭐ রেট করো', '⭐ Rate Us'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: _contactUs,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Center(
+                                  child: Text(tr('✉️ যোগাযোগ করো', '✉️ Contact Us'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 28),
 

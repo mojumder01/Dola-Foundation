@@ -3,6 +3,7 @@ import '../utils/difficulty_config.dart';
 import '../utils/progress_manager.dart';
 import '../utils/shape_factory.dart';
 import 'game_screen.dart';
+import '../widgets/app_background.dart';
 
 // একটা difficulty এর সব level এর grid — lock/unlock অবস্থা দেখায়
 class LevelSelectScreen extends StatefulWidget {
@@ -58,14 +59,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460)],
-          ),
-        ),
+      body: AppBackground(
         child: SafeArea(
           child: Column(
             children: [

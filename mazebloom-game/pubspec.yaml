@@ -15,8 +15,14 @@ dependencies:
   # Local storage — coins, progress সেভ করার জন্য
   shared_preferences: ^2.2.3
 
-  # AdMob rewarded ads — coins/extra life/continue এর জন্য (Part 4)
+  # AdMob rewarded/interstitial ads — coins/extra life/continue এর জন্য (Part 4)
   google_mobile_ads: ^7.0.0
+
+  # Real-money one-time purchases — remove ads, premium path color
+  in_app_purchase: ^3.2.0
+
+  # Rate us / Contact us / share referral code লিংক খোলার জন্য
+  url_launcher: ^6.3.1
 
   cupertino_icons: ^1.0.8
 

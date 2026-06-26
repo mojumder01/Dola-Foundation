@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/app_language.dart';
 import '../utils/profile_manager.dart';
+import '../widgets/app_background.dart';
 
 // স্থানীয় প্রোফাইল — কোনো real login/Google sign-in নেই, শুধু নাম + avatar emoji local এ সেভ হয়
 class ProfileScreen extends StatefulWidget {
@@ -51,14 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460)],
-          ),
-        ),
+      body: AppBackground(
         child: SafeArea(
           child: _loading
               ? const Center(child: CircularProgressIndicator())
