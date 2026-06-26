@@ -1,29 +1,42 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 // সব screen এ একই রকম richer-looking background — flat gradient এর বদলে
-// soft glow blob গুলো দিয়ে একটু depth/visual interest যুক্ত করে
+// soft glow blob গুলো দিয়ে একটু depth/visual interest যুক্ত করে।
+// gradientColors/imagePath দিলে GameScreen এ customizable background ও দেখানো যায় (#18)
 class AppBackground extends StatelessWidget {
   final Widget child;
+  final List<Color>? gradientColors;
+  final String? imagePath;
 
-  const AppBackground({super.key, required this.child});
+  const AppBackground({super.key, required this.child, this.gradientColors, this.imagePath});
+
+  static const List<Color> _defaultColors = [
+    Color(0xFF12121F), Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460),
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final colors = gradientColors ?? _defaultColors;
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF12121F), Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460)],
-          stops: [0.0, 0.35, 0.7, 1.0],
+          colors: colors,
         ),
       ),
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Positioned(top: -90, left: -70, child: _glow(const Color(0xFF7C4DFF), 240)),
-          Positioned(bottom: -110, right: -90, child: _glow(const Color(0xFF26A69A), 280)),
-          Positioned(top: 220, right: -70, child: _glow(const Color(0xFFFF7043), 170)),
+          if (imagePath != null) ...[
+            Image.file(File(imagePath!), fit: BoxFit.cover),
+            Container(color: Colors.black.withOpacity(0.55)),
+          ] else ...[
+            Positioned(top: -90, left: -70, child: _glow(const Color(0xFF7C4DFF), 240)),
+            Positioned(bottom: -110, right: -90, child: _glow(const Color(0xFF26A69A), 280)),
+            Positioned(top: 220, right: -70, child: _glow(const Color(0xFFFF7043), 170)),
+          ],
           child,
         ],
       ),

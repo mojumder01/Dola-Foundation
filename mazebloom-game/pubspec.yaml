@@ -24,6 +24,9 @@ dependencies:
   # Rate us / Contact us / share referral code লিংক খোলার জন্য
   url_launcher: ^6.3.1
 
+  # গ্যালারি থেকে maze background এর জন্য নিজের ছবি বাছার জন্য
+  image_picker: ^1.1.2
+
   cupertino_icons: ^1.0.8
 
 dev_dependencies:

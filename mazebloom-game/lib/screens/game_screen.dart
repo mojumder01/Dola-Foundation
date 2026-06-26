@@ -15,6 +15,7 @@ import '../utils/achievement_manager.dart';
 import '../utils/app_language.dart';
 import '../utils/path_color_manager.dart';
 import '../utils/cell_skin_manager.dart';
+import '../utils/maze_background_manager.dart';
 import '../utils/hint_manager.dart';
 import '../utils/feedback_service.dart';
 import '../services/ad_service.dart';
@@ -60,6 +61,8 @@ class _GameScreenState extends State<GameScreen> {
   int _lastCoinsEarned = 0;
   Color _pathColor = const Color(0xFF7C4DFF);
   Color _cellColor = const Color(0xFF1E1E3A);
+  List<Color>? _bgGradientColors;
+  String? _bgImagePath;
   bool _freeHintAvailable = true;
   late int? _levelIndex; // level mode এ পরের level এ in-place এগিয়ে যাওয়ার জন্য
   late int? _storyChapterIndex; // story mode এ পরের chapter এ in-place এগিয়ে যাওয়ার জন্য
@@ -80,10 +83,15 @@ class _GameScreenState extends State<GameScreen> {
   Future<void> _loadPathColor() async {
     final color = await PathColorManager.getSelectedColor();
     final cellColor = await CellSkinManager.getSelectedColor();
+    final bgId = await MazeBackgroundManager.getSelectedId();
+    final bgOption = MazeBackgroundManager.optionFor(bgId);
+    final customPath = bgOption.isCustomPhoto ? await MazeBackgroundManager.getCustomPhotoPath() : null;
     if (mounted) {
       setState(() {
         _pathColor = color;
         _cellColor = cellColor;
+        _bgGradientColors = bgOption.colors;
+        _bgImagePath = customPath;
       });
     }
   }
@@ -522,6 +530,8 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: AppBackground(
+        gradientColors: _bgGradientColors,
+        imagePath: _bgImagePath,
         child: SafeArea(
           child: Column(
             children: [
