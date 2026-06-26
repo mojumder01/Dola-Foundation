@@ -4,11 +4,13 @@ import '../utils/daily_challenge_manager.dart';
 import '../utils/shape_factory.dart';
 import '../utils/coin_manager.dart';
 import '../utils/app_language.dart';
+import '../utils/profile_manager.dart';
 import 'game_screen.dart';
 import 'level_select_screen.dart';
 import 'story_mode_screen.dart';
 import 'gallery_screen.dart';
 import 'rewards_screen.dart';
+import 'profile_screen.dart';
 
 // মূল মেনু — Levels (৩টা difficulty), Daily Challenge, Unlimited mode বেছে নেওয়ার জায়গা
 class HomeScreen extends StatefulWidget {
@@ -22,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _dailyDone = false;
   int _streak = 0;
   int _coins = 0;
+  String _avatar = ProfileManager.defaultAvatar;
+  String? _name;
 
   @override
   void initState() {
@@ -33,10 +37,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final done = await DailyChallengeManager.isCompletedToday();
     final streak = await DailyChallengeManager.getStreak();
     final coins = await CoinManager.getCoins();
+    final avatar = await ProfileManager.getAvatar();
+    final name = await ProfileManager.getName();
     setState(() {
       _dailyDone = done;
       _streak = streak;
       _coins = coins;
+      _avatar = avatar;
+      _name = name;
     });
   }
 
@@ -46,6 +54,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _openRewards() {
     Navigator.push(context, MaterialPageRoute(builder: (_) => const RewardsScreen())).then((_) => _loadData());
+  }
+
+  void _openProfile() {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen())).then((_) => _loadData());
   }
 
   void _openDailyChallenge() {
@@ -115,6 +127,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   tr('পুরো শেপ একটানা path দিয়ে পূরণ করো', 'Trace the whole shape in one continuous path'),
                   style: const TextStyle(color: Color(0xFFB0BEC5), fontSize: 14),
                 ),
+                if (_name != null && _name!.trim().isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    '$_avatar ${tr('আবার দেখা হলো', 'Welcome back')}, ${_name!.trim()}!',
+                    style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.bold),
+                  ),
+                ],
                 const SizedBox(height: 36),
 
                 _dailyChallengeCard(),
@@ -188,6 +207,18 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         const Spacer(),
+        GestureDetector(
+          onTap: _openProfile,
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              shape: BoxShape.circle,
+            ),
+            child: Text(_avatar, style: const TextStyle(fontSize: 18)),
+          ),
+        ),
+        const SizedBox(width: 10),
         GestureDetector(
           onTap: () {
             AppLanguage.instance.toggle();
