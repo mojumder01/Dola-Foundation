@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'app_language.dart';
 import 'coin_manager.dart';
 
 // সহজ local referral system — backend ছাড়া। প্রতিটা ইনস্টল একটা নিজের কোড পায়,
@@ -36,13 +37,13 @@ class ReferralManager {
     final trimmed = code.trim().toUpperCase();
 
     if (await hasRedeemed()) {
-      return 'তুমি আগেই একটা referral code redeem করেছো।';
+      return tr('তুমি আগেই একটা referral code redeem করেছো।', "You've already redeemed a referral code.");
     }
     if (trimmed.isEmpty || trimmed.length != 6) {
-      return 'কোডটা সঠিক না — ৬ অক্ষরের কোড দিতে হবে।';
+      return tr('কোডটা সঠিক না — ৬ অক্ষরের কোড দিতে হবে।', 'Invalid code — it must be 6 characters.');
     }
     if (trimmed == myCode) {
-      return 'নিজের কোড নিজেই redeem করা যায় না।';
+      return tr('নিজের কোড নিজেই redeem করা যায় না।', "You can't redeem your own code.");
     }
 
     final prefs = await SharedPreferences.getInstance();

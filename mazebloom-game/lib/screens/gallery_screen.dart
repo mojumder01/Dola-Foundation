@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/achievement_manager.dart';
+import '../utils/app_language.dart';
 
 // Mosaic Gallery — অর্জন করা সব badge পাশাপাশি দেখা যায়, ফাঁকা গুলো lock করা থাকে
 class GalleryScreen extends StatefulWidget {
@@ -57,9 +58,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       ),
                     ),
                     const SizedBox(width: 14),
-                    const Text(
-                      '🌺 মোসাইক গ্যালারি',
-                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                    Text(
+                      '🌺 ${tr('মোসাইক গ্যালারি', 'Mosaic Gallery')}',
+                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -67,7 +68,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
                 child: Text(
-                  _loading ? '' : '${_unlocked.length} / ${AchievementManager.all.length} অর্জন সংগ্রহ করেছো',
+                  _loading
+                      ? ''
+                      : tr('${_unlocked.length} / ${AchievementManager.all.length} অর্জন সংগ্রহ করেছো',
+                          '${_unlocked.length} / ${AchievementManager.all.length} achievements collected'),
                   style: const TextStyle(color: Color(0xFFB0BEC5), fontSize: 13),
                 ),
               ),
@@ -104,7 +108,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  unlocked ? achievement.title : '???',
+                                  unlocked ? achievement.displayTitle : '???',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: unlocked ? Colors.white : Colors.white38,
@@ -115,7 +119,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                 if (unlocked) ...[
                                   const SizedBox(height: 4),
                                   Text(
-                                    achievement.description,
+                                    achievement.displayDescription,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(color: Colors.white70, fontSize: 10),
                                   ),

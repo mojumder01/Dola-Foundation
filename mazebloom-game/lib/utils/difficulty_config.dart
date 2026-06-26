@@ -1,3 +1,5 @@
+import 'app_language.dart';
+
 // তিনটা difficulty — প্রতিটার level অনুযায়ী shape এর cell সংখ্যা বাড়ে
 enum Difficulty { easy, medium, hard }
 
@@ -9,11 +11,11 @@ class DifficultyConfig {
   static String label(Difficulty d) {
     switch (d) {
       case Difficulty.easy:
-        return 'সহজ';
+        return tr('সহজ', 'Easy');
       case Difficulty.medium:
-        return 'মাঝারি';
+        return tr('মাঝারি', 'Medium');
       case Difficulty.hard:
-        return 'কঠিন';
+        return tr('কঠিন', 'Hard');
     }
   }
 

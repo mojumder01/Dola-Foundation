@@ -3,6 +3,7 @@ import '../utils/difficulty_config.dart';
 import '../utils/daily_challenge_manager.dart';
 import '../utils/shape_factory.dart';
 import '../utils/coin_manager.dart';
+import '../utils/app_language.dart';
 import 'game_screen.dart';
 import 'level_select_screen.dart';
 import 'story_mode_screen.dart';
@@ -110,9 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'পুরো শেপ একটানা path দিয়ে পূরণ করো',
-                  style: TextStyle(color: Color(0xFFB0BEC5), fontSize: 14),
+                Text(
+                  tr('পুরো শেপ একটানা path দিয়ে পূরণ করো', 'Trace the whole shape in one continuous path'),
+                  style: const TextStyle(color: Color(0xFFB0BEC5), fontSize: 14),
                 ),
                 const SizedBox(height: 36),
 
@@ -120,16 +121,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 14),
 
                 _modeButton(
-                  '🇧🇩 সংস্কৃতির যাত্রা',
-                  'বাংলাদেশের রিকশা, ইলিশ, শাপলা ঘুরে আসো',
+                  '🇧🇩 ${tr('সংস্কৃতির যাত্রা', 'Culture Journey')}',
+                  tr('বাংলাদেশের রিকশা, ইলিশ, শাপলা ঘুরে আসো',
+                      "Explore Bangladesh's rickshaws, hilsa, and water lilies"),
                   const [Color(0xFF26A69A), Color(0xFF00695C)],
                   _openStoryMode,
                 ),
                 const SizedBox(height: 14),
 
                 _modeButton(
-                  '♾️ Unlimited Mode',
-                  'যতদূর পারো খেলো, লাইফ ফুরালে শেষ',
+                  '♾️ ${tr('আনলিমিটেড মোড', 'Unlimited Mode')}',
+                  tr('যতদূর পারো খেলো, লাইফ ফুরালে শেষ', 'Play as far as you can — ends when your lives run out'),
                   const [Color(0xFFFF7043), Color(0xFFFF5252)],
                   _openUnlimited,
                 ),
@@ -138,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Levels',
+                    tr('লেভেল', 'Levels'),
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.8),
                       fontWeight: FontWeight.bold,
@@ -153,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.only(bottom: 14),
                     child: _modeButton(
                       '${DifficultyConfig.emoji(d)} ${DifficultyConfig.label(d)}',
-                      'অসীম সংখ্যক লেভেল',
+                      tr('অসীম সংখ্যক লেভেল', 'Endless levels'),
                       const [Color(0xFF7C4DFF), Color(0xFF448AFF)],
                       () => _openDifficulty(d),
                     ),
@@ -186,6 +188,23 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         const Spacer(),
+        GestureDetector(
+          onTap: () {
+            AppLanguage.instance.toggle();
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Text(
+              AppLanguage.instance.isBangla ? 'বাং' : 'EN',
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
         GestureDetector(
           onTap: _openGallery,
           child: Container(
@@ -241,11 +260,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    festival != null ? '${festival.title} স্পেশাল!' : 'Daily Challenge',
+                    festival != null
+                        ? tr('${festival.displayTitle} স্পেশাল!', '${festival.displayTitle} Special!')
+                        : tr('দৈনিক চ্যালেঞ্জ', 'Daily Challenge'),
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   Text(
-                    _dailyDone ? 'আজকেরটা সমাধান হয়েছে! 🔥 $_streak দিনের streak' : '🔥 $_streak দিনের streak — আজকে খেলো',
+                    _dailyDone
+                        ? tr('আজকেরটা সমাধান হয়েছে! 🔥 $_streak দিনের streak', "Today's done! 🔥 $_streak day streak")
+                        : tr('🔥 $_streak দিনের streak — আজকে খেলো', '🔥 $_streak day streak — play today'),
                     style: const TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ],

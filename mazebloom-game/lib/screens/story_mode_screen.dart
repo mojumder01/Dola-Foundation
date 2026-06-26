@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/app_language.dart';
 import '../utils/culture_theme.dart';
 import '../utils/progress_manager.dart';
 import '../utils/shape_factory.dart';
@@ -76,9 +77,9 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
                       ),
                     ),
                     const SizedBox(width: 14),
-                    const Text(
-                      '🇧🇩 সংস্কৃতির যাত্রা',
-                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                    Text(
+                      tr('🇧🇩 সংস্কৃতির যাত্রা', '🇧🇩 Culture Journey'),
+                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -115,7 +116,7 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            unlocked ? theme.title : 'পরবর্তী অধ্যায়',
+                                            unlocked ? theme.displayTitle : tr('পরবর্তী অধ্যায়', 'Next chapter'),
                                             style: TextStyle(
                                               color: unlocked ? Colors.white : Colors.white38,
                                               fontWeight: FontWeight.bold,
@@ -124,7 +125,7 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
                                           ),
                                           if (unlocked)
                                             Text(
-                                              theme.description,
+                                              theme.displayDescription,
                                               style: const TextStyle(color: Colors.white70, fontSize: 12),
                                             ),
                                         ],

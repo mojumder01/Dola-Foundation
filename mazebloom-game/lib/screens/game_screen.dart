@@ -11,6 +11,7 @@ import '../utils/coin_manager.dart';
 import '../utils/reward_calculator.dart';
 import '../utils/lives_manager.dart';
 import '../utils/achievement_manager.dart';
+import '../utils/app_language.dart';
 import '../services/ad_service.dart';
 import '../widgets/maze_board.dart';
 
@@ -89,7 +90,7 @@ class _GameScreenState extends State<GameScreen> {
       // ছোট delay দিয়ে বুঝিয়ে দাও dead-end হয়েছে, তারপর path reset করো
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('😬 এই পথে আর যাওয়া যাচ্ছে না! আবার চেষ্টা করো।'),
+          content: Text(tr('😬 এই পথে আর যাওয়া যাচ্ছে না! আবার চেষ্টা করো।', "😬 No way forward from here! Try again.")),
           backgroundColor: const Color(0xFFF44336),
           duration: const Duration(seconds: 1),
           behavior: SnackBarBehavior.floating,
@@ -122,7 +123,7 @@ class _GameScreenState extends State<GameScreen> {
     } else {
       // বর্তমান path থেকে আর সমাধান সম্ভব না — dead-end এ পড়ে গেছো
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('এই path থেকে আর সমাধান সম্ভব না — restart করো।')),
+        SnackBar(content: Text(tr('এই path থেকে আর সমাধান সম্ভব না — restart করো।', 'No solution is possible from this path — restart.'))),
       );
     }
   }
@@ -209,17 +210,22 @@ class _GameScreenState extends State<GameScreen> {
         backgroundColor: const Color(0xFF1A1A2E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          theme != null ? '${theme.emoji} ${theme.title} সম্পন্ন!' : '🎉 সমাধান হয়েছে!',
+          theme != null
+              ? '${theme.emoji} ${theme.displayTitle} ${tr('সম্পন্ন!', 'Complete!')}'
+              : tr('🎉 সমাধান হয়েছে!', '🎉 Solved!'),
           style: const TextStyle(color: Colors.white),
         ),
         content: Text(
-          'সময় লেগেছে: $elapsed সেকেন্ড\n🪙 +$_lastCoinsEarned coins পেয়েছো',
+          tr(
+            'সময় লেগেছে: $elapsed সেকেন্ড\n🪙 +$_lastCoinsEarned coins পেয়েছো',
+            'Time taken: $elapsed sec\n🪙 +$_lastCoinsEarned coins earned',
+          ),
           style: const TextStyle(color: Color(0xFFB0BEC5)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-            child: const Text('হোম এ ফিরো'),
+            child: Text(tr('হোম এ ফিরো', 'Back to Home')),
           ),
         ],
       ),
@@ -234,22 +240,28 @@ class _GameScreenState extends State<GameScreen> {
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('🎉 শেপ #$_unlimitedStreak সমাধান!', style: const TextStyle(color: Colors.white)),
+        title: Text(
+          tr('🎉 শেপ #$_unlimitedStreak সমাধান!', '🎉 Shape #$_unlimitedStreak solved!'),
+          style: const TextStyle(color: Colors.white),
+        ),
         content: Text(
-          'সময় লেগেছে: $elapsed সেকেন্ড\n🪙 +$_lastCoinsEarned coins পেয়েছো\nচলো, পরের শেপটা একটু কঠিন!',
+          tr(
+            'সময় লেগেছে: $elapsed সেকেন্ড\n🪙 +$_lastCoinsEarned coins পেয়েছো\nচলো, পরের শেপটা একটু কঠিন!',
+            'Time taken: $elapsed sec\n🪙 +$_lastCoinsEarned coins earned\nNext shape will be a bit harder!',
+          ),
           style: const TextStyle(color: Color(0xFFB0BEC5)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('থামো'),
+            child: Text(tr('থামো', 'Stop')),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _loadNextUnlimitedShape();
             },
-            child: const Text('চালিয়ে যাও', style: TextStyle(color: Color(0xFF7C4DFF))),
+            child: Text(tr('চালিয়ে যাও', 'Continue'), style: const TextStyle(color: Color(0xFF7C4DFF))),
           ),
         ],
       ),
@@ -266,11 +278,11 @@ class _GameScreenState extends State<GameScreen> {
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('জীবন শেষ! 💔', style: TextStyle(color: Colors.white)),
+        title: Text(tr('জীবন শেষ! 💔', 'Out of lives! 💔'), style: const TextStyle(color: Colors.white)),
         content: Text(
           bankedLives > 0
-              ? 'তোমার ব্যাংকে $bankedLives টা extra life আছে — চালিয়ে যাবে?'
-              : 'একটা বিজ্ঞাপন দেখে continue করতে পারো।',
+              ? tr('তোমার ব্যাংকে $bankedLives টা extra life আছে — চালিয়ে যাবে?', 'You have $bankedLives banked extra life — continue?')
+              : tr('একটা বিজ্ঞাপন দেখে continue করতে পারো।', 'You can watch an ad to continue.'),
           style: const TextStyle(color: Color(0xFFB0BEC5)),
         ),
         actions: [
@@ -279,7 +291,7 @@ class _GameScreenState extends State<GameScreen> {
               Navigator.pop(context);
               _showGameOverDialog();
             },
-            child: const Text('থামো'),
+            child: Text(tr('থামো', 'Stop')),
           ),
           if (bankedLives > 0)
             TextButton(
@@ -291,7 +303,7 @@ class _GameScreenState extends State<GameScreen> {
                   _path = [];
                 });
               },
-              child: const Text('ব্যাংক থেকে লাইফ নাও', style: TextStyle(color: Color(0xFF7C4DFF))),
+              child: Text(tr('ব্যাংক থেকে লাইফ নাও', 'Use banked life'), style: const TextStyle(color: Color(0xFF7C4DFF))),
             )
           else
             TextButton(
@@ -312,7 +324,7 @@ class _GameScreenState extends State<GameScreen> {
                   },
                 );
               },
-              child: const Text('📺 বিজ্ঞাপন দেখো', style: TextStyle(color: Colors.amber)),
+              child: Text(tr('📺 বিজ্ঞাপন দেখো', '📺 Watch ad'), style: const TextStyle(color: Colors.amber)),
             ),
         ],
       ),
@@ -326,17 +338,17 @@ class _GameScreenState extends State<GameScreen> {
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('জীবন শেষ! 💔', style: TextStyle(color: Colors.white)),
+        title: Text(tr('জীবন শেষ! 💔', 'Out of lives! 💔'), style: const TextStyle(color: Colors.white)),
         content: Text(
           widget.mode == GameMode.unlimited
-              ? 'মোট $_unlimitedStreak টা শেপ সমাধান করেছো! আবার শুরু করতে চাও?'
-              : 'আর কোনো লাইফ নেই। আবার শুরু করতে চাও?',
+              ? tr('মোট $_unlimitedStreak টা শেপ সমাধান করেছো! আবার শুরু করতে চাও?', 'You solved $_unlimitedStreak shapes in total! Start over?')
+              : tr('আর কোনো লাইফ নেই। আবার শুরু করতে চাও?', 'No lives left. Start over?'),
           style: const TextStyle(color: Color(0xFFB0BEC5)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-            child: const Text('হোম এ ফিরো'),
+            child: Text(tr('হোম এ ফিরো', 'Back to Home')),
           ),
           TextButton(
             onPressed: () {
@@ -348,7 +360,7 @@ class _GameScreenState extends State<GameScreen> {
                 if (widget.mode == GameMode.unlimited) _unlimitedStreak = 0;
               });
             },
-            child: const Text('আবার খেলো', style: TextStyle(color: Color(0xFF7C4DFF))),
+            child: Text(tr('আবার খেলো', 'Play again'), style: const TextStyle(color: Color(0xFF7C4DFF))),
           ),
         ],
       ),
@@ -372,11 +384,12 @@ class _GameScreenState extends State<GameScreen> {
               _buildTopBar(),
               const SizedBox(height: 12),
               if (!_isSolvable)
-                const Padding(
-                  padding: EdgeInsets.all(12),
+                Padding(
+                  padding: const EdgeInsets.all(12),
                   child: Text(
-                    '⚠️ এই shape টা সমাধানযোগ্য না — ডেভেলপার কে জানাও',
-                    style: TextStyle(color: Colors.redAccent),
+                    tr('⚠️ এই shape টা সমাধানযোগ্য না — ডেভেলপার কে জানাও',
+                        '⚠️ This shape is not solvable — please notify the developer'),
+                    style: const TextStyle(color: Colors.redAccent),
                   ),
                 ),
               Expanded(
@@ -394,7 +407,8 @@ class _GameScreenState extends State<GameScreen> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: Text(
-                  '${_path.length} / ${_shape.totalCells} ঘর পূরণ হয়েছে',
+                  tr('${_path.length} / ${_shape.totalCells} ঘর পূরণ হয়েছে',
+                      '${_path.length} / ${_shape.totalCells} cells filled'),
                   style: const TextStyle(color: Color(0xFFB0BEC5), fontSize: 13),
                 ),
               ),
@@ -444,7 +458,7 @@ class _GameScreenState extends State<GameScreen> {
           if (widget.theme != null)
             Expanded(
               child: Text(
-                '${widget.theme!.emoji} ${widget.theme!.title}',
+                '${widget.theme!.emoji} ${widget.theme!.displayTitle}',
                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                 overflow: TextOverflow.ellipsis,
               ),

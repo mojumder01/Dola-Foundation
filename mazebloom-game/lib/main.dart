@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screens/home_screen.dart';
 import 'services/ad_service.dart';
+import 'utils/app_language.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AdService.initialize();
+  await AppLanguage.instance.load();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -27,19 +29,23 @@ class MazeBloomApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Maze Bloom',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF7C4DFF),
+    // AppLanguage বদলালে পুরো অ্যাপ rebuild হয় — যেখানেই tr(...) ব্যবহার হয়েছে সব আপডেট হবে
+    return AnimatedBuilder(
+      animation: AppLanguage.instance,
+      builder: (context, _) => MaterialApp(
+        title: 'Maze Bloom',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          useMaterial3: true,
           brightness: Brightness.dark,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF7C4DFF),
+            brightness: Brightness.dark,
+          ),
+          fontFamily: 'Roboto',
         ),
-        fontFamily: 'Roboto',
+        home: const HomeScreen(),
       ),
-      home: const HomeScreen(),
     );
   }
 }

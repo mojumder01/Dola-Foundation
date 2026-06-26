@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_language.dart';
 
 // বাংলা সংস্কৃতির থিম — গল্প/journey mode এবং উৎসব-ভিত্তিক daily challenge এর জন্য।
 // শেপ সবসময় ShapeFactory দিয়ে procedurally generate হয় (তাই solvability guaranteed),
@@ -6,8 +7,10 @@ import 'package:flutter/material.dart';
 class CultureTheme {
   final String id;
   final String title;
+  final String titleEn;
   final String emoji;
   final String description;
+  final String descriptionEn;
   final List<Color> colors;
   final int targetCells;
   final int seed;
@@ -15,12 +18,17 @@ class CultureTheme {
   const CultureTheme({
     required this.id,
     required this.title,
+    required this.titleEn,
     required this.emoji,
     required this.description,
+    required this.descriptionEn,
     required this.colors,
     required this.targetCells,
     required this.seed,
   });
+
+  String get displayTitle => tr(title, titleEn);
+  String get displayDescription => tr(description, descriptionEn);
 }
 
 // Story/Journey mode — বাংলাদেশের সংস্কৃতি ঘুরে দেখার একটা ধারাবাহিক যাত্রা
@@ -29,8 +37,10 @@ class StoryJourney {
     CultureTheme(
       id: 'rickshaw',
       title: 'ঢাকার রিকশা',
+      titleEn: 'Dhaka Rickshaw',
       emoji: '🛺',
       description: 'রঙ-বেরঙের রিকশায় শহর ঘোরার গল্প',
+      descriptionEn: 'A ride through the city on colorful rickshaws',
       colors: [Color(0xFFFFC107), Color(0xFFFF8F00)],
       targetCells: 12,
       seed: 501,
@@ -38,8 +48,10 @@ class StoryJourney {
     CultureTheme(
       id: 'shapla',
       title: 'শাপলার বিল',
+      titleEn: 'Water Lily Marsh',
       emoji: '🌼',
       description: 'জাতীয় ফুল শাপলায় ভরা গ্রামের বিল',
+      descriptionEn: "A village marsh full of the national flower, the water lily",
       colors: [Color(0xFF26C6DA), Color(0xFF00838F)],
       targetCells: 16,
       seed: 502,
@@ -47,8 +59,10 @@ class StoryJourney {
     CultureTheme(
       id: 'ilish',
       title: 'ইলিশের দেশ',
+      titleEn: 'Land of Hilsa',
       emoji: '🐟',
       description: 'পদ্মার ইলিশ আর জেলেদের নৌকা',
+      descriptionEn: 'Hilsa fish of the Padma and fishermen\'s boats',
       colors: [Color(0xFF42A5F5), Color(0xFF1565C0)],
       targetCells: 20,
       seed: 503,
@@ -56,8 +70,10 @@ class StoryJourney {
     CultureTheme(
       id: 'boishakh',
       title: 'বৈশাখী মেলা',
+      titleEn: 'Boishakhi Fair',
       emoji: '🎉',
       description: 'পহেলা বৈশাখের মঙ্গল শোভাযাত্রা',
+      descriptionEn: "Pohela Boishakh's Mangal Shobhajatra procession",
       colors: [Color(0xFFEF5350), Color(0xFFB71C1C)],
       targetCells: 24,
       seed: 504,
@@ -65,8 +81,10 @@ class StoryJourney {
     CultureTheme(
       id: 'nakshi',
       title: 'নকশী কাঁথা',
+      titleEn: 'Nakshi Kantha',
       emoji: '🧵',
       description: 'হাতে সেলাই করা ঐতিহ্যবাহী নকশী কাঁথার নকশা',
+      descriptionEn: 'Traditional hand-stitched Nakshi Kantha embroidery patterns',
       colors: [Color(0xFFAB47BC), Color(0xFF6A1B9A)],
       targetCells: 28,
       seed: 505,
@@ -74,8 +92,10 @@ class StoryJourney {
     CultureTheme(
       id: 'shadhinota',
       title: 'বিজয়ের দিন',
+      titleEn: 'Victory Day',
       emoji: '🇧🇩',
       description: 'লাল-সবুজ পতাকা আর বিজয়ের গর্ব',
+      descriptionEn: 'The red-green flag and the pride of victory',
       colors: [Color(0xFF66BB6A), Color(0xFF2E7D32)],
       targetCells: 32,
       seed: 506,

@@ -3,6 +3,7 @@ import '../utils/coin_manager.dart';
 import '../utils/lives_manager.dart';
 import '../utils/referral_manager.dart';
 import '../services/ad_service.dart';
+import '../utils/app_language.dart';
 
 // Coins, banked lives, আর referral code শেয়ার/redeem করার জায়গা
 class RewardsScreen extends StatefulWidget {
@@ -53,7 +54,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
         await _load();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('🎉 একটা extra life পেয়েছো!')),
+            SnackBar(content: Text(tr('🎉 একটা extra life পেয়েছো!', '🎉 You got an extra life!'))),
           );
         }
       },
@@ -69,7 +70,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
     if (error == null) {
       await _load();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('🎉 ${ReferralManager.bonusCoins} coins পেয়েছো!')),
+        SnackBar(content: Text(tr('🎉 ${ReferralManager.bonusCoins} coins পেয়েছো!', '🎉 You got ${ReferralManager.bonusCoins} coins!'))),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
@@ -109,9 +110,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
                             ),
                           ),
                           const SizedBox(width: 14),
-                          const Text(
-                            '🎁 Rewards',
-                            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                          Text(
+                            '🎁 ${tr('পুরস্কার', 'Rewards')}',
+                            style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -119,9 +120,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
 
                       Row(
                         children: [
-                          Expanded(child: _statCard('🪙', '$_coins', 'Coins')),
+                          Expanded(child: _statCard('🪙', '$_coins', tr('কয়েন', 'Coins'))),
                           const SizedBox(width: 12),
-                          Expanded(child: _statCard('❤️', '$_bankedLives / ${LivesManager.maxBankedLives}', 'Banked Lives')),
+                          Expanded(child: _statCard('❤️', '$_bankedLives / ${LivesManager.maxBankedLives}', tr('ব্যাংক করা লাইফ', 'Banked Lives'))),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -135,17 +136,17 @@ class _RewardsScreenState extends State<RewardsScreen> {
                             gradient: const LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFF8F00)]),
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          child: const Center(
+                          child: Center(
                             child: Text(
-                              '📺 বিজ্ঞাপন দেখে Extra Life নাও',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              tr('📺 বিজ্ঞাপন দেখে Extra Life নাও', '📺 Watch an ad for Extra Life'),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 28),
 
-                      Text('তোমার Referral Code', style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold)),
+                      Text(tr('তোমার Referral Code', 'Your Referral Code'), style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
                       Container(
                         width: double.infinity,
@@ -163,13 +164,14 @@ class _RewardsScreenState extends State<RewardsScreen> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'এই কোড বন্ধুকে দাও — বন্ধু redeem করলে দুইজনেই উপকৃত হবে',
+                        tr('এই কোড বন্ধুকে দাও — বন্ধু redeem করলে দুইজনেই উপকৃত হবে',
+                            'Share this code with a friend — when they redeem it, you both benefit'),
                         style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12),
                       ),
                       const SizedBox(height: 24),
 
                       if (!_redeemed) ...[
-                        Text('বন্ধুর কোড Redeem করো', style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold)),
+                        Text(tr('বন্ধুর কোড Redeem করো', "Redeem a friend's code"), style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
                         Row(
                           children: [
@@ -179,7 +181,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                                 textCapitalization: TextCapitalization.characters,
                                 style: const TextStyle(color: Colors.white),
                                 decoration: InputDecoration(
-                                  hintText: 'কোড লিখো',
+                                  hintText: tr('কোড লিখো', 'Enter code'),
                                   hintStyle: const TextStyle(color: Colors.white38),
                                   filled: true,
                                   fillColor: Colors.white.withOpacity(0.08),
@@ -197,12 +199,12 @@ class _RewardsScreenState extends State<RewardsScreen> {
                                 backgroundColor: const Color(0xFF7C4DFF),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               ),
-                              child: const Text('Redeem'),
+                              child: Text(tr('রিডিম', 'Redeem')),
                             ),
                           ],
                         ),
                       ] else
-                        const Text('✅ তুমি referral বোনাস redeem করেছো', style: TextStyle(color: Colors.white70)),
+                        Text(tr('✅ তুমি referral বোনাস redeem করেছো', "✅ You've redeemed a referral bonus"), style: const TextStyle(color: Colors.white70)),
                     ],
                   ),
                 ),
