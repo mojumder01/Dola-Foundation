@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.only(bottom: 14),
                     child: _modeButton(
                       '${DifficultyConfig.emoji(d)} ${DifficultyConfig.label(d)}',
-                      '${DifficultyConfig.levelsPerDifficulty} টা লেভেল',
+                      'অসীম সংখ্যক লেভেল',
                       const [Color(0xFF7C4DFF), Color(0xFF448AFF)],
                       () => _openDifficulty(d),
                     ),

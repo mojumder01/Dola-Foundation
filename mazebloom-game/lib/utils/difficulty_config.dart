@@ -2,7 +2,9 @@
 enum Difficulty { easy, medium, hard }
 
 class DifficultyConfig {
-  static const int levelsPerDifficulty = 15;
+  // আগে ১৫টা তে capped ছিল — এখন endless, প্রতি difficulty তেই অসীম level
+  // (UI তে একসাথে কতগুলো দেখানো হবে তার জন্য নিচের bufferAhead ব্যবহার হয়)
+  static const int bufferAhead = 30;
 
   static String label(Difficulty d) {
     switch (d) {

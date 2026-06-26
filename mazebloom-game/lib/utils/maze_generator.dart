@@ -60,10 +60,11 @@ class MazeGenerator {
     if (visited.length == totalCells) return true;
 
     final current = path.last;
-    final neighbors = _neighbors(current)
-        .where((n) => shape.contains(n) && !visited.contains(n))
-        .toList()
-      ..shuffle(random);
+    // Warnsdorff's rule — যে neighbor এর own unvisited-neighbor সবচেয়ে কম, সেটা আগে চেষ্টা করো।
+    // এটা বড় শেপেও দ্রুত সমাধান খুঁজে পায়, যেখানে শুধু random ordering আটকে যেত বা টাইমআউট হতো।
+    final neighbors = _neighbors(current).where((n) => shape.contains(n) && !visited.contains(n)).toList()
+      ..shuffle(random)
+      ..sort((a, b) => _unvisitedDegree(shape, visited, a).compareTo(_unvisitedDegree(shape, visited, b)));
 
     for (final next in neighbors) {
       visited.add(next);
@@ -76,6 +77,11 @@ class MazeGenerator {
       path.removeLast();
     }
     return false;
+  }
+
+  // একটা cell এর কতগুলো unvisited neighbor আছে — Warnsdorff's rule এর জন্য
+  static int _unvisitedDegree(GridShape shape, Set<Point<int>> visited, Point<int> p) {
+    return _neighbors(p).where((n) => shape.contains(n) && !visited.contains(n)).length;
   }
 
   static List<Point<int>> _neighbors(Point<int> p) => [

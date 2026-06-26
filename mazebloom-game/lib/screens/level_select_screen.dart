@@ -35,7 +35,12 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
   void _openLevel(int levelIndex) {
     final cells = DifficultyConfig.cellsForLevel(widget.difficulty, levelIndex);
     final seed = DifficultyConfig.seedForLevel(widget.difficulty, levelIndex);
-    final shape = ShapeFactory.generate(targetCells: cells, seed: seed);
+    final style = switch (widget.difficulty) {
+      Difficulty.easy => ShapeStyle.blob,
+      Difficulty.medium => ShapeStyle.snake,
+      Difficulty.hard => ShapeStyle.branchy,
+    };
+    final shape = ShapeFactory.generate(targetCells: cells, seed: seed, style: style);
 
     Navigator.push(
       context,
@@ -101,7 +106,9 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                           mainAxisSpacing: 14,
                           crossAxisSpacing: 14,
                         ),
-                        itemCount: DifficultyConfig.levelsPerDifficulty,
+                        // endless — unlocked levels + একটা buffer of আসন্ন (locked) level দেখানো হয়,
+                        // unlock হতে থাকলে এই সংখ্যাও বাড়তে থাকে — কখনো শেষ হয় না
+                        itemCount: _unlockedCount + DifficultyConfig.bufferAhead,
                         itemBuilder: (context, index) {
                           final unlocked = index < _unlockedCount;
                           return GestureDetector(

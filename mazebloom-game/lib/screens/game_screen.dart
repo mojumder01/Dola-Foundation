@@ -185,7 +185,10 @@ class _GameScreenState extends State<GameScreen> {
   // Unlimited mode এ — পরের shape টা একটু কঠিন আকারে generate করে in-place চালিয়ে যাওয়া হয়
   void _loadNextUnlimitedShape() {
     final nextCells = 10 + (_unlimitedStreak * 2).clamp(0, 30);
-    final next = ShapeFactory.generate(targetCells: nextCells);
+    final style = _unlimitedStreak < 4
+        ? ShapeStyle.blob
+        : (_unlimitedStreak < 9 ? ShapeStyle.snake : ShapeStyle.branchy);
+    final next = ShapeFactory.generate(targetCells: nextCells, style: style);
     setState(() {
       _shape = next;
       _path = [];
@@ -215,7 +218,7 @@ class _GameScreenState extends State<GameScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
             child: const Text('হোম এ ফিরো'),
           ),
         ],
@@ -332,7 +335,7 @@ class _GameScreenState extends State<GameScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
             child: const Text('হোম এ ফিরো'),
           ),
           TextButton(

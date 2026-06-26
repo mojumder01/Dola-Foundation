@@ -15,10 +15,7 @@ class ProgressManager {
     final unlocked = await getUnlockedCount(d);
     final nextUnlocked = completedLevelIndex + 2; // 0-based completed -> পরের level
     if (nextUnlocked > unlocked) {
-      await prefs.setInt(
-        _key(d),
-        nextUnlocked.clamp(1, DifficultyConfig.levelsPerDifficulty),
-      );
+      await prefs.setInt(_key(d), nextUnlocked); // endless — কোনো upper cap নেই
     }
   }
 
