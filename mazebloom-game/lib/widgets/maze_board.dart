@@ -10,6 +10,7 @@ class MazeBoard extends StatefulWidget {
   final Point<int>? hintCell; // hint হিসেবে highlight করার cell
   final void Function(List<Point<int>> newPath) onPathChanged;
   final void Function() onStuck; // dead-end এ পড়লে — life কমাতে হবে
+  final Color pathColor;
 
   const MazeBoard({
     super.key,
@@ -18,6 +19,7 @@ class MazeBoard extends StatefulWidget {
     required this.onPathChanged,
     required this.onStuck,
     this.hintCell,
+    this.pathColor = const Color(0xFF7C4DFF),
   });
 
   @override
@@ -147,6 +149,7 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
                 boardOffset: _boardOffset,
                 hintCell: widget.hintCell,
                 hintPulse: _hintPulse.value,
+                pathColor: widget.pathColor,
               ),
             ),
           ),
@@ -164,6 +167,7 @@ class _MazePainter extends CustomPainter {
   final Offset boardOffset;
   final Point<int>? hintCell;
   final double hintPulse; // 0.0–1.0, animation এর বর্তমান মান
+  final Color pathColor;
 
   _MazePainter({
     required this.shape,
@@ -171,6 +175,7 @@ class _MazePainter extends CustomPainter {
     required this.cellSize,
     required this.boardOffset,
     required this.hintPulse,
+    required this.pathColor,
     this.hintCell,
   });
 
@@ -215,7 +220,7 @@ class _MazePainter extends CustomPainter {
     // ৩. আঁকা path — connected line হিসেবে
     if (path.isNotEmpty) {
       final linePaint = Paint()
-        ..color = const Color(0xFF7C4DFF)
+        ..color = pathColor
         ..strokeWidth = cellSize * 0.32
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
@@ -240,6 +245,7 @@ class _MazePainter extends CustomPainter {
   bool shouldRepaint(covariant _MazePainter oldDelegate) {
     return oldDelegate.path != path ||
         oldDelegate.hintCell != hintCell ||
-        oldDelegate.hintPulse != hintPulse;
+        oldDelegate.hintPulse != hintPulse ||
+        oldDelegate.pathColor != pathColor;
   }
 }

@@ -12,6 +12,7 @@ import '../utils/reward_calculator.dart';
 import '../utils/lives_manager.dart';
 import '../utils/achievement_manager.dart';
 import '../utils/app_language.dart';
+import '../utils/path_color_manager.dart';
 import '../services/ad_service.dart';
 import '../widgets/maze_board.dart';
 
@@ -53,6 +54,7 @@ class _GameScreenState extends State<GameScreen> {
   DateTime? _startTime; // speed bonus হিসাব করার জন্য
   bool _perfectRun = true; // এই attempt এ একবারও dead-end এ পড়েনি কিনা
   int _lastCoinsEarned = 0;
+  Color _pathColor = const Color(0xFF7C4DFF);
 
   @override
   void initState() {
@@ -60,6 +62,12 @@ class _GameScreenState extends State<GameScreen> {
     _shape = widget.shape;
     _startTime = DateTime.now();
     _checkSolvable();
+    _loadPathColor();
+  }
+
+  Future<void> _loadPathColor() async {
+    final color = await PathColorManager.getSelectedColor();
+    if (mounted) setState(() => _pathColor = color);
   }
 
   void _checkSolvable() {
@@ -401,6 +409,7 @@ class _GameScreenState extends State<GameScreen> {
                     hintCell: _hintCell,
                     onPathChanged: _onPathChanged,
                     onStuck: _onStuck,
+                    pathColor: _pathColor,
                   ),
                 ),
               ),

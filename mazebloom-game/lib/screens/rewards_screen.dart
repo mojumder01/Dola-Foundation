@@ -4,6 +4,7 @@ import '../utils/lives_manager.dart';
 import '../utils/referral_manager.dart';
 import '../services/ad_service.dart';
 import '../utils/app_language.dart';
+import '../utils/path_color_manager.dart';
 
 // Coins, banked lives, আর referral code শেয়ার/redeem করার জায়গা
 class RewardsScreen extends StatefulWidget {
@@ -14,11 +15,15 @@ class RewardsScreen extends StatefulWidget {
 }
 
 class _RewardsScreenState extends State<RewardsScreen> {
+  static const int lifeCoinCost = 15;
+
   int _coins = 0;
   int _bankedLives = 0;
   String _myCode = '';
   bool _redeemed = false;
   bool _loading = true;
+  String _selectedColorId = PathColorManager.defaultId;
+  Set<String> _unlockedColorIds = {};
   final _codeController = TextEditingController();
 
   @override
@@ -38,13 +43,52 @@ class _RewardsScreenState extends State<RewardsScreen> {
     final lives = await LivesManager.getBankedLives();
     final code = await ReferralManager.getMyCode();
     final redeemed = await ReferralManager.hasRedeemed();
+    final selectedColorId = await PathColorManager.getSelectedId();
+    final unlockedColorIds = await PathColorManager.getUnlockedIds();
     setState(() {
       _coins = coins;
       _bankedLives = lives;
       _myCode = code;
       _redeemed = redeemed;
+      _selectedColorId = selectedColorId;
+      _unlockedColorIds = unlockedColorIds;
       _loading = false;
     });
+  }
+
+  Future<void> _buyLifeWithCoins() async {
+    if (_bankedLives >= LivesManager.maxBankedLives) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('ব্যাংক পূর্ণ — আর লাইফ ধরে না', 'Bank is full — no room for more lives'))),
+      );
+      return;
+    }
+    final spent = await CoinManager.spendCoins(lifeCoinCost);
+    if (!spent) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
+      );
+      return;
+    }
+    await LivesManager.addBankedLife();
+    await _load();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('🎉 একটা extra life পেয়েছো!', '🎉 You got an extra life!'))),
+      );
+    }
+  }
+
+  Future<void> _buyOrSelectColor(PathColorOption option) async {
+    final alreadyUnlocked = _unlockedColorIds.contains(option.id);
+    if (!alreadyUnlocked && _coins < option.cost) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
+      );
+      return;
+    }
+    final ok = await PathColorManager.purchase(option.id);
+    if (ok) await _load();
   }
 
   void _watchAdForLife() {
@@ -143,6 +187,62 @@ class _RewardsScreenState extends State<RewardsScreen> {
                             ),
                           ),
                         ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      GestureDetector(
+                        onTap: _buyLifeWithCoins,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(colors: [Color(0xFFEF5350), Color(0xFFB71C1C)]),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Center(
+                            child: Text(
+                              tr('❤️ $lifeCoinCost কয়েন দিয়ে Extra Life কিনো', '❤️ Buy an Extra Life for $lifeCoinCost coins'),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+
+                      Text(tr('🎨 Path এর রঙ', '🎨 Path Color'), style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: PathColorManager.options.map((option) {
+                          final unlocked = _unlockedColorIds.contains(option.id);
+                          final selected = option.id == _selectedColorId;
+                          return GestureDetector(
+                            onTap: () => _buyOrSelectColor(option),
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.06),
+                                borderRadius: BorderRadius.circular(14),
+                                border: selected ? Border.all(color: Colors.white, width: 2) : null,
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(color: option.color, shape: BoxShape.circle),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    unlocked ? (selected ? tr('বাছা হয়েছে', 'Selected') : tr('আনলকড', 'Unlocked')) : '🪙${option.cost}',
+                                    style: const TextStyle(color: Colors.white70, fontSize: 10),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       ),
                       const SizedBox(height: 28),
 
