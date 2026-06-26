@@ -7,6 +7,11 @@ import '../utils/difficulty_config.dart';
 import '../utils/progress_manager.dart';
 import '../utils/daily_challenge_manager.dart';
 import '../utils/culture_theme.dart';
+import '../utils/coin_manager.dart';
+import '../utils/reward_calculator.dart';
+import '../utils/lives_manager.dart';
+import '../utils/achievement_manager.dart';
+import '../services/ad_service.dart';
 import '../widgets/maze_board.dart';
 
 // গেম চারভাবে খেলা যায় — fixed level, daily challenge, unlimited (endless), অথবা story chapter
@@ -44,7 +49,9 @@ class _GameScreenState extends State<GameScreen> {
   int _unlimitedStreak = 0; // unlimited mode এ কয়টা শেপ সমাধান হলো
   Point<int>? _hintCell;
   bool _isSolvable = true; // shape generate করার সময়েই check হয়
-  DateTime? _startTime; // speed bonus হিসাব করার জন্য (Part 4 এ কাজে লাগবে)
+  DateTime? _startTime; // speed bonus হিসাব করার জন্য
+  bool _perfectRun = true; // এই attempt এ একবারও dead-end এ পড়েনি কিনা
+  int _lastCoinsEarned = 0;
 
   @override
   void initState() {
@@ -73,10 +80,11 @@ class _GameScreenState extends State<GameScreen> {
   void _onStuck() {
     setState(() {
       _lives--;
+      _perfectRun = false;
     });
 
     if (_lives <= 0) {
-      _showGameOverDialog();
+      _handleLivesExhausted();
     } else {
       // ছোট delay দিয়ে বুঝিয়ে দাও dead-end হয়েছে, তারপর path reset করো
       ScaffoldMessenger.of(context).showSnackBar(
@@ -123,10 +131,24 @@ class _GameScreenState extends State<GameScreen> {
     setState(() {
       _path = [];
       _hintCell = null;
+      _perfectRun = true;
     });
   }
 
   Future<void> _onShapeSolved() async {
+    final elapsed = DateTime.now().difference(_startTime!).inSeconds;
+    final coins = RewardCalculator.calculate(
+      totalCells: _shape.totalCells,
+      elapsedSeconds: elapsed,
+      perfectRun: _perfectRun,
+    );
+    await CoinManager.addCoins(coins);
+    _lastCoinsEarned = coins;
+
+    await AchievementManager.unlock('first_bloom');
+    if (elapsed <= 10) await AchievementManager.unlock('speed_bloom');
+    if (_perfectRun) await AchievementManager.unlock('perfect_bloom');
+
     switch (widget.mode) {
       case GameMode.level:
         if (widget.difficulty != null && widget.levelIndex != null) {
@@ -136,10 +158,13 @@ class _GameScreenState extends State<GameScreen> {
         break;
       case GameMode.daily:
         await DailyChallengeManager.markCompletedToday();
+        final streak = await DailyChallengeManager.getStreak();
+        if (streak >= 7) await AchievementManager.unlock('streak_master');
         _showWinDialog();
         break;
       case GameMode.unlimited:
         setState(() => _unlimitedStreak++);
+        if (_unlimitedStreak >= 10) await AchievementManager.unlock('unlimited_legend');
         _showUnlimitedWinDialog();
         break;
       case GameMode.story:
@@ -148,6 +173,9 @@ class _GameScreenState extends State<GameScreen> {
             widget.storyChapterIndex!,
             StoryJourney.chapters.length,
           );
+          if (widget.storyChapterIndex == StoryJourney.chapters.length - 1) {
+            await AchievementManager.unlock('culture_explorer');
+          }
         }
         _showWinDialog();
         break;
@@ -163,6 +191,7 @@ class _GameScreenState extends State<GameScreen> {
       _path = [];
       _hintCell = null;
       _startTime = DateTime.now();
+      _perfectRun = true;
     });
     _checkSolvable();
   }
@@ -181,7 +210,7 @@ class _GameScreenState extends State<GameScreen> {
           style: const TextStyle(color: Colors.white),
         ),
         content: Text(
-          'সময় লেগেছে: $elapsed সেকেন্ড',
+          'সময় লেগেছে: $elapsed সেকেন্ড\n🪙 +$_lastCoinsEarned coins পেয়েছো',
           style: const TextStyle(color: Color(0xFFB0BEC5)),
         ),
         actions: [
@@ -204,7 +233,7 @@ class _GameScreenState extends State<GameScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('🎉 শেপ #$_unlimitedStreak সমাধান!', style: const TextStyle(color: Colors.white)),
         content: Text(
-          'সময় লেগেছে: $elapsed সেকেন্ড\nচলো, পরের শেপটা একটু কঠিন!',
+          'সময় লেগেছে: $elapsed সেকেন্ড\n🪙 +$_lastCoinsEarned coins পেয়েছো\nচলো, পরের শেপটা একটু কঠিন!',
           style: const TextStyle(color: Color(0xFFB0BEC5)),
         ),
         actions: [
@@ -219,6 +248,69 @@ class _GameScreenState extends State<GameScreen> {
             },
             child: const Text('চালিয়ে যাও', style: TextStyle(color: Color(0xFF7C4DFF))),
           ),
+        ],
+      ),
+    );
+  }
+
+  // লাইফ শেষ হয়ে গেলে — ব্যাংক করা লাইফ বা ad দেখে continue করার সুযোগ দাও
+  Future<void> _handleLivesExhausted() async {
+    final bankedLives = await LivesManager.getBankedLives();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text('জীবন শেষ! 💔', style: TextStyle(color: Colors.white)),
+        content: Text(
+          bankedLives > 0
+              ? 'তোমার ব্যাংকে $bankedLives টা extra life আছে — চালিয়ে যাবে?'
+              : 'একটা বিজ্ঞাপন দেখে continue করতে পারো।',
+          style: const TextStyle(color: Color(0xFFB0BEC5)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _showGameOverDialog();
+            },
+            child: const Text('থামো'),
+          ),
+          if (bankedLives > 0)
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await LivesManager.useBankedLife();
+                setState(() {
+                  _lives = 1;
+                  _path = [];
+                });
+              },
+              child: const Text('ব্যাংক থেকে লাইফ নাও', style: TextStyle(color: Color(0xFF7C4DFF))),
+            )
+          else
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                AdService.showRewardedAd(
+                  onRewarded: () {
+                    setState(() {
+                      _lives = 1;
+                      _path = [];
+                    });
+                  },
+                  onFailed: (reason) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(reason)));
+                    }
+                    _showGameOverDialog();
+                  },
+                );
+              },
+              child: const Text('📺 বিজ্ঞাপন দেখো', style: TextStyle(color: Colors.amber)),
+            ),
         ],
       ),
     );
@@ -249,6 +341,7 @@ class _GameScreenState extends State<GameScreen> {
               setState(() {
                 _lives = _startingLives;
                 _path = [];
+                _perfectRun = true;
                 if (widget.mode == GameMode.unlimited) _unlimitedStreak = 0;
               });
             },

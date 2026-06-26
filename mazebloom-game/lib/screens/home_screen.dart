@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import '../utils/difficulty_config.dart';
 import '../utils/daily_challenge_manager.dart';
 import '../utils/shape_factory.dart';
+import '../utils/coin_manager.dart';
 import 'game_screen.dart';
 import 'level_select_screen.dart';
 import 'story_mode_screen.dart';
+import 'gallery_screen.dart';
+import 'rewards_screen.dart';
 
 // মূল মেনু — Levels (৩টা difficulty), Daily Challenge, Unlimited mode বেছে নেওয়ার জায়গা
 class HomeScreen extends StatefulWidget {
@@ -17,20 +20,31 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _dailyDone = false;
   int _streak = 0;
+  int _coins = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadDailyStatus();
+    _loadData();
   }
 
-  Future<void> _loadDailyStatus() async {
+  Future<void> _loadData() async {
     final done = await DailyChallengeManager.isCompletedToday();
     final streak = await DailyChallengeManager.getStreak();
+    final coins = await CoinManager.getCoins();
     setState(() {
       _dailyDone = done;
       _streak = streak;
+      _coins = coins;
     });
+  }
+
+  void _openGallery() {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const GalleryScreen())).then((_) => _loadData());
+  }
+
+  void _openRewards() {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const RewardsScreen())).then((_) => _loadData());
   }
 
   void _openDailyChallenge() {
@@ -41,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(
         builder: (_) => GameScreen(shape: shape, mode: GameMode.daily, theme: festivalTheme),
       ),
-    ).then((_) => _loadDailyStatus());
+    ).then((_) => _loadData());
   }
 
   void _openStoryMode() {
@@ -81,7 +95,9 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               children: [
-                const SizedBox(height: 40),
+                const SizedBox(height: 16),
+                _buildTopBar(),
+                const SizedBox(height: 16),
                 const Text('🌸', style: TextStyle(fontSize: 70)),
                 const SizedBox(height: 12),
                 const Text(
@@ -149,6 +165,51 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            children: [
+              const Text('🪙', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: 6),
+              Text('$_coins', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
+        const Spacer(),
+        GestureDetector(
+          onTap: _openGallery,
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Text('🌺', style: TextStyle(fontSize: 18)),
+          ),
+        ),
+        const SizedBox(width: 10),
+        GestureDetector(
+          onTap: _openRewards,
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Text('🎁', style: TextStyle(fontSize: 18)),
+          ),
+        ),
+      ],
     );
   }
 
