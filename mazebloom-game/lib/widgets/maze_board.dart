@@ -11,6 +11,7 @@ class MazeBoard extends StatefulWidget {
   final void Function(List<Point<int>> newPath) onPathChanged;
   final void Function() onStuck; // dead-end এ পড়লে — life কমাতে হবে
   final Color pathColor;
+  final Color cellColor;
 
   const MazeBoard({
     super.key,
@@ -20,6 +21,7 @@ class MazeBoard extends StatefulWidget {
     required this.onStuck,
     this.hintCell,
     this.pathColor = const Color(0xFF7C4DFF),
+    this.cellColor = const Color(0xFF1E1E3A),
   });
 
   @override
@@ -135,21 +137,30 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
         final boardH = _cellSize * widget.shape.rows;
         _boardOffset = Offset((maxW - boardW) / 2, (maxH - boardH) / 2);
 
-        return GestureDetector(
-          onPanStart: (details) => _handleTouch(details.localPosition),
-          onPanUpdate: (details) => _handleTouch(details.localPosition),
-          child: AnimatedBuilder(
-            animation: _hintPulse,
-            builder: (context, _) => CustomPaint(
-              size: Size(maxW, maxH),
-              painter: _MazePainter(
-                shape: widget.shape,
-                path: widget.path,
-                cellSize: _cellSize,
-                boardOffset: _boardOffset,
-                hintCell: widget.hintCell,
-                hintPulse: _hintPulse.value,
-                pathColor: widget.pathColor,
+        // panEnabled: false রাখায় এক-আঙুলের drag trace করার জন্য child এ চলে যায়,
+        // আর দুই-আঙুলের pinch gesture zoom এর জন্য InteractiveViewer ধরে নেয়
+        return InteractiveViewer(
+          panEnabled: false,
+          scaleEnabled: true,
+          minScale: 1.0,
+          maxScale: 2.5,
+          child: GestureDetector(
+            onPanStart: (details) => _handleTouch(details.localPosition),
+            onPanUpdate: (details) => _handleTouch(details.localPosition),
+            child: AnimatedBuilder(
+              animation: _hintPulse,
+              builder: (context, _) => CustomPaint(
+                size: Size(maxW, maxH),
+                painter: _MazePainter(
+                  shape: widget.shape,
+                  path: widget.path,
+                  cellSize: _cellSize,
+                  boardOffset: _boardOffset,
+                  hintCell: widget.hintCell,
+                  hintPulse: _hintPulse.value,
+                  pathColor: widget.pathColor,
+                  cellColor: widget.cellColor,
+                ),
               ),
             ),
           ),
@@ -168,6 +179,7 @@ class _MazePainter extends CustomPainter {
   final Point<int>? hintCell;
   final double hintPulse; // 0.0–1.0, animation এর বর্তমান মান
   final Color pathColor;
+  final Color cellColor;
 
   _MazePainter({
     required this.shape,
@@ -176,6 +188,7 @@ class _MazePainter extends CustomPainter {
     required this.boardOffset,
     required this.hintPulse,
     required this.pathColor,
+    required this.cellColor,
     this.hintCell,
   });
 
@@ -186,7 +199,7 @@ class _MazePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final cellPaint = Paint()..color = const Color(0xFF1E1E3A);
+    final cellPaint = Paint()..color = cellColor;
     final inset = cellSize * 0.08;
 
     // ১. শেপ এর সব cell — হালকা background box
@@ -246,6 +259,7 @@ class _MazePainter extends CustomPainter {
     return oldDelegate.path != path ||
         oldDelegate.hintCell != hintCell ||
         oldDelegate.hintPulse != hintPulse ||
-        oldDelegate.pathColor != pathColor;
+        oldDelegate.pathColor != pathColor ||
+        oldDelegate.cellColor != cellColor;
   }
 }

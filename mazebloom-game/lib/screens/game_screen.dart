@@ -14,6 +14,7 @@ import '../utils/lives_manager.dart';
 import '../utils/achievement_manager.dart';
 import '../utils/app_language.dart';
 import '../utils/path_color_manager.dart';
+import '../utils/cell_skin_manager.dart';
 import '../utils/hint_manager.dart';
 import '../utils/feedback_service.dart';
 import '../services/ad_service.dart';
@@ -58,6 +59,7 @@ class _GameScreenState extends State<GameScreen> {
   bool _perfectRun = true; // এই attempt এ একবারও dead-end এ পড়েনি কিনা
   int _lastCoinsEarned = 0;
   Color _pathColor = const Color(0xFF7C4DFF);
+  Color _cellColor = const Color(0xFF1E1E3A);
   bool _freeHintAvailable = true;
   late int? _levelIndex; // level mode এ পরের level এ in-place এগিয়ে যাওয়ার জন্য
   late int? _storyChapterIndex; // story mode এ পরের chapter এ in-place এগিয়ে যাওয়ার জন্য
@@ -77,7 +79,13 @@ class _GameScreenState extends State<GameScreen> {
 
   Future<void> _loadPathColor() async {
     final color = await PathColorManager.getSelectedColor();
-    if (mounted) setState(() => _pathColor = color);
+    final cellColor = await CellSkinManager.getSelectedColor();
+    if (mounted) {
+      setState(() {
+        _pathColor = color;
+        _cellColor = cellColor;
+      });
+    }
   }
 
   Future<void> _loadHintStatus() async {
@@ -529,6 +537,7 @@ class _GameScreenState extends State<GameScreen> {
                     onPathChanged: _onPathChanged,
                     onStuck: _onStuck,
                     pathColor: _pathColor,
+                    cellColor: _cellColor,
                   ),
                 ),
               ),
