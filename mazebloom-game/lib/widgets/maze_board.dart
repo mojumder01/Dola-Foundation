@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/grid_shape.dart';
 
 // মূল গেমবোর্ড — শেপ দেখায়, আঙুল দিয়ে drag করে path আঁকা যায়
@@ -23,9 +24,23 @@ class MazeBoard extends StatefulWidget {
   State<MazeBoard> createState() => _MazeBoardState();
 }
 
-class _MazeBoardState extends State<MazeBoard> {
+class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMixin {
   double _cellSize = 0;
   Offset _boardOffset = Offset.zero; // shape কে center করার জন্য padding
+  late final AnimationController _hintPulse;
+
+  @override
+  void initState() {
+    super.initState();
+    _hintPulse = AnimationController(vsync: this, duration: const Duration(milliseconds: 700))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _hintPulse.dispose();
+    super.dispose();
+  }
 
   // আঙুলের position থেকে কোন grid cell এ আছে বের করো
   Point<int>? _cellFromOffset(Offset local) {
@@ -79,15 +94,20 @@ class _MazeBoardState extends State<MazeBoard> {
     if (_isAdjacent(cell, path.last) && !path.contains(cell)) {
       path.add(cell);
       widget.onPathChanged(path);
+      HapticFeedback.selectionClick(); // প্রতিটা নতুন cell এ ছোট vibration feedback
 
       // সম্পূর্ণ হয়ে গেলে আর check করার দরকার নেই
-      if (path.length == widget.shape.totalCells) return;
+      if (path.length == widget.shape.totalCells) {
+        HapticFeedback.mediumImpact();
+        return;
+      }
 
       // নতুন end cell থেকে কোনো unvisited neighbor আছে কিনা — না থাকলে dead-end
       final hasMove = _neighbors(cell).any(
         (n) => widget.shape.contains(n) && !path.contains(n),
       );
       if (!hasMove) {
+        HapticFeedback.heavyImpact();
         widget.onStuck();
       }
     }
@@ -116,14 +136,18 @@ class _MazeBoardState extends State<MazeBoard> {
         return GestureDetector(
           onPanStart: (details) => _handleTouch(details.localPosition),
           onPanUpdate: (details) => _handleTouch(details.localPosition),
-          child: CustomPaint(
-            size: Size(maxW, maxH),
-            painter: _MazePainter(
-              shape: widget.shape,
-              path: widget.path,
-              cellSize: _cellSize,
-              boardOffset: _boardOffset,
-              hintCell: widget.hintCell,
+          child: AnimatedBuilder(
+            animation: _hintPulse,
+            builder: (context, _) => CustomPaint(
+              size: Size(maxW, maxH),
+              painter: _MazePainter(
+                shape: widget.shape,
+                path: widget.path,
+                cellSize: _cellSize,
+                boardOffset: _boardOffset,
+                hintCell: widget.hintCell,
+                hintPulse: _hintPulse.value,
+              ),
             ),
           ),
         );
@@ -139,12 +163,14 @@ class _MazePainter extends CustomPainter {
   final double cellSize;
   final Offset boardOffset;
   final Point<int>? hintCell;
+  final double hintPulse; // 0.0–1.0, animation এর বর্তমান মান
 
   _MazePainter({
     required this.shape,
     required this.path,
     required this.cellSize,
     required this.boardOffset,
+    required this.hintPulse,
     this.hintCell,
   });
 
@@ -182,7 +208,7 @@ class _MazePainter extends CustomPainter {
       );
       canvas.drawRRect(
         RRect.fromRectAndRadius(rect, Radius.circular(cellSize * 0.18)),
-        Paint()..color = Colors.amber.withOpacity(0.5),
+        Paint()..color = Colors.amber.withOpacity(0.35 + hintPulse * 0.35),
       );
     }
 
@@ -212,6 +238,8 @@ class _MazePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _MazePainter oldDelegate) {
-    return oldDelegate.path != path || oldDelegate.hintCell != hintCell;
+    return oldDelegate.path != path ||
+        oldDelegate.hintCell != hintCell ||
+        oldDelegate.hintPulse != hintPulse;
   }
 }
