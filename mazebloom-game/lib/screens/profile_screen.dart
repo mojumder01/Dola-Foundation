@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/app_language.dart';
 import '../utils/profile_manager.dart';
+import '../utils/feedback_service.dart';
 import '../widgets/app_background.dart';
 
 // স্থানীয় প্রোফাইল — কোনো real login/Google sign-in নেই, শুধু নাম + avatar emoji local এ সেভ হয়
@@ -16,6 +17,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _avatar = ProfileManager.defaultAvatar;
   bool _loading = true;
   bool _saved = false;
+  bool _soundOn = true;
+  bool _vibrationOn = true;
 
   @override
   void initState() {
@@ -35,6 +38,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _nameController.text = name ?? '';
       _avatar = avatar;
+      _soundOn = FeedbackService.soundOn;
+      _vibrationOn = FeedbackService.vibrationOn;
       _loading = false;
     });
   }
@@ -141,6 +146,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           );
                         }).toList(),
+                      ),
+                      const SizedBox(height: 28),
+
+                      Text(
+                        tr('সাউন্ড ও ভাইব্রেশন', 'Sound & Vibration'),
+                        style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.06),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Column(
+                          children: [
+                            SwitchListTile(
+                              value: _soundOn,
+                              onChanged: (value) async {
+                                await FeedbackService.setSoundOn(value);
+                                setState(() => _soundOn = value);
+                              },
+                              activeColor: const Color(0xFF7C4DFF),
+                              title: Text(tr('🔊 সাউন্ড', '🔊 Sound'), style: const TextStyle(color: Colors.white)),
+                            ),
+                            SwitchListTile(
+                              value: _vibrationOn,
+                              onChanged: (value) async {
+                                await FeedbackService.setVibrationOn(value);
+                                setState(() => _vibrationOn = value);
+                              },
+                              activeColor: const Color(0xFF7C4DFF),
+                              title: Text(tr('📳 ভাইব্রেশন', '📳 Vibration'), style: const TextStyle(color: Colors.white)),
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 28),
 

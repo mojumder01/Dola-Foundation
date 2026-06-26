@@ -15,6 +15,7 @@ import '../utils/achievement_manager.dart';
 import '../utils/app_language.dart';
 import '../utils/path_color_manager.dart';
 import '../utils/hint_manager.dart';
+import '../utils/feedback_service.dart';
 import '../services/ad_service.dart';
 import '../widgets/maze_board.dart';
 import '../widgets/app_background.dart';
@@ -85,17 +86,20 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _onPathChanged(List<Point<int>> newPath) {
+    if (newPath.length > _path.length) FeedbackService.tap();
     setState(() {
       _path = newPath;
       _hintCell = null; // নতুন move হলে আগের hint বাতিল
     });
 
     if (newPath.length == _shape.totalCells) {
+      FeedbackService.win();
       _onShapeSolved();
     }
   }
 
   void _onStuck() {
+    FeedbackService.fail();
     setState(() {
       _lives--;
       _perfectRun = false;

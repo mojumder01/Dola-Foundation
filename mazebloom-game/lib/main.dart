@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'screens/home_screen.dart';
+import 'screens/splash_screen.dart';
 import 'services/ad_service.dart';
 import 'services/iap_service.dart';
 import 'utils/app_language.dart';
+import 'utils/feedback_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AdService.initialize();
   await IapService.initialize();
   await AppLanguage.instance.load();
+  await FeedbackService.load();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -46,7 +48,7 @@ class MazeBloomApp extends StatelessWidget {
           ),
           fontFamily: 'Roboto',
         ),
-        home: const HomeScreen(),
+        home: const SplashScreen(),
       ),
     );
   }
