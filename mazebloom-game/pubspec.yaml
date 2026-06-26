@@ -1,0 +1,26 @@
+name: maze_bloom
+description: "Maze Bloom - একটা unique shape-tracing maze puzzle game"
+publish_to: 'none'
+
+# version: major.minor.patch+buildNumber
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Local storage — coins, progress সেভ করার জন্য (Part 2+ থেকে দরকার হবে)
+  shared_preferences: ^2.2.3
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
