@@ -37,3 +37,9 @@
 ## সাধারণ সমস্যা
 - AdMob test ad লোড না হলে → ইন্টারনেট কানেকশন চেক করো, প্রথমবার ১-২ মিনিট সময় লাগতে পারে
 - কোনো শেপ "সমাধানযোগ্য না" দেখালে → সেটা bug, রিপোর্ট করো (procedural generator সবসময় verify করে তবুও edge case থাকতে পারে)
+- `flutter run` করলে "Could not get unknown property 'all' for configuration container for project ':google_mobile_ads'" এই Gradle error আসলে → তোমার `flutter create .` দিয়ে generate হওয়া `android/` ফোল্ডারের Gradle/AGP version পুরনো, যা `google_mobile_ads` প্যাকেজের নতুন build script সাপোর্ট করে না। ফিক্স:
+  1. `flutter upgrade` চালাও (Flutter SDK কে লেটেস্ট stable এ আনো)
+  2. পুরনো `android/` ফোল্ডারটা ডিলিট করে আবার `flutter create .` চালাও (নতুন Flutter SDK দিয়ে regenerate হলে Gradle wrapper + AGP version আপডেট হয়ে যাবে)
+  3. AndroidManifest.xml এ আগের INTERNET permission + AdMob APPLICATION_ID meta-data আবার যুক্ত করতে হবে (regenerate এর কারণে মুছে যাবে) — `android_manifest_reference.xml` দেখে মিলিয়ে নাও
+  4. তারপর `flutter pub get` ও `flutter run` (বা `run_game.bat`) আবার চালাও
+  - manual fix (upgrade/regenerate করতে না চাইলে): `android/gradle/wrapper/gradle-wrapper.properties` এ `distributionUrl` কে Gradle 8.9+ এ আপডেট করো, আর `android/settings.gradle` এ `com.android.application` plugin version 8.6.0+ এ বাড়াও।
