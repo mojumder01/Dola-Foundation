@@ -51,19 +51,23 @@ class _GameScreenState extends State<GameScreen> {
   int _lives = _startingLives;
   int _unlimitedStreak = 0; // unlimited mode এ কয়টা শেপ সমাধান হলো
   Point<int>? _hintCell;
-  bool _isSolvable = true; // shape generate করার সময়েই check হয়
   DateTime? _startTime; // speed bonus হিসাব করার জন্য
   bool _perfectRun = true; // এই attempt এ একবারও dead-end এ পড়েনি কিনা
   int _lastCoinsEarned = 0;
   Color _pathColor = const Color(0xFF7C4DFF);
   bool _freeHintAvailable = true;
+  late int? _levelIndex; // level mode এ পরের level এ in-place এগিয়ে যাওয়ার জন্য
+  late int? _storyChapterIndex; // story mode এ পরের chapter এ in-place এগিয়ে যাওয়ার জন্য
+  late CultureTheme? _theme;
 
   @override
   void initState() {
     super.initState();
+    _levelIndex = widget.levelIndex;
+    _storyChapterIndex = widget.storyChapterIndex;
+    _theme = widget.theme;
     _shape = widget.shape;
     _startTime = DateTime.now();
-    _checkSolvable();
     _loadPathColor();
     _loadHintStatus();
   }
@@ -76,11 +80,6 @@ class _GameScreenState extends State<GameScreen> {
   Future<void> _loadHintStatus() async {
     final hasFree = await HintManager.hasFreeHintToday();
     if (mounted) setState(() => _freeHintAvailable = hasFree);
-  }
-
-  void _checkSolvable() {
-    final solution = MazeGenerator.findHamiltonianPath(_shape);
-    _isSolvable = solution != null;
   }
 
   void _onPathChanged(List<Point<int>> newPath) {
@@ -231,10 +230,10 @@ class _GameScreenState extends State<GameScreen> {
 
     switch (widget.mode) {
       case GameMode.level:
-        if (widget.difficulty != null && widget.levelIndex != null) {
-          await ProgressManager.unlockNext(widget.difficulty!, widget.levelIndex!);
+        if (widget.difficulty != null && _levelIndex != null) {
+          await ProgressManager.unlockNext(widget.difficulty!, _levelIndex!);
         }
-        _showWinDialog();
+        _showWinDialog(onNext: _loadNextLevel, nextLabel: tr('পরের Level ➜', 'Next Level ➜'));
         break;
       case GameMode.daily:
         await DailyChallengeManager.markCompletedToday();
@@ -248,16 +247,17 @@ class _GameScreenState extends State<GameScreen> {
         _showUnlimitedWinDialog();
         break;
       case GameMode.story:
-        if (widget.storyChapterIndex != null) {
-          await ProgressManager.unlockNextStoryChapter(
-            widget.storyChapterIndex!,
-            StoryJourney.chapters.length,
-          );
-          if (widget.storyChapterIndex == StoryJourney.chapters.length - 1) {
-            await AchievementManager.unlock('culture_explorer');
-          }
+        final chapterIndex = _storyChapterIndex;
+        var hasNext = false;
+        if (chapterIndex != null) {
+          await ProgressManager.unlockNextStoryChapter(chapterIndex, StoryJourney.chapters.length);
+          hasNext = chapterIndex < StoryJourney.chapters.length - 1;
+          if (!hasNext) await AchievementManager.unlock('culture_explorer');
         }
-        _showWinDialog();
+        _showWinDialog(
+          onNext: hasNext ? _loadNextStoryChapter : null,
+          nextLabel: tr('পরের অধ্যায় ➜', 'Next Chapter ➜'),
+        );
         break;
     }
   }
@@ -276,12 +276,51 @@ class _GameScreenState extends State<GameScreen> {
       _startTime = DateTime.now();
       _perfectRun = true;
     });
-    _checkSolvable();
   }
 
-  void _showWinDialog() {
+  // Level mode এ জিতলে পরের level টা in-place লোড হয় — হোমে ফিরে আসার বদলে
+  void _loadNextLevel() {
+    final difficulty = widget.difficulty;
+    if (difficulty == null) return;
+    final nextIndex = (_levelIndex ?? 0) + 1;
+    final cells = DifficultyConfig.cellsForLevel(difficulty, nextIndex);
+    final seed = DifficultyConfig.seedForLevel(difficulty, nextIndex);
+    final style = switch (difficulty) {
+      Difficulty.easy => ShapeStyle.blob,
+      Difficulty.medium => ShapeStyle.snake,
+      Difficulty.hard => ShapeStyle.branchy,
+    };
+    final shape = ShapeFactory.generate(targetCells: cells, seed: seed, style: style);
+    setState(() {
+      _shape = shape;
+      _levelIndex = nextIndex;
+      _path = [];
+      _hintCell = null;
+      _startTime = DateTime.now();
+      _perfectRun = true;
+    });
+  }
+
+  // Story mode এ জিতলে পরের chapter টা in-place লোড হয় — শেষ chapter হলে আর এগোনোর কিছু নেই
+  void _loadNextStoryChapter() {
+    final nextIndex = (_storyChapterIndex ?? 0) + 1;
+    if (nextIndex >= StoryJourney.chapters.length) return;
+    final theme = StoryJourney.chapters[nextIndex];
+    final shape = ShapeFactory.generate(targetCells: theme.targetCells, seed: theme.seed);
+    setState(() {
+      _shape = shape;
+      _theme = theme;
+      _storyChapterIndex = nextIndex;
+      _path = [];
+      _hintCell = null;
+      _startTime = DateTime.now();
+      _perfectRun = true;
+    });
+  }
+
+  void _showWinDialog({VoidCallback? onNext, String? nextLabel}) {
     final elapsed = DateTime.now().difference(_startTime!).inSeconds;
-    final theme = widget.theme;
+    final theme = _theme;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -306,6 +345,17 @@ class _GameScreenState extends State<GameScreen> {
             onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
             child: Text(tr('হোম এ ফিরো', 'Back to Home')),
           ),
+          if (onNext != null)
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                onNext();
+              },
+              child: Text(
+                nextLabel ?? tr('পরের পর্ব ➜', 'Next ➜'),
+                style: const TextStyle(color: Color(0xFF7C4DFF)),
+              ),
+            ),
         ],
       ),
     );
@@ -462,15 +512,6 @@ class _GameScreenState extends State<GameScreen> {
             children: [
               _buildTopBar(),
               const SizedBox(height: 12),
-              if (!_isSolvable)
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Text(
-                    tr('⚠️ এই shape টা সমাধানযোগ্য না — ডেভেলপার কে জানাও',
-                        '⚠️ This shape is not solvable — please notify the developer'),
-                    style: const TextStyle(color: Colors.redAccent),
-                  ),
-                ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(20),
@@ -535,10 +576,10 @@ class _GameScreenState extends State<GameScreen> {
           const SizedBox(width: 10),
 
           // Theme title — story chapter বা festival daily challenge হলে দেখায়
-          if (widget.theme != null)
+          if (_theme != null)
             Expanded(
               child: Text(
-                '${widget.theme!.emoji} ${widget.theme!.displayTitle}',
+                '${_theme!.emoji} ${_theme!.displayTitle}',
                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                 overflow: TextOverflow.ellipsis,
               ),
