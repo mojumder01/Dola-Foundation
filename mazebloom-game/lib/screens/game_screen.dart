@@ -64,6 +64,7 @@ class _GameScreenState extends State<GameScreen> {
   List<Color>? _bgGradientColors;
   String? _bgImagePath;
   bool _freeHintAvailable = true;
+  bool _generating = false; // পরের shape generate হওয়ার সময় (background isolate এ) loading দেখানোর জন্য
   late int? _levelIndex; // level mode এ পরের level এ in-place এগিয়ে যাওয়ার জন্য
   late int? _storyChapterIndex; // story mode এ পরের chapter এ in-place এগিয়ে যাওয়ার জন্য
   late CultureTheme? _theme;
@@ -204,20 +205,26 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  void _revealHint() {
+  // Hamiltonian-path/continuation খোঁজা backtracking-heavy — বড় shape এ main thread
+  // ব্লক করে ANR ("Not Responding") হতে পারে, তাই compute() দিয়ে আলাদা isolate এ চালানো হয়
+  Future<void> _revealHint() async {
     if (_path.isEmpty) {
       // path শুরুই হয়নি — solvable হলে যেকোনো cell থেকেই শুরু করা যায়,
       // তাই hint হিসেবে generate করা solution এর প্রথম cell দেখাও
-      final solution = MazeGenerator.findHamiltonianPath(_shape);
-      if (solution != null) {
+      final solution = await compute(findHamiltonianPathInBackground, _shape);
+      if (solution != null && mounted) {
         setState(() => _hintCell = solution.first);
       }
       return;
     }
 
     final visited = _path.toSet();
-    final continuation = MazeGenerator.findContinuation(_shape, visited, _path.last);
+    final continuation = await compute(
+      findContinuationInBackground,
+      continuationRequest(_shape, visited, _path.last),
+    );
 
+    if (!mounted) return;
     if (continuation != null && continuation.isNotEmpty) {
       setState(() => _hintCell = continuation.first);
     } else {
@@ -293,25 +300,30 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   // Unlimited mode এ — পরের shape টা একটু কঠিন আকারে generate করে in-place চালিয়ে যাওয়া হয়
-  void _loadNextUnlimitedShape() {
+  // (generation compute() এ আলাদা isolate এ চলে যাতে main thread block হয়ে ANR না হয়)
+  Future<void> _loadNextUnlimitedShape() async {
+    setState(() => _generating = true);
     final nextCells = 10 + (_unlimitedStreak * 2).clamp(0, 30);
     final style = _unlimitedStreak < 4
         ? ShapeStyle.blob
         : (_unlimitedStreak < 9 ? ShapeStyle.snake : ShapeStyle.branchy);
-    final next = ShapeFactory.generate(targetCells: nextCells, style: style);
+    final next = await compute(generateShapeInBackground, ShapeGenRequest(targetCells: nextCells, style: style));
+    if (!mounted) return;
     setState(() {
       _shape = next;
       _path = [];
       _hintCell = null;
       _startTime = DateTime.now();
       _perfectRun = true;
+      _generating = false;
     });
   }
 
   // Level mode এ জিতলে পরের level টা in-place লোড হয় — হোমে ফিরে আসার বদলে
-  void _loadNextLevel() {
+  Future<void> _loadNextLevel() async {
     final difficulty = widget.difficulty;
     if (difficulty == null) return;
+    setState(() => _generating = true);
     final nextIndex = (_levelIndex ?? 0) + 1;
     final cells = DifficultyConfig.cellsForLevel(difficulty, nextIndex);
     final seed = DifficultyConfig.seedForLevel(difficulty, nextIndex);
@@ -320,7 +332,11 @@ class _GameScreenState extends State<GameScreen> {
       Difficulty.medium => ShapeStyle.snake,
       Difficulty.hard => ShapeStyle.branchy,
     };
-    final shape = ShapeFactory.generate(targetCells: cells, seed: seed, style: style);
+    final shape = await compute(
+      generateShapeInBackground,
+      ShapeGenRequest(targetCells: cells, seed: seed, style: style),
+    );
+    if (!mounted) return;
     setState(() {
       _shape = shape;
       _levelIndex = nextIndex;
@@ -328,15 +344,21 @@ class _GameScreenState extends State<GameScreen> {
       _hintCell = null;
       _startTime = DateTime.now();
       _perfectRun = true;
+      _generating = false;
     });
   }
 
   // Story mode এ জিতলে পরের chapter টা in-place লোড হয় — শেষ chapter হলে আর এগোনোর কিছু নেই
-  void _loadNextStoryChapter() {
+  Future<void> _loadNextStoryChapter() async {
     final nextIndex = (_storyChapterIndex ?? 0) + 1;
     if (nextIndex >= StoryJourney.chapters.length) return;
+    setState(() => _generating = true);
     final theme = StoryJourney.chapters[nextIndex];
-    final shape = ShapeFactory.generate(targetCells: theme.targetCells, seed: theme.seed);
+    final shape = await compute(
+      generateShapeInBackground,
+      ShapeGenRequest(targetCells: theme.targetCells, seed: theme.seed),
+    );
+    if (!mounted) return;
     setState(() {
       _shape = shape;
       _theme = theme;
@@ -345,6 +367,7 @@ class _GameScreenState extends State<GameScreen> {
       _hintCell = null;
       _startTime = DateTime.now();
       _perfectRun = true;
+      _generating = false;
     });
   }
 
@@ -540,14 +563,39 @@ class _GameScreenState extends State<GameScreen> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(20),
-                  child: MazeBoard(
-                    shape: _shape,
-                    path: _path,
-                    hintCell: _hintCell,
-                    onPathChanged: _onPathChanged,
-                    onStuck: _onStuck,
-                    pathColor: _pathColor,
-                    cellColor: _cellColor,
+                  child: Stack(
+                    children: [
+                      MazeBoard(
+                        shape: _shape,
+                        path: _path,
+                        hintCell: _hintCell,
+                        onPathChanged: _onPathChanged,
+                        onStuck: _onStuck,
+                        pathColor: _pathColor,
+                        cellColor: _cellColor,
+                      ),
+                      // পরের shape background isolate এ generate হওয়ার সময় — UI thread
+                      // আটকায় না, কিন্তু user কে বুঝাতে loading overlay দেখানো হয়
+                      if (_generating)
+                        Positioned.fill(
+                          child: Container(
+                            color: Colors.black.withOpacity(0.55),
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const CircularProgressIndicator(color: Color(0xFF7C4DFF)),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    tr('মেজ তৈরি হচ্ছে...', 'Building maze...'),
+                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),

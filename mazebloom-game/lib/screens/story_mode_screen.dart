@@ -17,6 +17,7 @@ class StoryModeScreen extends StatefulWidget {
 class _StoryModeScreenState extends State<StoryModeScreen> {
   int _unlockedCount = 1;
   bool _loading = true;
+  bool _opening = false;
 
   @override
   void initState() {
@@ -32,9 +33,19 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
     });
   }
 
-  void _openChapter(int index) {
+  Future<void> _openChapter(int index) async {
+    if (_opening) return;
+    setState(() => _opening = true);
+
     final theme = StoryJourney.chapters[index];
-    final shape = ShapeFactory.generate(targetCells: theme.targetCells, seed: theme.seed);
+    final shape = await compute(
+      generateShapeInBackground,
+      ShapeGenRequest(targetCells: theme.targetCells, seed: theme.seed),
+    );
+
+    if (!mounted) return;
+    setState(() => _opening = false);
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -53,7 +64,9 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
     return Scaffold(
       body: AppBackground(
         child: SafeArea(
-          child: Column(
+          child: Stack(
+            children: [
+              Column(
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
@@ -90,7 +103,7 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 14),
                             child: GestureDetector(
-                              onTap: unlocked ? () => _openChapter(index) : null,
+                              onTap: unlocked && !_opening ? () => _openChapter(index) : null,
                               child: Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
@@ -134,6 +147,27 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
                         },
                       ),
               ),
+            ],
+          ),
+              if (_opening)
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.55),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const CircularProgressIndicator(color: Color(0xFF7C4DFF)),
+                          const SizedBox(height: 12),
+                          Text(
+                            tr('মেজ তৈরি হচ্ছে...', 'Building maze...'),
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

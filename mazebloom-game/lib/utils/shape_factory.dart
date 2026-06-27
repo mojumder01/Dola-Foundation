@@ -2,6 +2,21 @@ import 'dart:math';
 import '../models/grid_shape.dart';
 import 'maze_generator.dart';
 
+// shape generation এ Hamiltonian-path খোঁজার জন্য backtracking লাগে, যা বড়
+// (বিশেষত Hard difficulty/branchy) shape এ অনেকক্ষণ ধরে চলতে পারে। এটা সরাসরি
+// main/UI thread এ ডাকলে app "Not Responding" দেখিয়ে force-close হয়ে যায় —
+// তাই compute() দিয়ে আলাদা isolate এ চালানোর জন্য এই top-level wrapper।
+// (compute() এর callback static/top-level হতে হয়, এবং একটাই argument নেয়।)
+class ShapeGenRequest {
+  final int targetCells;
+  final int? seed;
+  final ShapeStyle style;
+  const ShapeGenRequest({required this.targetCells, this.seed, this.style = ShapeStyle.blob});
+}
+
+GridShape generateShapeInBackground(ShapeGenRequest req) =>
+    ShapeFactory.generate(targetCells: req.targetCells, seed: req.seed, style: req.style);
+
 // শেপ কতটা "গুটিয়ে" থাকবে নাকি ঘুরপথে/শাখা-প্রশাখায় বাড়বে — difficulty বাড়ার
 // সাথে সাথে শেপের ধরনও বদলায়, যাতে সব level একই রকম গোলগাল blob না লাগে।
 enum ShapeStyle { blob, snake, branchy }
@@ -20,7 +35,9 @@ class ShapeFactory {
     final random = seed != null ? Random(seed) : Random();
 
     // কয়েকবার চেষ্টা করো — মাঝে মাঝে growth আটকে যেতে পারে অথবা solvable না হতে পারে
-    for (int attempt = 0; attempt < 30; attempt++) {
+    // (branchy/বড় shape এ unsolvable attempt detect করাটাও backtracking-heavy,
+    // তাই retry সংখ্যা কম রাখা হয়েছে যাতে worst-case সময় বেশি বেড়ে না যায়)
+    for (int attempt = 0; attempt < 12; attempt++) {
       final shape = switch (style) {
         ShapeStyle.blob => _growBlob(targetCells, gridSize, random),
         ShapeStyle.snake => _growSnake(targetCells, gridSize, random),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../utils/difficulty_config.dart';
 import '../utils/progress_manager.dart';
 import '../utils/shape_factory.dart';
+import '../utils/app_language.dart';
 import 'game_screen.dart';
 import '../widgets/app_background.dart';
 
@@ -18,6 +19,7 @@ class LevelSelectScreen extends StatefulWidget {
 class _LevelSelectScreenState extends State<LevelSelectScreen> {
   int _unlockedCount = 1;
   bool _loading = true;
+  bool _opening = false; // shape generate হওয়ার সময় একই tile-এ একাধিকবার tap আটকাতে
 
   @override
   void initState() {
@@ -33,7 +35,10 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
     });
   }
 
-  void _openLevel(int levelIndex) {
+  Future<void> _openLevel(int levelIndex) async {
+    if (_opening) return;
+    setState(() => _opening = true);
+
     final cells = DifficultyConfig.cellsForLevel(widget.difficulty, levelIndex);
     final seed = DifficultyConfig.seedForLevel(widget.difficulty, levelIndex);
     final style = switch (widget.difficulty) {
@@ -41,7 +46,16 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
       Difficulty.medium => ShapeStyle.snake,
       Difficulty.hard => ShapeStyle.branchy,
     };
-    final shape = ShapeFactory.generate(targetCells: cells, seed: seed, style: style);
+    // Hard difficulty এর বড় shape এ Hamiltonian-path backtracking অনেকক্ষণ লাগতে
+    // পারে — compute() দিয়ে background isolate এ চালানো হয় যাতে UI thread না
+    // আটকায় এবং Android ANR/force-close না হয়
+    final shape = await compute(
+      generateShapeInBackground,
+      ShapeGenRequest(targetCells: cells, seed: seed, style: style),
+    );
+
+    if (!mounted) return;
+    setState(() => _opening = false);
 
     Navigator.push(
       context,
@@ -61,7 +75,9 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
     return Scaffold(
       body: AppBackground(
         child: SafeArea(
-          child: Column(
+          child: Stack(
+            children: [
+              Column(
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
@@ -106,7 +122,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                         itemBuilder: (context, index) {
                           final unlocked = index < _unlockedCount;
                           return GestureDetector(
-                            onTap: unlocked ? () => _openLevel(index) : null,
+                            onTap: unlocked && !_opening ? () => _openLevel(index) : null,
                             child: Container(
                               decoration: BoxDecoration(
                                 gradient: unlocked
@@ -134,6 +150,27 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                         },
                       ),
               ),
+            ],
+          ),
+              if (_opening)
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.55),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const CircularProgressIndicator(color: Color(0xFF7C4DFF)),
+                          const SizedBox(height: 12),
+                          Text(
+                            tr('মেজ তৈরি হচ্ছে...', 'Building maze...'),
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

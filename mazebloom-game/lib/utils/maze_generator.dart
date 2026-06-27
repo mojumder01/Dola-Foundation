@@ -1,11 +1,30 @@
 import 'dart:math';
 import '../models/grid_shape.dart';
 
+// Hint এর জন্য continuation/solution খোঁজাও backtracking-ভিত্তিক, বড় shape এ
+// অনেকক্ষণ লাগতে পারে — তাই এগুলোও compute() দিয়ে আলাদা isolate এ চালানোর জন্য
+// top-level wrapper (main thread block করলে ANR/"Not Responding" crash হয়)।
+class _HintRequest {
+  final GridShape shape;
+  final Set<Point<int>>? visited;
+  final Point<int>? current;
+  const _HintRequest({required this.shape, this.visited, this.current});
+}
+
+List<Point<int>>? findHamiltonianPathInBackground(GridShape shape) =>
+    MazeGenerator.findHamiltonianPath(shape);
+
+List<Point<int>>? findContinuationInBackground(_HintRequest req) =>
+    MazeGenerator.findContinuation(req.shape, req.visited!, req.current!);
+
+_HintRequest continuationRequest(GridShape shape, Set<Point<int>> visited, Point<int> current) =>
+    _HintRequest(shape: shape, visited: visited, current: current);
+
 // Shape এর ভেতরে Hamiltonian path খুঁজে বের করে — মানে এমন একটা route
 // যেটা প্রতিটা cell ঠিক একবার visit করে। এটা দিয়ে বোঝা যায় shape টা
 // সমাধানযোগ্য কিনা, আর hint button এর জন্য continuation খোঁজা হয় একই লজিকে।
 class MazeGenerator {
-  static const int _maxAttempts = 200000; // অনেকদূর চেষ্টা করে হ্যাং না হওয়ার জন্য limit
+  static const int _maxAttempts = 50000; // অনেকদূর চেষ্টা করে হ্যাং না হওয়ার জন্য limit
   static int _attempts = 0;
 
   // নতুন level load হলে shape টা solvable কিনা যাচাই করো (এবং একটা সমাধান পাও)
@@ -16,7 +35,7 @@ class MazeGenerator {
     final starts = shape.cells.toList()..shuffle(random);
 
     // কয়েকটা random start cell দিয়ে চেষ্টা করো — একটাতেই সাধারণত পেয়ে যাবে
-    for (final start in starts.take(5)) {
+    for (final start in starts.take(3)) {
       _attempts = 0;
       final visited = <Point<int>>{start};
       final path = <Point<int>>[start];
