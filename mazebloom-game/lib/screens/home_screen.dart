@@ -461,8 +461,16 @@ class _LifeQuickBuySheet extends StatefulWidget {
 }
 
 class _LifeQuickBuySheetState extends State<_LifeQuickBuySheet> {
-  static const int lifeCoinCost = 15;
+  int _lifeCoinCost = 150;
   bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    LivesManager.getNextCoinCost().then((cost) {
+      if (mounted) setState(() => _lifeCoinCost = cost);
+    });
+  }
 
   Future<void> _watchAd() async {
     setState(() => _busy = true);
@@ -488,13 +496,14 @@ class _LifeQuickBuySheetState extends State<_LifeQuickBuySheet> {
       );
       return;
     }
-    final spent = await CoinManager.spendCoins(lifeCoinCost);
+    final spent = await CoinManager.spendCoins(_lifeCoinCost);
     if (!spent) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
       );
       return;
     }
+    await LivesManager.recordCoinPurchase();
     await LivesManager.addBankedLife();
     widget.onChanged();
     if (mounted) Navigator.pop(context);
@@ -552,7 +561,7 @@ class _LifeQuickBuySheetState extends State<_LifeQuickBuySheet> {
               ),
               child: Center(
                 child: Text(
-                  tr('🪙 $lifeCoinCost কয়েন দিয়ে নাও', '🪙 Buy for $lifeCoinCost coins'),
+                  tr('🪙 $_lifeCoinCost কয়েন দিয়ে নাও', '🪙 Buy for $_lifeCoinCost coins'),
                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),

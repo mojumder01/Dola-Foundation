@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'coin_manager.dart';
+import 'difficulty_config.dart';
+import 'progress_manager.dart';
 
 // গেম স্ক্রিনের background — কিছু আগে থেকে বানানো gradient, আর একটা স্লট নিজের ফোনের ছবি দিয়ে customize করার জন্য
 class MazeBackgroundOption {
   final String id;
   final List<Color> colors;
   final int cost;
+  final bool isLight; // light theme হলে true — dark এর সাথে combo দেখানোর জন্য
   final bool isCustomPhoto; // true হলে device থেকে বাছা ছবি — কয়েন লাগে না, কিন্তু আগে ছবি বাছতে হবে
+  final int? unlockLevel; // এই level এ পৌঁছালে কয়েন না লাগিয়েই আনলক হয়ে যায়
 
   const MazeBackgroundOption({
     required this.id,
     required this.colors,
     required this.cost,
+    this.isLight = false,
     this.isCustomPhoto = false,
+    this.unlockLevel,
   });
 }
 
@@ -24,20 +30,97 @@ class MazeBackgroundManager {
   static const String defaultId = 'default';
   static const String customId = 'custom_photo';
 
+  // dark আর light থিম পালাক্রমে রাখা হয়েছে — সবগুলোই একরকম dark থাকার অভিযোগ ঠিক করার জন্য।
+  // serial unlock: এক একটা আগের option আনলক না করলে পরেরটা কেনা যায় না, আর দাম ক্রমান্বয়ে বাড়ে।
+  // প্রতিটার একটা বিকল্প unlockLevel ও আছে — কয়েন না খরচ করেও সেই level এ পৌঁছালে ফ্রি আনলক হয়ে যায়।
   static const List<MazeBackgroundOption> options = [
     MazeBackgroundOption(id: defaultId, colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460)], cost: 0),
-    MazeBackgroundOption(id: 'aurora', colors: [Color(0xFF1B2A4A), Color(0xFF2E5C4A), Color(0xFF4A1B5C)], cost: 30),
-    MazeBackgroundOption(id: 'ember', colors: [Color(0xFF3A1414), Color(0xFF5C2E1B), Color(0xFF1A0E0E)], cost: 30),
-    MazeBackgroundOption(id: 'lagoon', colors: [Color(0xFF0E2A3A), Color(0xFF14525C), Color(0xFF0A1A2E)], cost: 30),
+    // football-field অনুপ্রাণিত হালকা সবুজ মাঠ — ব্যবহারকারীর পছন্দ হয়েছিল
+    MazeBackgroundOption(
+      id: 'meadow',
+      colors: [Color(0xFFA5D6A7), Color(0xFF66BB6A), Color(0xFF388E3C)],
+      cost: 40,
+      isLight: true,
+      unlockLevel: 3,
+    ),
+    MazeBackgroundOption(
+      id: 'aurora',
+      colors: [Color(0xFF1B2A4A), Color(0xFF2E5C4A), Color(0xFF4A1B5C)],
+      cost: 80,
+      unlockLevel: 6,
+    ),
+    // হালকা আকাশী-সাদা — আকাশের থিম
+    MazeBackgroundOption(
+      id: 'sky',
+      colors: [Color(0xFFE1F5FE), Color(0xFF81D4FA), Color(0xFF4FC3F7)],
+      cost: 160,
+      isLight: true,
+      unlockLevel: 9,
+    ),
+    MazeBackgroundOption(
+      id: 'ember',
+      colors: [Color(0xFF3A1414), Color(0xFF5C2E1B), Color(0xFF1A0E0E)],
+      cost: 320,
+      unlockLevel: 12,
+    ),
+    // হালকা বালু/মরুভূমি টোন
+    MazeBackgroundOption(
+      id: 'sand',
+      colors: [Color(0xFFFFF3E0), Color(0xFFFFCC80), Color(0xFFFFA726)],
+      cost: 640,
+      isLight: true,
+      unlockLevel: 15,
+    ),
+    MazeBackgroundOption(
+      id: 'lagoon',
+      colors: [Color(0xFF0E2A3A), Color(0xFF14525C), Color(0xFF0A1A2E)],
+      cost: 1280,
+      unlockLevel: 18,
+    ),
     MazeBackgroundOption(id: customId, colors: [Color(0xFF1A1A2E), Color(0xFF16213E)], cost: 0, isCustomPhoto: true),
   ];
 
   static MazeBackgroundOption optionFor(String id) =>
       options.firstWhere((o) => o.id == id, orElse: () => options.first);
 
+  // serial order — default আর custom বাদে বাকিগুলো ক্রমানুসারে আনলক করতে হয়
+  static List<MazeBackgroundOption> get _serialOptions =>
+      options.where((o) => o.id != defaultId && !o.isCustomPhoto).toList();
+
+  // আগের সব serial option আনলক হয়ে থাকলেই এটা কেনা/আনলক করা যাবে
+  static bool isPurchasable(String id, Set<String> unlockedIds) {
+    final serial = _serialOptions;
+    final index = serial.indexWhere((o) => o.id == id);
+    if (index <= 0) return true; // প্রথমটা সবসময় কেনা যায়
+    return unlockedIds.contains(serial[index - 1].id);
+  }
+
+  // সর্বোচ্চ level (যেকোনো difficulty এর মধ্যে) দিয়ে level-ভিত্তিক ফ্রি আনলক চেক করা হয়
+  static Future<int> _highestUnlockedLevel() async {
+    final counts = await Future.wait(
+      Difficulty.values.map((d) => ProgressManager.getUnlockedCount(d)),
+    );
+    return counts.reduce((a, b) => a > b ? a : b);
+  }
+
+  // level দিয়ে যেগুলো ফ্রি আনলক হওয়ার কথা সেগুলো unlocked set এ যুক্ত করে দেয়
+  static Future<Set<String>> _applyLevelUnlocks(SharedPreferences prefs, Set<String> unlocked) async {
+    final highest = await _highestUnlockedLevel();
+    var changed = false;
+    for (final o in options) {
+      if (o.unlockLevel != null && highest >= o.unlockLevel! && !unlocked.contains(o.id)) {
+        unlocked.add(o.id);
+        changed = true;
+      }
+    }
+    if (changed) await prefs.setStringList(_unlockedKey, unlocked.toList());
+    return unlocked;
+  }
+
   static Future<Set<String>> getUnlockedIds() async {
     final prefs = await SharedPreferences.getInstance();
-    return (prefs.getStringList(_unlockedKey) ?? [defaultId]).toSet()..add(defaultId);
+    final unlocked = (prefs.getStringList(_unlockedKey) ?? [defaultId]).toSet()..add(defaultId);
+    return _applyLevelUnlocks(prefs, unlocked);
   }
 
   static Future<String> getSelectedId() async {
@@ -73,6 +156,8 @@ class MazeBackgroundManager {
       await select(id);
       return true;
     }
+    if (!isPurchasable(id, unlocked)) return false; // আগের serial option আগে আনলক করতে হবে
+
     final spent = await CoinManager.spendCoins(option.cost);
     if (!spent) return false;
 

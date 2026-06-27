@@ -33,6 +33,7 @@ class GameScreen extends StatefulWidget {
   final int? levelIndex; // mode == level হলে লাগবে
   final CultureTheme? theme; // mode == story/festival daily হলে — নাম, রঙ, ইমোজি দেখানোর জন্য
   final int? storyChapterIndex; // mode == story হলে লাগবে
+  final int? storyLevelIndex; // mode == story হলে — chapter এর ভেতরের কোন level
 
   const GameScreen({
     super.key,
@@ -42,6 +43,7 @@ class GameScreen extends StatefulWidget {
     this.levelIndex,
     this.theme,
     this.storyChapterIndex,
+    this.storyLevelIndex,
   });
 
   @override
@@ -63,10 +65,12 @@ class _GameScreenState extends State<GameScreen> {
   Color _cellColor = const Color(0xFF1E1E3A);
   List<Color>? _bgGradientColors;
   String? _bgImagePath;
+  bool _bgIsLight = false;
   bool _freeHintAvailable = true;
   bool _generating = false; // পরের shape generate হওয়ার সময় (background isolate এ) loading দেখানোর জন্য
   late int? _levelIndex; // level mode এ পরের level এ in-place এগিয়ে যাওয়ার জন্য
   late int? _storyChapterIndex; // story mode এ পরের chapter এ in-place এগিয়ে যাওয়ার জন্য
+  late int? _storyLevelIndex; // story mode এ chapter এর ভেতরের পরের level এ এগিয়ে যাওয়ার জন্য
   late CultureTheme? _theme;
 
   @override
@@ -74,6 +78,7 @@ class _GameScreenState extends State<GameScreen> {
     super.initState();
     _levelIndex = widget.levelIndex;
     _storyChapterIndex = widget.storyChapterIndex;
+    _storyLevelIndex = widget.storyLevelIndex;
     _theme = widget.theme;
     _shape = widget.shape;
     _startTime = DateTime.now();
@@ -93,6 +98,7 @@ class _GameScreenState extends State<GameScreen> {
         _cellColor = cellColor;
         _bgGradientColors = bgOption.colors;
         _bgImagePath = customPath;
+        _bgIsLight = bgOption.isLight;
       });
     }
   }
@@ -279,15 +285,24 @@ class _GameScreenState extends State<GameScreen> {
         break;
       case GameMode.story:
         final chapterIndex = _storyChapterIndex;
+        final levelIndex = _storyLevelIndex;
         var hasNext = false;
-        if (chapterIndex != null) {
-          await ProgressManager.unlockNextStoryChapter(chapterIndex, StoryJourney.chapters.length);
-          hasNext = chapterIndex < StoryJourney.chapters.length - 1;
-          if (!hasNext) await _unlockAchievement('culture_explorer');
+        var nextLabel = tr('পরের Level ➜', 'Next Level ➜');
+        if (chapterIndex != null && levelIndex != null) {
+          final isLastLevelInChapter = levelIndex >= StoryJourney.levelsPerChapter - 1;
+          if (isLastLevelInChapter) {
+            await ProgressManager.unlockNextStoryChapter(chapterIndex, StoryJourney.chapters.length);
+            hasNext = chapterIndex < StoryJourney.chapters.length - 1;
+            nextLabel = tr('পরের অধ্যায় ➜', 'Next Chapter ➜');
+            if (!hasNext) await _unlockAchievement('culture_explorer');
+          } else {
+            await ProgressManager.unlockNextStoryLevel(chapterIndex, levelIndex, StoryJourney.levelsPerChapter);
+            hasNext = true;
+          }
         }
         _showWinDialog(
-          onNext: hasNext ? _loadNextStoryChapter : null,
-          nextLabel: tr('পরের অধ্যায় ➜', 'Next Chapter ➜'),
+          onNext: hasNext ? _loadNextStoryLevel : null,
+          nextLabel: nextLabel,
         );
         break;
     }
@@ -348,21 +363,35 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
-  // Story mode এ জিতলে পরের chapter টা in-place লোড হয় — শেষ chapter হলে আর এগোনোর কিছু নেই
-  Future<void> _loadNextStoryChapter() async {
-    final nextIndex = (_storyChapterIndex ?? 0) + 1;
-    if (nextIndex >= StoryJourney.chapters.length) return;
+  // Story mode এ জিতলে পরের level (একই chapter এ, অথবা chapter শেষ হলে পরের chapter এর
+  // ১ম level) in-place লোড হয় — সব chapter এর সব level শেষ হলে আর এগোনোর কিছু নেই
+  Future<void> _loadNextStoryLevel() async {
+    final currentChapter = _storyChapterIndex ?? 0;
+    final currentLevel = _storyLevelIndex ?? 0;
+    int nextChapter = currentChapter;
+    int nextLevel = currentLevel + 1;
+    if (nextLevel >= StoryJourney.levelsPerChapter) {
+      nextChapter = currentChapter + 1;
+      nextLevel = 0;
+    }
+    if (nextChapter >= StoryJourney.chapters.length) return;
+
     setState(() => _generating = true);
-    final theme = StoryJourney.chapters[nextIndex];
+    final theme = StoryJourney.chapters[nextChapter];
     final shape = await compute(
       generateShapeInBackground,
-      ShapeGenRequest(targetCells: theme.targetCells, seed: theme.seed),
+      ShapeGenRequest(
+        targetCells: theme.cellsForLevel(nextLevel),
+        seed: theme.seedForLevel(nextLevel),
+        style: theme.style,
+      ),
     );
     if (!mounted) return;
     setState(() {
       _shape = shape;
       _theme = theme;
-      _storyChapterIndex = nextIndex;
+      _storyChapterIndex = nextChapter;
+      _storyLevelIndex = nextLevel;
       _path = [];
       _hintCell = null;
       _startTime = DateTime.now();
@@ -555,6 +584,7 @@ class _GameScreenState extends State<GameScreen> {
       body: AppBackground(
         gradientColors: _bgGradientColors,
         imagePath: _bgImagePath,
+        isLight: _bgIsLight,
         child: SafeArea(
           child: Column(
             children: [

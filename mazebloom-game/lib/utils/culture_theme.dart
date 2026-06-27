@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'app_language.dart';
+import 'shape_factory.dart';
 
 // বাংলা সংস্কৃতির থিম — গল্প/journey mode এবং উৎসব-ভিত্তিক daily challenge এর জন্য।
 // শেপ সবসময় ShapeFactory দিয়ে procedurally generate হয় (তাই solvability guaranteed),
 // কিন্তু নাম, রঙ, ইমোজি আর cell-size দিয়ে প্রতিটাকে আলাদা সাংস্কৃতিক রূপ দেওয়া হয়।
+// আগে প্রতি chapter এ একটাই fixed maze ছিল ("only one game per section" feedback) —
+// এখন প্রতিটা chapter এ অনেকগুলো level আছে, আর style ভিন্ন রাখা হয়েছে যাতে maze design
+// আরও বৈচিত্র্যময়/আকর্ষণীয় লাগে।
 class CultureTheme {
   final String id;
   final String title;
@@ -14,6 +18,7 @@ class CultureTheme {
   final List<Color> colors;
   final int targetCells;
   final int seed;
+  final ShapeStyle style;
 
   const CultureTheme({
     required this.id,
@@ -25,14 +30,24 @@ class CultureTheme {
     required this.colors,
     required this.targetCells,
     required this.seed,
+    this.style = ShapeStyle.blob,
   });
 
   String get displayTitle => tr(title, titleEn);
   String get displayDescription => tr(description, descriptionEn);
+
+  // chapter এর ভেতরের level (0-based) অনুযায়ী cell সংখ্যা বাড়তে থাকে
+  int cellsForLevel(int levelIndex) => targetCells + levelIndex * 6;
+
+  // প্রতিটা sub-level এর জন্য আলাদা deterministic seed
+  int seedForLevel(int levelIndex) => seed * 100 + levelIndex;
 }
 
 // Story/Journey mode — বাংলাদেশের সংস্কৃতি ঘুরে দেখার একটা ধারাবাহিক যাত্রা
 class StoryJourney {
+  // প্রতিটা chapter (section) এ এখন একটার বদলে একাধিক maze খেলা যায়
+  static const int levelsPerChapter = 5;
+
   static const List<CultureTheme> chapters = [
     CultureTheme(
       id: 'rickshaw',
@@ -44,6 +59,7 @@ class StoryJourney {
       colors: [Color(0xFFFFC107), Color(0xFFFF8F00)],
       targetCells: 12,
       seed: 501,
+      style: ShapeStyle.blob,
     ),
     CultureTheme(
       id: 'shapla',
@@ -55,6 +71,7 @@ class StoryJourney {
       colors: [Color(0xFF26C6DA), Color(0xFF00838F)],
       targetCells: 16,
       seed: 502,
+      style: ShapeStyle.snake,
     ),
     CultureTheme(
       id: 'ilish',
@@ -66,6 +83,7 @@ class StoryJourney {
       colors: [Color(0xFF42A5F5), Color(0xFF1565C0)],
       targetCells: 20,
       seed: 503,
+      style: ShapeStyle.branchy,
     ),
     CultureTheme(
       id: 'boishakh',
@@ -77,6 +95,7 @@ class StoryJourney {
       colors: [Color(0xFFEF5350), Color(0xFFB71C1C)],
       targetCells: 24,
       seed: 504,
+      style: ShapeStyle.snake,
     ),
     CultureTheme(
       id: 'nakshi',
@@ -88,6 +107,7 @@ class StoryJourney {
       colors: [Color(0xFFAB47BC), Color(0xFF6A1B9A)],
       targetCells: 28,
       seed: 505,
+      style: ShapeStyle.branchy,
     ),
     CultureTheme(
       id: 'shadhinota',
@@ -99,6 +119,7 @@ class StoryJourney {
       colors: [Color(0xFF66BB6A), Color(0xFF2E7D32)],
       targetCells: 32,
       seed: 506,
+      style: ShapeStyle.branchy,
     ),
   ];
 }

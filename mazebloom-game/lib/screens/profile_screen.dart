@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../utils/app_language.dart';
 import '../utils/profile_manager.dart';
 import '../utils/feedback_service.dart';
+import '../utils/coin_manager.dart';
+import '../utils/path_color_manager.dart';
+import '../utils/cell_skin_manager.dart';
+import '../utils/maze_background_manager.dart';
+import '../services/iap_service.dart';
 import '../widgets/app_background.dart';
 
 // স্থানীয় প্রোফাইল — কোনো real login/Google sign-in নেই, শুধু নাম + avatar emoji local এ সেভ হয়
@@ -19,6 +25,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _saved = false;
   bool _soundOn = true;
   bool _vibrationOn = true;
+  int _coins = 0;
+  String _selectedColorId = PathColorManager.defaultId;
+  Set<String> _unlockedColorIds = {};
+  String _selectedSkinId = CellSkinManager.defaultId;
+  Set<String> _unlockedSkinIds = {};
+  String _selectedBgId = MazeBackgroundManager.defaultId;
+  Set<String> _unlockedBgIds = {};
 
   @override
   void initState() {
@@ -33,15 +46,90 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _load() async {
+    if (IapService.diamondColorUnlocked) {
+      await PathColorManager.unlockPremium(PathColorManager.diamondId);
+    }
     final name = await ProfileManager.getName();
     final avatar = await ProfileManager.getAvatar();
+    final coins = await CoinManager.getCoins();
+    final selectedColorId = await PathColorManager.getSelectedId();
+    final unlockedColorIds = await PathColorManager.getUnlockedIds();
+    final selectedSkinId = await CellSkinManager.getSelectedId();
+    final unlockedSkinIds = await CellSkinManager.getUnlockedIds();
+    final selectedBgId = await MazeBackgroundManager.getSelectedId();
+    final unlockedBgIds = await MazeBackgroundManager.getUnlockedIds();
     setState(() {
       _nameController.text = name ?? '';
       _avatar = avatar;
       _soundOn = FeedbackService.soundOn;
       _vibrationOn = FeedbackService.vibrationOn;
+      _coins = coins;
+      _selectedColorId = selectedColorId;
+      _unlockedColorIds = unlockedColorIds;
+      _selectedSkinId = selectedSkinId;
+      _unlockedSkinIds = unlockedSkinIds;
+      _selectedBgId = selectedBgId;
+      _unlockedBgIds = unlockedBgIds;
       _loading = false;
     });
+  }
+
+  Future<void> _buyOrSelectColor(PathColorOption option) async {
+    final alreadyUnlocked = _unlockedColorIds.contains(option.id);
+    if (option.isPremium && !alreadyUnlocked) {
+      final started = await IapService.buy(IapService.diamondColorProductId);
+      if (!started && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(tr('এই মুহূর্তে কেনা যাচ্ছে না — পরে চেষ্টা করো', 'Purchase unavailable right now — try again later'))),
+        );
+      }
+      return;
+    }
+    if (!alreadyUnlocked && _coins < option.cost) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
+      );
+      return;
+    }
+    final ok = await PathColorManager.purchase(option.id);
+    if (ok) await _load();
+  }
+
+  Future<void> _buyOrSelectSkin(CellSkinOption option) async {
+    final alreadyUnlocked = _unlockedSkinIds.contains(option.id);
+    if (!alreadyUnlocked && _coins < option.cost) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
+      );
+      return;
+    }
+    final ok = await CellSkinManager.purchase(option.id);
+    if (ok) await _load();
+  }
+
+  Future<void> _buyOrSelectBackground(MazeBackgroundOption option) async {
+    if (option.isCustomPhoto) {
+      final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (picked == null) return;
+      await MazeBackgroundManager.setCustomPhotoPath(picked.path);
+      await _load();
+      return;
+    }
+    final alreadyUnlocked = _unlockedBgIds.contains(option.id);
+    if (!alreadyUnlocked && !MazeBackgroundManager.isPurchasable(option.id, _unlockedBgIds)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('আগের ব্যাকগ্রাউন্ডটা আগে আনলক করো', 'Unlock the previous background first'))),
+      );
+      return;
+    }
+    if (!alreadyUnlocked && _coins < option.cost) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
+      );
+      return;
+    }
+    final ok = await MazeBackgroundManager.purchase(option.id);
+    if (ok) await _load();
   }
 
   Future<void> _save() async {
@@ -160,6 +248,147 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(width: 12),
                           Expanded(child: _langOption('বাংলা', AppLang.bn)),
                         ],
+                      ),
+                      const SizedBox(height: 28),
+
+                      Text(tr('🎨 Path এর রঙ', '🎨 Path Color'), style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: PathColorManager.options.map((option) {
+                          final unlocked = _unlockedColorIds.contains(option.id);
+                          final selected = option.id == _selectedColorId;
+                          String priceLabel;
+                          if (unlocked) {
+                            priceLabel = selected ? tr('বাছা হয়েছে', 'Selected') : tr('আনলকড', 'Unlocked');
+                          } else if (option.isPremium) {
+                            priceLabel = IapService.productFor(IapService.diamondColorProductId)?.price ?? tr('প্রিমিয়াম', 'Premium');
+                          } else {
+                            priceLabel = '🪙${option.cost}';
+                          }
+                          return GestureDetector(
+                            onTap: () => _buyOrSelectColor(option),
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.06),
+                                borderRadius: BorderRadius.circular(14),
+                                border: selected
+                                    ? Border.all(color: Colors.white, width: 2)
+                                    : (option.isPremium ? Border.all(color: const Color(0xFF00E5FF).withOpacity(0.5), width: 1.5) : null),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(color: option.color, shape: BoxShape.circle),
+                                    child: option.isPremium && !unlocked
+                                        ? const Icon(Icons.diamond, color: Colors.white, size: 16)
+                                        : null,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(priceLabel, style: const TextStyle(color: Colors.white70, fontSize: 10)),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 28),
+
+                      Text(tr('🧩 Cell এর রঙ', '🧩 Cell Skin'), style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: CellSkinManager.options.map((option) {
+                          final unlocked = _unlockedSkinIds.contains(option.id);
+                          final selected = option.id == _selectedSkinId;
+                          return GestureDetector(
+                            onTap: () => _buyOrSelectSkin(option),
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.06),
+                                borderRadius: BorderRadius.circular(14),
+                                border: selected ? Border.all(color: Colors.white, width: 2) : null,
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(color: option.color, borderRadius: BorderRadius.circular(8)),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    unlocked ? (selected ? tr('বাছা হয়েছে', 'Selected') : tr('আনলকড', 'Unlocked')) : '🪙${option.cost}',
+                                    style: const TextStyle(color: Colors.white70, fontSize: 10),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 28),
+
+                      Text(tr('🖼️ গেম ব্যাকগ্রাউন্ড', '🖼️ Game Background'), style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: MazeBackgroundManager.options.map((option) {
+                          final unlocked = _unlockedBgIds.contains(option.id);
+                          final selected = option.id == _selectedBgId;
+                          final locked = !unlocked && !option.isCustomPhoto && !MazeBackgroundManager.isPurchasable(option.id, _unlockedBgIds);
+                          String label;
+                          if (option.isCustomPhoto) {
+                            label = unlocked ? (selected ? tr('বাছা হয়েছে', 'Selected') : tr('বদলাও', 'Change')) : tr('ছবি বাছো', 'Pick Photo');
+                          } else if (locked) {
+                            label = tr('🔒 আগেরটা আনলক করো', '🔒 Unlock previous');
+                          } else if (unlocked) {
+                            label = selected ? tr('বাছা হয়েছে', 'Selected') : tr('আনলকড', 'Unlocked');
+                          } else if (option.unlockLevel != null) {
+                            label = '🪙${option.cost} / Lv${option.unlockLevel}';
+                          } else {
+                            label = '🪙${option.cost}';
+                          }
+                          return GestureDetector(
+                            onTap: () => _buyOrSelectBackground(option),
+                            child: Opacity(
+                              opacity: locked ? 0.5 : 1.0,
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.06),
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: selected ? Border.all(color: Colors.white, width: 2) : null,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 44,
+                                      height: 32,
+                                      decoration: BoxDecoration(
+                                        gradient: option.isCustomPhoto ? null : LinearGradient(colors: option.colors),
+                                        color: option.isCustomPhoto ? Colors.white.withOpacity(0.1) : null,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: option.isCustomPhoto
+                                          ? const Icon(Icons.add_photo_alternate, color: Colors.white70, size: 18)
+                                          : null,
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(label, style: const TextStyle(color: Colors.white70, fontSize: 10)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       ),
                       const SizedBox(height: 28),
 

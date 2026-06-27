@@ -40,4 +40,21 @@ class ProgressManager {
       await prefs.setInt(_storyKey, nextUnlocked.clamp(1, totalChapters));
     }
   }
+
+  // প্রতিটা chapter এর ভেতরে এখন একাধিক level আছে — সেগুলোর unlock state আলাদাভাবে রাখা হয়
+  static String _storyLevelKey(int chapterIndex) => 'mazebloom_story_level_$chapterIndex';
+
+  static Future<int> getUnlockedStoryLevelCount(int chapterIndex) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_storyLevelKey(chapterIndex)) ?? 1;
+  }
+
+  static Future<void> unlockNextStoryLevel(int chapterIndex, int completedLevelIndex, int levelsPerChapter) async {
+    final prefs = await SharedPreferences.getInstance();
+    final unlocked = await getUnlockedStoryLevelCount(chapterIndex);
+    final nextUnlocked = completedLevelIndex + 2;
+    if (nextUnlocked > unlocked) {
+      await prefs.setInt(_storyLevelKey(chapterIndex), nextUnlocked.clamp(1, levelsPerChapter));
+    }
+  }
 }

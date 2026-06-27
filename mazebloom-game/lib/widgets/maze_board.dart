@@ -35,9 +35,17 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
   final TransformationController _transformController = TransformationController();
   bool _panEnabled = false;
 
+  // shape.rows/cols আসলে generation এর সময়কার abstract grid size — শেপ সেই
+  // grid এর যেকোনো কোণায় থাকতে পারে, পুরোটা ব্যবহার না করেও। আগে পুরো grid এর
+  // জন্য canvas বানানো হতো, তাই শেপ একপাশে চাপা/ছোট দেখাতো আর zoom/pan করলেও
+  // আসল শেপটা viewport এর বাইরে কাটা থাকতো। তাই শেপের নিজের bounding box (যতটুকু
+  // cell আসলে আছে) ধরে trim করে নেওয়া হয় — এতে শেপ সবসময় ঠিক viewport এ ফিট হয়।
+  int _minRow = 0, _minCol = 0, _boundRows = 1, _boundCols = 1;
+
   @override
   void initState() {
     super.initState();
+    _computeBounds();
     // hint cell না থাকলে animation বন্ধ রাখা হয় — আগে এটা সবসময় চলতো, যার ফলে
     // বড় shape (Hard level) এও পুরো board প্রতি ফ্রেমে repaint হতো আর গেম স্লো/স্ট্যাক লাগতো
     _hintPulse = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
@@ -45,13 +53,39 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
     _transformController.addListener(_onTransformChanged);
   }
 
+  void _computeBounds() {
+    if (widget.shape.cells.isEmpty) {
+      _minRow = 0;
+      _minCol = 0;
+      _boundRows = 1;
+      _boundCols = 1;
+      return;
+    }
+    int minRow = widget.shape.cells.first.x, maxRow = widget.shape.cells.first.x;
+    int minCol = widget.shape.cells.first.y, maxCol = widget.shape.cells.first.y;
+    for (final c in widget.shape.cells) {
+      if (c.x < minRow) minRow = c.x;
+      if (c.x > maxRow) maxRow = c.x;
+      if (c.y < minCol) minCol = c.y;
+      if (c.y > maxCol) maxCol = c.y;
+    }
+    _minRow = minRow;
+    _minCol = minCol;
+    _boundRows = maxRow - minRow + 1;
+    _boundCols = maxCol - minCol + 1;
+  }
+
   void _onTransformChanged() {
-    // জুম করার পরই single-finger দিয়ে move/pan করা চালু হয় — না হলে zoom আউট
-    // অবস্থায় pan trace-করার drag এর সাথে conflict করতো
+    // জুম-ইন করার পরই single-finger দিয়ে move/pan করা চালু হয় — bound trim করার
+    // পরও কোনো কোনো লম্বা শেপে এক পাশে viewport এর চেয়ে বড় হয়ে যেতে পারে, তাই
+    // scale ১.০ এর কাছাকাছি থাকলেও (zoomed-out অবস্থা) pan অন রাখা হয় — না হলে
+    // বড় শেপের বাকি অংশে আঙুল দিয়ে পৌঁছানো যেত না
     final scale = _transformController.value.getMaxScaleOnAxis();
-    final shouldPan = scale > 1.02;
+    final shouldPan = scale > 1.02 || _boardOverflowsViewport;
     if (shouldPan != _panEnabled) setState(() => _panEnabled = shouldPan);
   }
+
+  bool _boardOverflowsViewport = false;
 
   @override
   void didUpdateWidget(covariant MazeBoard oldWidget) {
@@ -63,6 +97,7 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
       _hintPulse.value = 0;
     }
     if (oldWidget.shape != widget.shape) {
+      _computeBounds();
       _transformController.value = Matrix4.identity();
     }
   }
@@ -75,16 +110,16 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
     super.dispose();
   }
 
-  // আঙুলের position থেকে কোন grid cell এ আছে বের করো
+  // আঙুলের position থেকে কোন grid cell এ আছে বের করো (bounding-box trimmed coordinate থেকে আসল shape coordinate এ ফিরিয়ে আনা হয়)
   Point<int>? _cellFromOffset(Offset local) {
     if (_cellSize <= 0) return null;
     final adjusted = local - _boardOffset;
-    final col = (adjusted.dx / _cellSize).floor();
-    final row = (adjusted.dy / _cellSize).floor();
-    if (row < 0 || col < 0 || row >= widget.shape.rows || col >= widget.shape.cols) {
+    final localCol = (adjusted.dx / _cellSize).floor();
+    final localRow = (adjusted.dy / _cellSize).floor();
+    if (localRow < 0 || localCol < 0 || localRow >= _boundRows || localCol >= _boundCols) {
       return null;
     }
-    final p = Point(row, col);
+    final p = Point(localRow + _minRow, localCol + _minCol);
     return widget.shape.contains(p) ? p : null;
   }
 
@@ -162,16 +197,17 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
         // সাইজে দেখায় (এর আগে ছোট shape এ অনেক বড়, বড় shape এ অনেক ছোট হয়ে যেত)
         final maxW = constraints.maxWidth;
         final maxH = constraints.maxHeight;
-        final rawSize = min(maxW / widget.shape.cols, maxH / widget.shape.rows);
+        final rawSize = min(maxW / _boundCols, maxH / _boundRows);
         _cellSize = rawSize.clamp(26.0, 58.0);
 
-        final boardW = _cellSize * widget.shape.cols;
-        final boardH = _cellSize * widget.shape.rows;
+        final boardW = _cellSize * _boundCols;
+        final boardH = _cellSize * _boundRows;
         // clamp করার পর board viewport এর চেয়ে বড় হয়ে গেলে canvas টাও বড় করে দিতে
         // হয়, না হলে বাকি অংশ আঁকা/ছোঁয়া যায় না — সেক্ষেত্রে zoom/pan করে পুরোটা দেখা যায়
         final canvasW = max(maxW, boardW);
         final canvasH = max(maxH, boardH);
         _boardOffset = Offset((canvasW - boardW) / 2, (canvasH - boardH) / 2);
+        _boardOverflowsViewport = boardW > maxW || boardH > maxH;
 
         // জুম-আউট অবস্থায় (scale ~1) pan বন্ধ থাকে যাতে এক-আঙুলের drag trace
         // করার জন্য child এ চলে যায় — জুম করার পর pan চালু হয়ে যায় move করার জন্য
@@ -179,7 +215,7 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
           transformationController: _transformController,
           panEnabled: _panEnabled,
           scaleEnabled: true,
-          minScale: 1.0,
+          minScale: 0.5,
           maxScale: 3.0,
           child: GestureDetector(
             onPanStart: (details) => _handleTouch(details.localPosition),
@@ -193,6 +229,8 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
                   path: widget.path,
                   cellSize: _cellSize,
                   boardOffset: _boardOffset,
+                  minRow: _minRow,
+                  minCol: _minCol,
                   hintCell: widget.hintCell,
                   hintPulse: _hintPulse.value,
                   pathColor: widget.pathColor,
@@ -213,6 +251,8 @@ class _MazePainter extends CustomPainter {
   final List<Point<int>> path;
   final double cellSize;
   final Offset boardOffset;
+  final int minRow;
+  final int minCol;
   final Point<int>? hintCell;
   final double hintPulse; // 0.0–1.0, animation এর বর্তমান মান
   final Color pathColor;
@@ -223,6 +263,8 @@ class _MazePainter extends CustomPainter {
     required this.path,
     required this.cellSize,
     required this.boardOffset,
+    required this.minRow,
+    required this.minCol,
     required this.hintPulse,
     required this.pathColor,
     required this.cellColor,
@@ -230,8 +272,8 @@ class _MazePainter extends CustomPainter {
   });
 
   Offset _centerOf(Point<int> p) => Offset(
-        boardOffset.dx + p.y * cellSize + cellSize / 2,
-        boardOffset.dy + p.x * cellSize + cellSize / 2,
+        boardOffset.dx + (p.y - minCol) * cellSize + cellSize / 2,
+        boardOffset.dy + (p.x - minRow) * cellSize + cellSize / 2,
       );
 
   @override
@@ -248,8 +290,8 @@ class _MazePainter extends CustomPainter {
     // ১. শেপ এর সব cell — হালকা background box, border সহ
     for (final cell in shape.cells) {
       final rect = Rect.fromLTWH(
-        boardOffset.dx + cell.y * cellSize + inset,
-        boardOffset.dy + cell.x * cellSize + inset,
+        boardOffset.dx + (cell.y - minCol) * cellSize + inset,
+        boardOffset.dy + (cell.x - minRow) * cellSize + inset,
         cellSize - inset * 2,
         cellSize - inset * 2,
       );
@@ -261,8 +303,8 @@ class _MazePainter extends CustomPainter {
     // ২. Hint cell — সোনালি highlight
     if (hintCell != null) {
       final rect = Rect.fromLTWH(
-        boardOffset.dx + hintCell!.y * cellSize + inset,
-        boardOffset.dy + hintCell!.x * cellSize + inset,
+        boardOffset.dx + (hintCell!.y - minCol) * cellSize + inset,
+        boardOffset.dy + (hintCell!.x - minRow) * cellSize + inset,
         cellSize - inset * 2,
         cellSize - inset * 2,
       );

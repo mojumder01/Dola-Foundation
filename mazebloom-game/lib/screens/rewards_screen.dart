@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../utils/coin_manager.dart';
 import '../utils/gem_manager.dart';
@@ -11,9 +10,6 @@ import '../services/ad_service.dart';
 import '../services/iap_service.dart';
 import '../utils/app_language.dart';
 import '../utils/app_links.dart';
-import '../utils/path_color_manager.dart';
-import '../utils/cell_skin_manager.dart';
-import '../utils/maze_background_manager.dart';
 import '../widgets/app_background.dart';
 import 'spin_wheel_screen.dart';
 
@@ -26,22 +22,16 @@ class RewardsScreen extends StatefulWidget {
 }
 
 class _RewardsScreenState extends State<RewardsScreen> {
-  static const int lifeCoinCost = 15;
   static const int lifeBundleGemCost = 8;
   static const int lifeBundleAmount = 3;
 
   int _coins = 0;
   int _gems = 0;
   int _bankedLives = 0;
+  int _lifeCoinCost = 150;
   String _myCode = '';
   bool _redeemed = false;
   bool _loading = true;
-  String _selectedColorId = PathColorManager.defaultId;
-  Set<String> _unlockedColorIds = {};
-  String _selectedSkinId = CellSkinManager.defaultId;
-  Set<String> _unlockedSkinIds = {};
-  String _selectedBgId = MazeBackgroundManager.defaultId;
-  Set<String> _unlockedBgIds = {};
   final _codeController = TextEditingController();
   StreamSubscription<void>? _iapSubscription;
 
@@ -61,32 +51,19 @@ class _RewardsScreenState extends State<RewardsScreen> {
   }
 
   Future<void> _load() async {
-    if (IapService.diamondColorUnlocked) {
-      await PathColorManager.unlockPremium(PathColorManager.diamondId);
-    }
     final coins = await CoinManager.getCoins();
     final gems = await GemManager.getGems();
     final lives = await LivesManager.getBankedLives();
+    final nextCoinCost = await LivesManager.getNextCoinCost();
     final code = await ReferralManager.getMyCode();
     final redeemed = await ReferralManager.hasRedeemed();
-    final selectedColorId = await PathColorManager.getSelectedId();
-    final unlockedColorIds = await PathColorManager.getUnlockedIds();
-    final selectedSkinId = await CellSkinManager.getSelectedId();
-    final unlockedSkinIds = await CellSkinManager.getUnlockedIds();
-    final selectedBgId = await MazeBackgroundManager.getSelectedId();
-    final unlockedBgIds = await MazeBackgroundManager.getUnlockedIds();
     setState(() {
       _coins = coins;
       _gems = gems;
       _bankedLives = lives;
+      _lifeCoinCost = nextCoinCost;
       _myCode = code;
       _redeemed = redeemed;
-      _selectedColorId = selectedColorId;
-      _unlockedColorIds = unlockedColorIds;
-      _selectedSkinId = selectedSkinId;
-      _unlockedSkinIds = unlockedSkinIds;
-      _selectedBgId = selectedBgId;
-      _unlockedBgIds = unlockedBgIds;
       _loading = false;
     });
   }
@@ -98,13 +75,14 @@ class _RewardsScreenState extends State<RewardsScreen> {
       );
       return;
     }
-    final spent = await CoinManager.spendCoins(lifeCoinCost);
+    final spent = await CoinManager.spendCoins(_lifeCoinCost);
     if (!spent) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
       );
       return;
     }
+    await LivesManager.recordCoinPurchase();
     await LivesManager.addBankedLife();
     await _load();
     if (mounted) {
@@ -112,60 +90,6 @@ class _RewardsScreenState extends State<RewardsScreen> {
         SnackBar(content: Text(tr('🎉 একটা extra life পেয়েছো!', '🎉 You got an extra life!'))),
       );
     }
-  }
-
-  Future<void> _buyOrSelectColor(PathColorOption option) async {
-    final alreadyUnlocked = _unlockedColorIds.contains(option.id);
-
-    if (option.isPremium && !alreadyUnlocked) {
-      final started = await IapService.buy(IapService.diamondColorProductId);
-      if (!started && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(tr('এই মুহূর্তে কেনা যাচ্ছে না — পরে চেষ্টা করো', 'Purchase unavailable right now — try again later'))),
-        );
-      }
-      return;
-    }
-
-    if (!alreadyUnlocked && _coins < option.cost) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
-      );
-      return;
-    }
-    final ok = await PathColorManager.purchase(option.id);
-    if (ok) await _load();
-  }
-
-  Future<void> _buyOrSelectSkin(CellSkinOption option) async {
-    final alreadyUnlocked = _unlockedSkinIds.contains(option.id);
-    if (!alreadyUnlocked && _coins < option.cost) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
-      );
-      return;
-    }
-    final ok = await CellSkinManager.purchase(option.id);
-    if (ok) await _load();
-  }
-
-  Future<void> _buyOrSelectBackground(MazeBackgroundOption option) async {
-    if (option.isCustomPhoto) {
-      final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (picked == null) return;
-      await MazeBackgroundManager.setCustomPhotoPath(picked.path);
-      await _load();
-      return;
-    }
-    final alreadyUnlocked = _unlockedBgIds.contains(option.id);
-    if (!alreadyUnlocked && _coins < option.cost) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(tr('যথেষ্ট কয়েন নেই', 'Not enough coins'))),
-      );
-      return;
-    }
-    final ok = await MazeBackgroundManager.purchase(option.id);
-    if (ok) await _load();
   }
 
   Future<void> _buyRemoveAds() async {
@@ -346,7 +270,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
                           ),
                           child: Center(
                             child: Text(
-                              tr('❤️ $lifeCoinCost কয়েন দিয়ে Extra Life কিনো', '❤️ Buy an Extra Life for $lifeCoinCost coins'),
+                              tr('❤️ $_lifeCoinCost কয়েন দিয়ে Extra Life কিনো', '❤️ Buy an Extra Life for $_lifeCoinCost coins'),
                               style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -371,145 +295,6 @@ class _RewardsScreenState extends State<RewardsScreen> {
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 28),
-
-                      Text(tr('🎨 Path এর রঙ', '🎨 Path Color'), style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: PathColorManager.options.map((option) {
-                          final unlocked = _unlockedColorIds.contains(option.id);
-                          final selected = option.id == _selectedColorId;
-                          String priceLabel;
-                          if (unlocked) {
-                            priceLabel = selected ? tr('বাছা হয়েছে', 'Selected') : tr('আনলকড', 'Unlocked');
-                          } else if (option.isPremium) {
-                            priceLabel = IapService.productFor(IapService.diamondColorProductId)?.price ?? tr('প্রিমিয়াম', 'Premium');
-                          } else {
-                            priceLabel = '🪙${option.cost}';
-                          }
-                          return GestureDetector(
-                            onTap: () => _buyOrSelectColor(option),
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.06),
-                                borderRadius: BorderRadius.circular(14),
-                                border: selected
-                                    ? Border.all(color: Colors.white, width: 2)
-                                    : (option.isPremium ? Border.all(color: const Color(0xFF00E5FF).withOpacity(0.5), width: 1.5) : null),
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: 32,
-                                    height: 32,
-                                    decoration: BoxDecoration(color: option.color, shape: BoxShape.circle),
-                                    child: option.isPremium && !unlocked
-                                        ? const Icon(Icons.diamond, color: Colors.white, size: 16)
-                                        : null,
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    priceLabel,
-                                    style: const TextStyle(color: Colors.white70, fontSize: 10),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 28),
-
-                      Text(tr('🧩 Cell এর রঙ', '🧩 Cell Skin'), style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: CellSkinManager.options.map((option) {
-                          final unlocked = _unlockedSkinIds.contains(option.id);
-                          final selected = option.id == _selectedSkinId;
-                          return GestureDetector(
-                            onTap: () => _buyOrSelectSkin(option),
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.06),
-                                borderRadius: BorderRadius.circular(14),
-                                border: selected ? Border.all(color: Colors.white, width: 2) : null,
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: 32,
-                                    height: 32,
-                                    decoration: BoxDecoration(
-                                      color: option.color,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    unlocked ? (selected ? tr('বাছা হয়েছে', 'Selected') : tr('আনলকড', 'Unlocked')) : '🪙${option.cost}',
-                                    style: const TextStyle(color: Colors.white70, fontSize: 10),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 28),
-
-                      Text(tr('🖼️ গেম ব্যাকগ্রাউন্ড', '🖼️ Game Background'), style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: MazeBackgroundManager.options.map((option) {
-                          final unlocked = _unlockedBgIds.contains(option.id);
-                          final selected = option.id == _selectedBgId;
-                          String label;
-                          if (option.isCustomPhoto) {
-                            label = unlocked ? (selected ? tr('বাছা হয়েছে', 'Selected') : tr('বদলাও', 'Change')) : tr('ছবি বাছো', 'Pick Photo');
-                          } else {
-                            label = unlocked ? (selected ? tr('বাছা হয়েছে', 'Selected') : tr('আনলকড', 'Unlocked')) : '🪙${option.cost}';
-                          }
-                          return GestureDetector(
-                            onTap: () => _buyOrSelectBackground(option),
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.06),
-                                borderRadius: BorderRadius.circular(14),
-                                border: selected ? Border.all(color: Colors.white, width: 2) : null,
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: 44,
-                                    height: 32,
-                                    decoration: BoxDecoration(
-                                      gradient: option.isCustomPhoto
-                                          ? null
-                                          : LinearGradient(colors: option.colors),
-                                      color: option.isCustomPhoto ? Colors.white.withOpacity(0.1) : null,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: option.isCustomPhoto
-                                        ? const Icon(Icons.add_photo_alternate, color: Colors.white70, size: 18)
-                                        : null,
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(label, style: const TextStyle(color: Colors.white70, fontSize: 10)),
-                                ],
-                              ),
-                            ),
-                          );
-                        }).toList(),
                       ),
                       const SizedBox(height: 28),
 
