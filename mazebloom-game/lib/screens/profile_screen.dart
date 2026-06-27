@@ -13,6 +13,7 @@ import '../utils/cell_skin_manager.dart';
 import '../utils/maze_background_manager.dart';
 import '../services/iap_service.dart';
 import '../widgets/app_background.dart';
+import '../widgets/three_d_style.dart';
 
 // স্থানীয় প্রোফাইল — কোনো real login/Google sign-in নেই, শুধু নাম + avatar emoji local এ সেভ হয়
 /// Stateful screen widget for the profile/settings screen. Logic and data
@@ -206,8 +207,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(colors: [Color(0xFF7C4DFF), Color(0xFF448AFF)]),
+                            gradient: ThreeD.bevelGradient(const [Color(0xFF7C4DFF), Color(0xFF448AFF)]),
                             shape: BoxShape.circle,
+                            border: ThreeD.bevelBorder(),
+                            boxShadow: ThreeD.shadow(elevation: 10),
                           ),
                           child: Text(_avatar, style: const TextStyle(fontSize: 48)),
                         ),
@@ -251,11 +254,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onTap: () => setState(() => _avatar = emoji),
                             child: Container(
                               padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: selected ? Colors.white.withOpacity(0.2) : Colors.white.withOpacity(0.06),
-                                borderRadius: BorderRadius.circular(14),
-                                border: selected ? Border.all(color: const Color(0xFF7C4DFF), width: 2) : null,
-                              ),
+                              decoration: selected
+                                  ? ThreeD.decoration(colors: const [Color(0xFF9575FF), Color(0xFF7C4DFF)], radius: 14).copyWith(
+                                      border: Border.all(color: const Color(0xFF7C4DFF), width: 2),
+                                    )
+                                  : ThreeD.decoration(colors: [Colors.white.withOpacity(0.06)], radius: 14, flat: true),
                               child: Text(emoji, style: const TextStyle(fontSize: 26)),
                             ),
                           );
@@ -297,19 +300,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onTap: () => _buyOrSelectColor(option),
                             child: Container(
                               padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.06),
-                                borderRadius: BorderRadius.circular(14),
-                                border: selected
-                                    ? Border.all(color: Colors.white, width: 2)
-                                    : (option.isPremium ? Border.all(color: const Color(0xFF00E5FF).withOpacity(0.5), width: 1.5) : null),
-                              ),
+                              decoration: (selected
+                                  ? ThreeD.decoration(colors: [Colors.white.withOpacity(0.18)], radius: 14).copyWith(
+                                      border: Border.all(color: Colors.white, width: 2),
+                                    )
+                                  : ThreeD.decoration(colors: [Colors.white.withOpacity(0.06)], radius: 14, flat: true).copyWith(
+                                      border: option.isPremium ? Border.all(color: const Color(0xFF00E5FF).withOpacity(0.5), width: 1.5) : null,
+                                    )),
                               child: Column(
                                 children: [
                                   Container(
                                     width: 32,
                                     height: 32,
-                                    decoration: BoxDecoration(color: option.color, shape: BoxShape.circle),
+                                    decoration: BoxDecoration(
+                                      color: option.color,
+                                      shape: BoxShape.circle,
+                                      border: ThreeD.bevelBorder(),
+                                      boxShadow: ThreeD.shadow(elevation: 4),
+                                    ),
                                     child: option.isPremium && !unlocked
                                         ? const Icon(Icons.diamond, color: Colors.white, size: 16)
                                         : null,
@@ -336,17 +344,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onTap: () => _buyOrSelectSkin(option),
                             child: Container(
                               padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.06),
-                                borderRadius: BorderRadius.circular(14),
-                                border: selected ? Border.all(color: Colors.white, width: 2) : null,
-                              ),
+                              decoration: selected
+                                  ? ThreeD.decoration(colors: [Colors.white.withOpacity(0.18)], radius: 14).copyWith(
+                                      border: Border.all(color: Colors.white, width: 2),
+                                    )
+                                  : ThreeD.decoration(colors: [Colors.white.withOpacity(0.06)], radius: 14, flat: true),
                               child: Column(
                                 children: [
                                   Container(
                                     width: 32,
                                     height: 32,
-                                    decoration: BoxDecoration(color: option.color, borderRadius: BorderRadius.circular(8)),
+                                    decoration: ThreeD.decoration(colors: [option.color], radius: 8),
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
@@ -388,21 +396,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               opacity: locked ? 0.5 : 1.0,
                               child: Container(
                                 padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.06),
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: selected ? Border.all(color: Colors.white, width: 2) : null,
-                                ),
+                                decoration: selected
+                                    ? ThreeD.decoration(colors: [Colors.white.withOpacity(0.18)], radius: 14).copyWith(
+                                        border: Border.all(color: Colors.white, width: 2),
+                                      )
+                                    : ThreeD.decoration(colors: [Colors.white.withOpacity(0.06)], radius: 14, flat: true),
                                 child: Column(
                                   children: [
                                     Container(
                                       width: 44,
                                       height: 32,
-                                      decoration: BoxDecoration(
-                                        gradient: option.isCustomPhoto ? null : LinearGradient(colors: option.colors),
-                                        color: option.isCustomPhoto ? Colors.white.withOpacity(0.1) : null,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
+                                      decoration: option.isCustomPhoto
+                                          ? ThreeD.decoration(colors: [Colors.white.withOpacity(0.1)], radius: 8, flat: true)
+                                          : ThreeD.decoration(colors: option.colors, radius: 8),
                                       child: option.isCustomPhoto
                                           ? const Icon(Icons.add_photo_alternate, color: Colors.white70, size: 18)
                                           : null,
@@ -424,10 +430,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 8),
                       Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.06),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
+                        decoration: ThreeD.decoration(colors: [Colors.white.withOpacity(0.06)], radius: 14, flat: true),
                         child: Column(
                           children: [
                             SwitchListTile(
@@ -458,10 +461,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(colors: [Color(0xFF66BB6A), Color(0xFF2E7D32)]),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
+                          decoration: ThreeD.decoration(colors: const [Color(0xFF66BB6A), Color(0xFF2E7D32)], radius: 16),
                           child: Center(
                             child: Text(
                               tr('সেভ করো', 'Save'),
@@ -503,11 +503,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: selected ? const Color(0xFF7C4DFF) : Colors.white.withOpacity(0.06),
-          borderRadius: BorderRadius.circular(12),
-          border: selected ? null : Border.all(color: Colors.white24),
-        ),
+        decoration: selected
+            ? ThreeD.decoration(colors: const [Color(0xFF9575FF), Color(0xFF7C4DFF)], radius: 12)
+            : ThreeD.decoration(colors: [Colors.white.withOpacity(0.06)], radius: 12, flat: true).copyWith(
+                border: Border.all(color: Colors.white24),
+              ),
         child: Center(
           child: Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         ),

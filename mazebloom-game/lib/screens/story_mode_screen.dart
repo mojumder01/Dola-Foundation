@@ -6,6 +6,7 @@ import '../utils/culture_theme.dart';
 import '../utils/progress_manager.dart';
 import 'story_chapter_levels_screen.dart';
 import '../widgets/app_background.dart';
+import '../widgets/three_d_style.dart';
 
 // বাংলাদেশের সংস্কৃতি ঘুরে দেখার journey — chapter ধরে ধরে unlock হয়
 /// Top-level Story Mode screen showing the list of chapters (each a
@@ -66,9 +67,9 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
                       onTap: () => Navigator.pop(context),
                       child: Container(
                         padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                        decoration: ThreeD.decoration(
+                          colors: [Colors.white.withOpacity(0.1)],
+                          radius: 12,
                         ),
                         child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                       ),
@@ -96,10 +97,10 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
                               onTap: unlocked ? () => _openChapter(index) : null,
                               child: Container(
                                 padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  gradient: unlocked ? LinearGradient(colors: theme.colors) : null,
-                                  color: unlocked ? null : Colors.white.withOpacity(0.06),
-                                  borderRadius: BorderRadius.circular(16),
+                                decoration: ThreeD.decoration(
+                                  colors: unlocked ? theme.colors : [Colors.white.withOpacity(0.06)],
+                                  radius: 16,
+                                  flat: !unlocked,
                                 ),
                                 child: Row(
                                   children: [

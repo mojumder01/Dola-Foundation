@@ -7,6 +7,7 @@ import '../utils/coin_manager.dart';
 import '../utils/app_language.dart';
 import '../services/ad_service.dart';
 import '../widgets/app_background.dart';
+import '../widgets/three_d_style.dart';
 
 // দিনে ৩ বার পর্যন্ত spin করে কয়েন পাওয়ার চাকা — ১টা ফ্রি, বাকিগুলো বিজ্ঞাপন দেখে
 /// Stateful widget hosting the daily spin wheel UI and reward logic.
@@ -135,9 +136,9 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with SingleTickerProv
                       onTap: () => Navigator.pop(context),
                       child: Container(
                         padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                        decoration: ThreeD.decoration(
+                          colors: [Colors.white.withOpacity(0.1)],
+                          radius: 12,
                         ),
                         child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                       ),
@@ -178,13 +179,12 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with SingleTickerProv
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: spinsLeft > 0
-                            ? const [Color(0xFFFFB300), Color(0xFFFF8F00)]
-                            : [Colors.grey.shade700, Colors.grey.shade800],
-                      ),
-                      borderRadius: BorderRadius.circular(16),
+                    decoration: ThreeD.decoration(
+                      colors: spinsLeft > 0
+                          ? const [Color(0xFFFFB300), Color(0xFFFF8F00)]
+                          : [Colors.grey.shade700, Colors.grey.shade800],
+                      radius: 16,
+                      flat: spinsLeft <= 0,
                     ),
                     child: Center(
                       child: Text(

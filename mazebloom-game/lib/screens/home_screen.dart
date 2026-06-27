@@ -19,6 +19,7 @@ import 'gallery_screen.dart';
 import 'rewards_screen.dart';
 import 'profile_screen.dart';
 import '../widgets/app_background.dart';
+import '../widgets/three_d_style.dart';
 
 // মূল মেনু — Levels (৩টা difficulty), Daily Challenge, Unlimited mode বেছে নেওয়ার জায়গা
 /// Stateful screen widget for the home/main menu. Logic and data loading
@@ -318,6 +319,8 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.08),
             borderRadius: BorderRadius.circular(20),
+            border: ThreeD.bevelBorder(),
+            boxShadow: ThreeD.shadow(elevation: 4),
           ),
           child: Row(
             children: [
@@ -335,6 +338,8 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.08),
               borderRadius: BorderRadius.circular(20),
+              border: ThreeD.bevelBorder(),
+              boxShadow: ThreeD.shadow(elevation: 4),
             ),
             child: Row(
               children: [
@@ -355,6 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.08),
               shape: BoxShape.circle,
+              boxShadow: ThreeD.shadow(elevation: 4),
             ),
             child: Text(_avatar, style: const TextStyle(fontSize: 18)),
           ),
@@ -367,6 +373,8 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.08),
               borderRadius: BorderRadius.circular(14),
+              border: ThreeD.bevelBorder(),
+              boxShadow: ThreeD.shadow(elevation: 4),
             ),
             child: const Text('🌺', style: TextStyle(fontSize: 18)),
           ),
@@ -379,6 +387,8 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.08),
               borderRadius: BorderRadius.circular(14),
+              border: ThreeD.bevelBorder(),
+              boxShadow: ThreeD.shadow(elevation: 4),
             ),
             child: const Text('🎁', style: TextStyle(fontSize: 18)),
           ),
@@ -401,11 +411,12 @@ class _HomeScreenState extends State<HomeScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: colors),
+          gradient: ThreeD.bevelGradient(colors),
           borderRadius: BorderRadius.circular(18),
-          border: _dailyDone ? Border.all(color: Colors.white.withOpacity(0.5), width: 1.5) : null,
+          border: _dailyDone ? Border.all(color: Colors.white.withOpacity(0.5), width: 1.5) : ThreeD.bevelBorder(),
           boxShadow: [
             BoxShadow(color: colors.first.withOpacity(0.45), blurRadius: 22, spreadRadius: _dailyDone ? 1 : 0),
+            ...ThreeD.shadow(elevation: 8),
           ],
         ),
         child: Row(
@@ -415,6 +426,7 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(_dailyDone ? 0.25 : 0.15),
                 shape: BoxShape.circle,
+                boxShadow: ThreeD.shadow(elevation: 4),
               ),
               child: Text(_dailyDone ? '🏆' : (festival?.emoji ?? '📅'), style: const TextStyle(fontSize: 26)),
             ),
@@ -472,10 +484,11 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(colors: colors),
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [BoxShadow(color: colors.first.withOpacity(0.4), blurRadius: 16)],
+        decoration: ThreeD.decoration(colors: colors, radius: 18).copyWith(
+          boxShadow: [
+            BoxShadow(color: colors.first.withOpacity(0.4), blurRadius: 16),
+            ...ThreeD.shadow(elevation: 8),
+          ],
         ),
         child: Row(
           children: [
@@ -580,9 +593,13 @@ class _LifeQuickBuySheetState extends State<_LifeQuickBuySheet> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
-      decoration: const BoxDecoration(
-        color: Color(0xFF1A1A2E),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1A2E),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(
+          top: BorderSide(color: Colors.white.withOpacity(0.25), width: 1),
+        ),
+        boxShadow: ThreeD.shadow(elevation: 10),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -604,9 +621,9 @@ class _LifeQuickBuySheetState extends State<_LifeQuickBuySheet> {
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFF8F00)]),
-                borderRadius: BorderRadius.circular(16),
+              decoration: ThreeD.decoration(
+                colors: const [Color(0xFFFFB300), Color(0xFFFF8F00)],
+                radius: 16,
               ),
               child: Center(
                 child: Text(
@@ -622,9 +639,9 @@ class _LifeQuickBuySheetState extends State<_LifeQuickBuySheet> {
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFFEF5350), Color(0xFFB71C1C)]),
-                borderRadius: BorderRadius.circular(16),
+              decoration: ThreeD.decoration(
+                colors: const [Color(0xFFEF5350), Color(0xFFB71C1C)],
+                radius: 16,
               ),
               child: Center(
                 child: Text(

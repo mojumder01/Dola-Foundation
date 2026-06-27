@@ -27,6 +27,7 @@ import '../utils/feedback_service.dart';
 import '../services/ad_service.dart';
 import '../widgets/maze_board.dart';
 import '../widgets/app_background.dart';
+import '../widgets/three_d_style.dart';
 
 // গেম চারভাবে খেলা যায় — fixed level, daily challenge, unlimited (endless), অথবা story chapter
 /// The four supported game modes. Each mode drives different progression and
@@ -494,7 +495,12 @@ class _GameScreenState extends State<GameScreen> {
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: Colors.white.withOpacity(0.12), width: 1),
+        ),
+        elevation: 16,
+        shadowColor: Colors.black.withOpacity(0.5),
         title: Text(
           theme != null
               ? '${theme.emoji} ${theme.displayTitle} ${tr('সম্পন্ন!', 'Complete!')}'
@@ -539,7 +545,12 @@ class _GameScreenState extends State<GameScreen> {
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: Colors.white.withOpacity(0.12), width: 1),
+        ),
+        elevation: 16,
+        shadowColor: Colors.black.withOpacity(0.5),
         title: Text(
           tr('🎉 শেপ #$_unlimitedStreak সমাধান!', '🎉 Shape #$_unlimitedStreak solved!'),
           style: const TextStyle(color: Colors.white),
@@ -583,7 +594,12 @@ class _GameScreenState extends State<GameScreen> {
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: Colors.white.withOpacity(0.12), width: 1),
+        ),
+        elevation: 16,
+        shadowColor: Colors.black.withOpacity(0.5),
         title: Text(tr('জীবন শেষ! 💔', 'Out of lives! 💔'), style: const TextStyle(color: Colors.white)),
         content: Text(
           bankedLives > 0
@@ -647,7 +663,12 @@ class _GameScreenState extends State<GameScreen> {
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: Colors.white.withOpacity(0.12), width: 1),
+        ),
+        elevation: 16,
+        shadowColor: Colors.black.withOpacity(0.5),
         title: Text(tr('জীবন শেষ! 💔', 'Out of lives! 💔'), style: const TextStyle(color: Colors.white)),
         content: Text(
           widget.mode == GameMode.unlimited
@@ -764,9 +785,9 @@ class _GameScreenState extends State<GameScreen> {
             onTap: () => Navigator.pop(context),
             child: Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+              decoration: ThreeD.decoration(
+                colors: [Colors.white.withOpacity(0.1)],
+                radius: 12,
               ),
               child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
             ),
@@ -779,9 +800,9 @@ class _GameScreenState extends State<GameScreen> {
             onTap: _restart,
             child: Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+              decoration: ThreeD.decoration(
+                colors: [Colors.white.withOpacity(0.1)],
+                radius: 12,
               ),
               child: const Icon(Icons.refresh, color: Colors.white, size: 20),
             ),
@@ -803,9 +824,9 @@ class _GameScreenState extends State<GameScreen> {
           if (widget.mode == GameMode.unlimited)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(12),
+              decoration: ThreeD.decoration(
+                colors: [Colors.white.withOpacity(0.08)],
+                radius: 12,
               ),
               child: Text(
                 '🔥 $_unlimitedStreak',
@@ -819,10 +840,16 @@ class _GameScreenState extends State<GameScreen> {
           Row(
             children: List.generate(
               _startingLives,
-              (i) => Icon(
-                i < _lives ? Icons.favorite : Icons.favorite_border,
-                color: const Color(0xFFF44336),
-                size: 20,
+              (i) => Container(
+                margin: const EdgeInsets.symmetric(horizontal: 1),
+                decoration: BoxDecoration(
+                  boxShadow: i < _lives ? ThreeD.shadow(elevation: 3, color: const Color(0xFFF44336)) : null,
+                ),
+                child: Icon(
+                  i < _lives ? Icons.favorite : Icons.favorite_border,
+                  color: const Color(0xFFF44336),
+                  size: 20,
+                ),
               ),
             ),
           ),
@@ -834,9 +861,10 @@ class _GameScreenState extends State<GameScreen> {
             onTap: _useHint,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.amber.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(20),
+              decoration: ThreeD.decoration(
+                colors: [Colors.amber.withOpacity(0.15)],
+                radius: 20,
+              ).copyWith(
                 border: Border.all(color: Colors.amber.withOpacity(0.5)),
               ),
               child: Row(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../utils/achievement_manager.dart';
 import '../utils/app_language.dart';
 import '../widgets/app_background.dart';
+import '../widgets/three_d_style.dart';
 
 // Mosaic Gallery — অর্জন করা সব badge পাশাপাশি দেখা যায়, ফাঁকা গুলো lock করা থাকে
 /// Stateful screen widget for the achievement gallery. Holds no logic
@@ -53,9 +54,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       onTap: () => Navigator.pop(context),
                       child: Container(
                         padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                        decoration: ThreeD.decoration(
+                          colors: [Colors.white.withOpacity(0.1)],
+                          radius: 12,
                         ),
                         child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                       ),
@@ -95,13 +96,16 @@ class _GalleryScreenState extends State<GalleryScreen> {
                           final unlocked = _unlocked.contains(achievement.id);
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                            decoration: BoxDecoration(
-                              gradient: unlocked
-                                  ? const LinearGradient(colors: [Color(0xFF7C4DFF), Color(0xFF448AFF)])
-                                  : null,
-                              color: unlocked ? null : Colors.white.withOpacity(0.06),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
+                            decoration: unlocked
+                                ? ThreeD.decoration(
+                                    colors: const [Color(0xFF7C4DFF), Color(0xFF448AFF)],
+                                    radius: 16,
+                                  )
+                                : ThreeD.decoration(
+                                    colors: [Colors.white.withOpacity(0.06)],
+                                    radius: 16,
+                                    flat: true,
+                                  ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,

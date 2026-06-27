@@ -8,6 +8,7 @@ import '../utils/progress_manager.dart';
 import '../utils/shape_factory.dart';
 import 'game_screen.dart';
 import '../widgets/app_background.dart';
+import '../widgets/three_d_style.dart';
 
 // একটা chapter এর ভেতরের সব level — আগে chapter এ একটাই maze ছিল,
 // এখন এখান থেকে একাধিক maze বেছে খেলা যায় (sequential unlock)
@@ -104,9 +105,9 @@ class _StoryChapterLevelsScreenState extends State<StoryChapterLevelsScreen> {
                           onTap: () => Navigator.pop(context),
                           child: Container(
                             padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
+                            decoration: ThreeD.decoration(
+                              colors: [Colors.white.withOpacity(0.1)],
+                              radius: 12,
                             ),
                             child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                           ),
@@ -145,11 +146,13 @@ class _StoryChapterLevelsScreenState extends State<StoryChapterLevelsScreen> {
                               return GestureDetector(
                                 onTap: unlocked && !_opening ? () => _openLevel(index) : null,
                                 child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: unlocked ? LinearGradient(colors: theme.colors) : null,
-                                    color: unlocked ? null : Colors.white.withOpacity(0.06),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
+                                  decoration: unlocked
+                                      ? ThreeD.decoration(colors: theme.colors, radius: 16)
+                                      : ThreeD.decoration(
+                                          colors: [Colors.white.withOpacity(0.06)],
+                                          radius: 16,
+                                          flat: true,
+                                        ),
                                   child: Center(
                                     child: unlocked
                                         ? Text(

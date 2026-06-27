@@ -8,6 +8,7 @@ import '../utils/shape_factory.dart';
 import '../utils/app_language.dart';
 import 'game_screen.dart';
 import '../widgets/app_background.dart';
+import '../widgets/three_d_style.dart';
 
 // একটা difficulty এর সব level এর grid — lock/unlock অবস্থা দেখায়
 /// Stateful widget that renders the level-selection grid for [difficulty].
@@ -98,9 +99,9 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                       onTap: () => Navigator.pop(context),
                       child: Container(
                         padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                        decoration: ThreeD.decoration(
+                          colors: [Colors.white.withOpacity(0.1)],
+                          radius: 12,
                         ),
                         child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                       ),
@@ -135,15 +136,16 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                           return GestureDetector(
                             onTap: unlocked && !_opening ? () => _openLevel(index) : null,
                             child: Container(
-                              decoration: BoxDecoration(
-                                gradient: unlocked
-                                    ? const LinearGradient(
-                                        colors: [Color(0xFF7C4DFF), Color(0xFF448AFF)],
-                                      )
-                                    : null,
-                                color: unlocked ? null : Colors.white.withOpacity(0.06),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
+                              decoration: unlocked
+                                  ? ThreeD.decoration(
+                                      colors: const [Color(0xFF7C4DFF), Color(0xFF448AFF)],
+                                      radius: 16,
+                                    )
+                                  : ThreeD.decoration(
+                                      colors: [Colors.white.withOpacity(0.06)],
+                                      radius: 16,
+                                      flat: true,
+                                    ),
                               child: Center(
                                 child: unlocked
                                     ? Text(

@@ -14,6 +14,7 @@ import '../services/iap_service.dart';
 import '../utils/app_language.dart';
 import '../utils/app_links.dart';
 import '../widgets/app_background.dart';
+import '../widgets/three_d_style.dart';
 import 'spin_wheel_screen.dart';
 
 // Coins, banked lives, আর referral code শেয়ার/redeem করার জায়গা
@@ -255,9 +256,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFF8F00)]),
-                            borderRadius: BorderRadius.circular(16),
+                          decoration: ThreeD.decoration(
+                            colors: const [Color(0xFFFFB300), Color(0xFFFF8F00)],
+                            radius: 16,
                           ),
                           child: Center(
                             child: Text(
@@ -274,9 +275,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(colors: [Color(0xFF7C4DFF), Color(0xFF512DA8)]),
-                            borderRadius: BorderRadius.circular(16),
+                          decoration: ThreeD.decoration(
+                            colors: const [Color(0xFF7C4DFF), Color(0xFF512DA8)],
+                            radius: 16,
                           ),
                           child: Center(
                             child: Text(
@@ -293,9 +294,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(colors: [Color(0xFFEF5350), Color(0xFFB71C1C)]),
-                            borderRadius: BorderRadius.circular(16),
+                          decoration: ThreeD.decoration(
+                            colors: const [Color(0xFFEF5350), Color(0xFFB71C1C)],
+                            radius: 16,
                           ),
                           child: Center(
                             child: Text(
@@ -312,9 +313,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(colors: [Color(0xFF26C6DA), Color(0xFF00838F)]),
-                            borderRadius: BorderRadius.circular(16),
+                          decoration: ThreeD.decoration(
+                            colors: const [Color(0xFF26C6DA), Color(0xFF00838F)],
+                            radius: 16,
                           ),
                           child: Center(
                             child: Text(
@@ -333,9 +334,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(14),
+                          decoration: ThreeD.decoration(
+                            colors: [Colors.white.withOpacity(0.08)],
+                            radius: 14,
                           ),
                           child: Center(
                             child: Text(tr('✅ বিজ্ঞাপন সরানো হয়েছে', '✅ Ads removed'), style: const TextStyle(color: Colors.white70)),
@@ -347,9 +348,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
                           child: Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(colors: [Color(0xFF42A5F5), Color(0xFF1565C0)]),
-                              borderRadius: BorderRadius.circular(16),
+                            decoration: ThreeD.decoration(
+                              colors: const [Color(0xFF42A5F5), Color(0xFF1565C0)],
+                              radius: 16,
                             ),
                             child: Center(
                               child: Text(
@@ -370,9 +371,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
                               onTap: _rateUs,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 14),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(14),
+                                decoration: ThreeD.decoration(
+                                  colors: [Colors.white.withOpacity(0.08)],
+                                  radius: 14,
                                 ),
                                 child: Center(
                                   child: Text(tr('⭐ রেট করো', '⭐ Rate Us'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -386,9 +387,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
                               onTap: _contactUs,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 14),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(14),
+                                decoration: ThreeD.decoration(
+                                  colors: [Colors.white.withOpacity(0.08)],
+                                  radius: 14,
                                 ),
                                 child: Center(
                                   child: Text(tr('✉️ যোগাযোগ করো', '✉️ Contact Us'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -405,9 +406,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(14),
+                        decoration: ThreeD.decoration(
+                          colors: [Colors.white.withOpacity(0.08)],
+                          radius: 14,
                         ),
                         child: Center(
                           child: Text(
@@ -430,30 +431,42 @@ class _RewardsScreenState extends State<RewardsScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: TextField(
-                                controller: _codeController,
-                                textCapitalization: TextCapitalization.characters,
-                                style: const TextStyle(color: Colors.white),
-                                decoration: InputDecoration(
-                                  hintText: tr('কোড লিখো', 'Enter code'),
-                                  hintStyle: const TextStyle(color: Colors.white38),
-                                  filled: true,
-                                  fillColor: Colors.white.withOpacity(0.08),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide.none,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: ThreeD.shadowFlat(),
+                                ),
+                                child: TextField(
+                                  controller: _codeController,
+                                  textCapitalization: TextCapitalization.characters,
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: InputDecoration(
+                                    hintText: tr('কোড লিখো', 'Enter code'),
+                                    hintStyle: const TextStyle(color: Colors.white38),
+                                    filled: true,
+                                    fillColor: Colors.white.withOpacity(0.08),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide.none,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                             const SizedBox(width: 10),
-                            ElevatedButton(
-                              onPressed: _redeem,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF7C4DFF),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: ThreeD.shadow(color: const Color(0xFF7C4DFF), elevation: 6),
                               ),
-                              child: Text(tr('রিডিম', 'Redeem')),
+                              child: ElevatedButton(
+                                onPressed: _redeem,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF7C4DFF),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: Text(tr('রিডিম', 'Redeem')),
+                              ),
                             ),
                           ],
                         ),
@@ -472,9 +485,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
   Widget _statCard(String emoji, String value, String label) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(16),
+      decoration: ThreeD.decoration(
+        colors: [Colors.white.withOpacity(0.08)],
+        radius: 16,
       ),
       child: Column(
         children: [
