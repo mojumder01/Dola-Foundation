@@ -31,6 +31,8 @@ class DifficultyConfig {
   }
 
   // Level index (0-based) থেকে কতগুলো cell এর shape বানাতে হবে তা হিসাব করে
+  // (একটা cap দেওয়া আছে — না হলে levels যত এগোয়, shape তত বড় হতে হতে maze
+  // generation/Hamiltonian-path খোঁজা ভীষণ ধীর হয়ে যায় আর গেম freeze/lag করে)
   static int cellsForLevel(Difficulty d, int levelIndex) {
     final base = switch (d) {
       Difficulty.easy => 8,
@@ -42,7 +44,12 @@ class DifficultyConfig {
       Difficulty.medium => 2,
       Difficulty.hard => 3,
     };
-    return base + (levelIndex * step);
+    final cap = switch (d) {
+      Difficulty.easy => 40,
+      Difficulty.medium => 55,
+      Difficulty.hard => 70,
+    };
+    return (base + (levelIndex * step)).clamp(base, cap);
   }
 
   // প্রতি difficulty + level এর জন্য একটা unique deterministic seed

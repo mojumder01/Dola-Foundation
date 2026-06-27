@@ -32,17 +32,46 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
   double _cellSize = 0;
   Offset _boardOffset = Offset.zero; // shape কে center করার জন্য padding
   late final AnimationController _hintPulse;
+  final TransformationController _transformController = TransformationController();
+  bool _panEnabled = false;
 
   @override
   void initState() {
     super.initState();
-    _hintPulse = AnimationController(vsync: this, duration: const Duration(milliseconds: 700))
-      ..repeat(reverse: true);
+    // hint cell না থাকলে animation বন্ধ রাখা হয় — আগে এটা সবসময় চলতো, যার ফলে
+    // বড় shape (Hard level) এও পুরো board প্রতি ফ্রেমে repaint হতো আর গেম স্লো/স্ট্যাক লাগতো
+    _hintPulse = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    if (widget.hintCell != null) _hintPulse.repeat(reverse: true);
+    _transformController.addListener(_onTransformChanged);
+  }
+
+  void _onTransformChanged() {
+    // জুম করার পরই single-finger দিয়ে move/pan করা চালু হয় — না হলে zoom আউট
+    // অবস্থায় pan trace-করার drag এর সাথে conflict করতো
+    final scale = _transformController.value.getMaxScaleOnAxis();
+    final shouldPan = scale > 1.02;
+    if (shouldPan != _panEnabled) setState(() => _panEnabled = shouldPan);
+  }
+
+  @override
+  void didUpdateWidget(covariant MazeBoard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.hintCell != null && !_hintPulse.isAnimating) {
+      _hintPulse.repeat(reverse: true);
+    } else if (widget.hintCell == null && _hintPulse.isAnimating) {
+      _hintPulse.stop();
+      _hintPulse.value = 0;
+    }
+    if (oldWidget.shape != widget.shape) {
+      _transformController.value = Matrix4.identity();
+    }
   }
 
   @override
   void dispose() {
     _hintPulse.dispose();
+    _transformController.removeListener(_onTransformChanged);
+    _transformController.dispose();
     super.dispose();
   }
 
@@ -128,29 +157,37 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Cell size — শেপ এর rows/cols অনুযায়ী যতটা জায়গায় ফিট হয়
+        // Cell size — শেপ এর rows/cols অনুযায়ী যতটা জায়গায় ফিট হয়, কিন্তু একটা
+        // min/max range এ clamp করা থাকে যাতে ছোট আর বড় শেপেও cell গুলো একই রকম
+        // সাইজে দেখায় (এর আগে ছোট shape এ অনেক বড়, বড় shape এ অনেক ছোট হয়ে যেত)
         final maxW = constraints.maxWidth;
         final maxH = constraints.maxHeight;
-        _cellSize = min(maxW / widget.shape.cols, maxH / widget.shape.rows);
+        final rawSize = min(maxW / widget.shape.cols, maxH / widget.shape.rows);
+        _cellSize = rawSize.clamp(26.0, 58.0);
 
         final boardW = _cellSize * widget.shape.cols;
         final boardH = _cellSize * widget.shape.rows;
-        _boardOffset = Offset((maxW - boardW) / 2, (maxH - boardH) / 2);
+        // clamp করার পর board viewport এর চেয়ে বড় হয়ে গেলে canvas টাও বড় করে দিতে
+        // হয়, না হলে বাকি অংশ আঁকা/ছোঁয়া যায় না — সেক্ষেত্রে zoom/pan করে পুরোটা দেখা যায়
+        final canvasW = max(maxW, boardW);
+        final canvasH = max(maxH, boardH);
+        _boardOffset = Offset((canvasW - boardW) / 2, (canvasH - boardH) / 2);
 
-        // panEnabled: false রাখায় এক-আঙুলের drag trace করার জন্য child এ চলে যায়,
-        // আর দুই-আঙুলের pinch gesture zoom এর জন্য InteractiveViewer ধরে নেয়
+        // জুম-আউট অবস্থায় (scale ~1) pan বন্ধ থাকে যাতে এক-আঙুলের drag trace
+        // করার জন্য child এ চলে যায় — জুম করার পর pan চালু হয়ে যায় move করার জন্য
         return InteractiveViewer(
-          panEnabled: false,
+          transformationController: _transformController,
+          panEnabled: _panEnabled,
           scaleEnabled: true,
           minScale: 1.0,
-          maxScale: 2.5,
+          maxScale: 3.0,
           child: GestureDetector(
             onPanStart: (details) => _handleTouch(details.localPosition),
             onPanUpdate: (details) => _handleTouch(details.localPosition),
             child: AnimatedBuilder(
               animation: _hintPulse,
               builder: (context, _) => CustomPaint(
-                size: Size(maxW, maxH),
+                size: Size(canvasW, canvasH),
                 painter: _MazePainter(
                   shape: widget.shape,
                   path: widget.path,
@@ -199,10 +236,16 @@ class _MazePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final cellPaint = Paint()..color = cellColor;
+    // cellColor কে background এর তুলনায় একটু হালকা/উজ্জ্বল করে দেওয়া হয়, আর একটা
+    // পাতলা সাদা border যুক্ত করা হয় — এতে box গুলো background থেকে স্পষ্ট আলাদা দেখায়
+    final cellPaint = Paint()..color = Color.alphaBlend(Colors.white.withOpacity(0.14), cellColor);
+    final cellBorder = Paint()
+      ..color = Colors.white.withOpacity(0.16)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = max(1.0, cellSize * 0.025);
     final inset = cellSize * 0.08;
 
-    // ১. শেপ এর সব cell — হালকা background box
+    // ১. শেপ এর সব cell — হালকা background box, border সহ
     for (final cell in shape.cells) {
       final rect = Rect.fromLTWH(
         boardOffset.dx + cell.y * cellSize + inset,
@@ -210,10 +253,9 @@ class _MazePainter extends CustomPainter {
         cellSize - inset * 2,
         cellSize - inset * 2,
       );
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(rect, Radius.circular(cellSize * 0.18)),
-        cellPaint,
-      );
+      final rrect = RRect.fromRectAndRadius(rect, Radius.circular(cellSize * 0.18));
+      canvas.drawRRect(rrect, cellPaint);
+      canvas.drawRRect(rrect, cellBorder);
     }
 
     // ২. Hint cell — সোনালি highlight

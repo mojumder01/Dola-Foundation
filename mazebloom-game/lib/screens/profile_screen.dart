@@ -150,6 +150,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 28),
 
                       Text(
+                        tr('ভাষা', 'Language'),
+                        style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(child: _langOption('English', AppLang.en)),
+                          const SizedBox(width: 12),
+                          Expanded(child: _langOption('বাংলা', AppLang.bn)),
+                        ],
+                      ),
+                      const SizedBox(height: 28),
+
+                      Text(
                         tr('সাউন্ড ও ভাইব্রেশন', 'Sound & Vibration'),
                         style: TextStyle(color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.bold),
                       ),
@@ -214,6 +228,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                 ),
+        ),
+      ),
+    );
+  }
+
+  // ভাষা টগল করার সাথে সাথে এই screen টা নিজেই rebuild হয়, তাই সাথে সাথে দেখা যায়
+  Widget _langOption(String label, AppLang lang) {
+    final selected = AppLanguage.instance.lang == lang;
+    return GestureDetector(
+      onTap: () async {
+        if (selected) return;
+        await AppLanguage.instance.toggle();
+        if (mounted) setState(() {});
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFF7C4DFF) : Colors.white.withOpacity(0.06),
+          borderRadius: BorderRadius.circular(12),
+          border: selected ? null : Border.all(color: Colors.white24),
+        ),
+        child: Center(
+          child: Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         ),
       ),
     );

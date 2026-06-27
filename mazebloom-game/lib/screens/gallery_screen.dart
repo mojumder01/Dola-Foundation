@@ -78,14 +78,14 @@ class _GalleryScreenState extends State<GalleryScreen> {
                           crossAxisCount: 3,
                           mainAxisSpacing: 14,
                           crossAxisSpacing: 14,
-                          childAspectRatio: 0.85,
+                          childAspectRatio: 0.68,
                         ),
                         itemCount: AchievementManager.all.length,
                         itemBuilder: (context, index) {
                           final achievement = AchievementManager.all[index];
                           final unlocked = _unlocked.contains(achievement.id);
                           return Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                             decoration: BoxDecoration(
                               gradient: unlocked
                                   ? const LinearGradient(colors: [Color(0xFF7C4DFF), Color(0xFF448AFF)])
@@ -95,27 +95,32 @@ class _GalleryScreenState extends State<GalleryScreen> {
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
                                   unlocked ? achievement.emoji : '🔒',
-                                  style: const TextStyle(fontSize: 28),
+                                  style: const TextStyle(fontSize: 26),
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 6),
                                 Text(
                                   unlocked ? achievement.displayTitle : '???',
                                   textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color: unlocked ? Colors.white : Colors.white38,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 12,
+                                    fontSize: 11,
                                   ),
                                 ),
                                 if (unlocked) ...[
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: 3),
                                   Text(
                                     achievement.displayDescription,
                                     textAlign: TextAlign.center,
-                                    style: const TextStyle(color: Colors.white70, fontSize: 10),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(color: Colors.white70, fontSize: 9.5),
                                   ),
                                 ],
                               ],

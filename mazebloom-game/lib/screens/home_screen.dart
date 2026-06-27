@@ -100,6 +100,32 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _openDailyChallenge() {
+    if (_dailyDone) {
+      // আজকেরটা আগেই শেষ — পুরোনো maze আবার না দেখিয়ে শুধু জানিয়ে দাও কালকে আসতে হবে
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          backgroundColor: const Color(0xFF1A1A2E),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          title: Text(
+            tr('🏆 আজকেরটা শেষ!', '🏆 Already done for today!'),
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            tr('🔥 $_streak দিনের streak। নতুন একটা unique চ্যালেঞ্জের জন্য কালকে আবার আসো!',
+                "🔥 $_streak day streak. Come back tomorrow for a brand-new challenge!"),
+            style: const TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(tr('ঠিক আছে', 'OK'), style: const TextStyle(color: Color(0xFF7C4DFF))),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     final shape = DailyChallengeManager.todaysShape();
     final festivalTheme = DailyChallengeManager.todaysFestivalTheme();
     Navigator.push(
@@ -283,23 +309,6 @@ class _HomeScreenState extends State<HomeScreen> {
               shape: BoxShape.circle,
             ),
             child: Text(_avatar, style: const TextStyle(fontSize: 18)),
-          ),
-        ),
-        const SizedBox(width: 10),
-        GestureDetector(
-          onTap: () {
-            AppLanguage.instance.toggle();
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Text(
-              AppLanguage.instance.isBangla ? 'বাং' : 'EN',
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
-            ),
           ),
         ),
         const SizedBox(width: 10),
