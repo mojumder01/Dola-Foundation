@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../utils/difficulty_config.dart';
 import '../utils/progress_manager.dart';
