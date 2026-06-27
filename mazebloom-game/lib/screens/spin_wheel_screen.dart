@@ -1,3 +1,5 @@
+// Daily spin-wheel screen: lets the player spin once for free per day, then
+// watch rewarded ads for additional spins, earning random coin amounts.
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../utils/spin_wheel_manager.dart';
@@ -7,6 +9,7 @@ import '../services/ad_service.dart';
 import '../widgets/app_background.dart';
 
 // দিনে ৩ বার পর্যন্ত spin করে কয়েন পাওয়ার চাকা — ১টা ফ্রি, বাকিগুলো বিজ্ঞাপন দেখে
+/// Stateful widget hosting the daily spin wheel UI and reward logic.
 class SpinWheelScreen extends StatefulWidget {
   const SpinWheelScreen({super.key});
 
@@ -14,14 +17,18 @@ class SpinWheelScreen extends StatefulWidget {
   State<SpinWheelScreen> createState() => _SpinWheelScreenState();
 }
 
+/// Drives the spin-wheel animation, tracks today's spin count, and awards
+/// coins when a spin completes.
 class _SpinWheelScreenState extends State<SpinWheelScreen> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
+  // Current wheel rotation in radians; also the animation start point for the next spin.
   double _angle = 0;
   bool _spinning = false;
   int _spinsUsed = 0;
   int? _lastReward;
   final _random = Random();
 
+  // Colors cycled across wheel segments, matched to SpinWheelManager.wheelRewards by index.
   static const List<Color> _segmentColors = [
     Color(0xFF7C4DFF), Color(0xFF26A69A), Color(0xFFEF5350), Color(0xFFFFA000),
     Color(0xFF42A5F5), Color(0xFFEC407A), Color(0xFFFFD54F), Color(0xFF66BB6A),
@@ -40,11 +47,15 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with SingleTickerProv
     super.dispose();
   }
 
+  /// Loads how many spins have already been used today.
   Future<void> _load() async {
     final used = await SpinWheelManager.spinsUsedToday();
     setState(() => _spinsUsed = used);
   }
 
+  /// Handles a spin button tap: blocks re-entry while spinning, checks
+  /// remaining spins, and either spins immediately (free spin) or requires
+  /// watching a rewarded ad first.
   Future<void> _onSpinPressed() async {
     if (_spinning) return;
     final hasFree = await SpinWheelManager.hasFreeSpinLeft();
@@ -69,6 +80,9 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with SingleTickerProv
     }
   }
 
+  /// Picks a random reward segment, computes the rotation angle needed to
+  /// land on it under the fixed pointer, animates the wheel, then persists
+  /// the spin and grants the coin reward once the animation finishes.
   Future<void> _doSpin() async {
     final segmentIndex = _random.nextInt(SpinWheelManager.wheelRewards.length);
     final reward = SpinWheelManager.wheelRewards[segmentIndex];
@@ -102,6 +116,9 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with SingleTickerProv
     });
   }
 
+  /// Builds the wheel UI: header, rotating wheel with fixed pointer, last
+  /// reward text, and a spin button whose label reflects free/ad-gated/
+  /// exhausted spin state.
   @override
   Widget build(BuildContext context) {
     final spinsLeft = SpinWheelManager.maxSpinsPerDay - _spinsUsed;
@@ -193,12 +210,16 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with SingleTickerProv
   }
 }
 
+/// Paints the spin wheel as colored pie segments with the reward amount
+/// labeled in each segment, plus an outer ring border.
 class _WheelPainter extends CustomPainter {
   final List<int> rewards;
   final List<Color> colors;
 
   _WheelPainter({required this.rewards, required this.colors});
 
+  /// Draws each reward segment as an arc starting from the top (12 o'clock),
+  /// with its reward value centered within the segment.
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
@@ -231,6 +252,7 @@ class _WheelPainter extends CustomPainter {
       ..strokeWidth = 4);
   }
 
+  // Static reward/color data — never needs repainting once drawn.
   @override
   bool shouldRepaint(covariant _WheelPainter oldDelegate) => false;
 }

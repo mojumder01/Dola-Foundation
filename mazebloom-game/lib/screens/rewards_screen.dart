@@ -1,3 +1,6 @@
+// Rewards/store hub: lets the player earn coins/gems/lives via ads, spins,
+// or purchases, buy the remove-ads IAP, rate/contact support, and manage
+// referral codes.
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -14,6 +17,9 @@ import '../widgets/app_background.dart';
 import 'spin_wheel_screen.dart';
 
 // Coins, banked lives, আর referral code শেয়ার/redeem করার জায়গা
+/// Screen where the player can earn/spend coins and gems for extra lives,
+/// purchase the "remove ads" IAP, rate/contact the developer, and
+/// share/redeem referral codes.
 class RewardsScreen extends StatefulWidget {
   const RewardsScreen({super.key});
 
@@ -21,6 +27,8 @@ class RewardsScreen extends StatefulWidget {
   State<RewardsScreen> createState() => _RewardsScreenState();
 }
 
+/// Manages currency balances, banked lives, referral state, and the IAP
+/// purchase subscription backing [RewardsScreen].
 class _RewardsScreenState extends State<RewardsScreen> {
   static const int lifeBundleGemCost = 8;
   static const int lifeBundleAmount = 3;
@@ -28,11 +36,13 @@ class _RewardsScreenState extends State<RewardsScreen> {
   int _coins = 0;
   int _gems = 0;
   int _bankedLives = 0;
+  // Dynamic price for the next coin-bought life (increases with each purchase).
   int _lifeCoinCost = 150;
   String _myCode = '';
   bool _redeemed = false;
   bool _loading = true;
   final _codeController = TextEditingController();
+  // Listens for real-money purchase completions.
   StreamSubscription<void>? _iapSubscription;
 
   @override
@@ -50,6 +60,8 @@ class _RewardsScreenState extends State<RewardsScreen> {
     super.dispose();
   }
 
+  /// Refreshes all displayed state (coins, gems, banked lives, next life
+  /// cost, referral code, and redeemed flag) from their respective managers.
   Future<void> _load() async {
     final coins = await CoinManager.getCoins();
     final gems = await GemManager.getGems();
@@ -68,6 +80,8 @@ class _RewardsScreenState extends State<RewardsScreen> {
     });
   }
 
+  /// Spends [_lifeCoinCost] coins to add one banked life, if the bank has
+  /// room and the player has enough coins. Shows a snackbar on failure.
   Future<void> _buyLifeWithCoins() async {
     if (_bankedLives >= LivesManager.maxBankedLives) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -92,6 +106,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
     }
   }
 
+  /// Starts the "remove ads" in-app purchase flow via [IapService].
   Future<void> _buyRemoveAds() async {
     final started = await IapService.buy(IapService.removeAdsProductId);
     if (!started && mounted) {
@@ -101,11 +116,13 @@ class _RewardsScreenState extends State<RewardsScreen> {
     }
   }
 
+  /// Opens the Play Store listing in an external app for rating the game.
   Future<void> _rateUs() async {
     final uri = Uri.parse(AppLinks.playStoreUrl);
     await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
+  /// Opens the default mail client with a pre-filled feedback email.
   Future<void> _contactUs() async {
     final uri = Uri(
       scheme: 'mailto',
@@ -115,7 +132,10 @@ class _RewardsScreenState extends State<RewardsScreen> {
     await launchUrl(uri);
   }
 
+  /// Spends gems to add up to [lifeBundleAmount] banked lives, capped by
+  /// remaining bank capacity. Shows a snackbar on failure or success.
   Future<void> _buyLifeBundleWithGems() async {
+    // Remaining capacity in the life bank.
     final roomLeft = LivesManager.maxBankedLives - _bankedLives;
     if (roomLeft <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -142,10 +162,14 @@ class _RewardsScreenState extends State<RewardsScreen> {
     }
   }
 
+  /// Navigates to the daily spin wheel screen and refreshes state on return
+  /// (since spinning may have awarded coins).
   void _openSpinWheel() {
     Navigator.push(context, MaterialPageRoute(builder: (_) => const SpinWheelScreen())).then((_) => _load());
   }
 
+  /// Shows a rewarded ad and grants one banked life if the player watches
+  /// it to completion.
   void _watchAdForLife() {
     AdService.showRewardedAd(
       onRewarded: () async {
@@ -163,6 +187,9 @@ class _RewardsScreenState extends State<RewardsScreen> {
     );
   }
 
+  /// Attempts to redeem the referral code currently typed into
+  /// [_codeController], reloading state and showing a snackbar with the
+  /// result (bonus coins or an error message).
   Future<void> _redeem() async {
     final error = await ReferralManager.redeemCode(_codeController.text);
     if (!mounted) return;
@@ -176,6 +203,8 @@ class _RewardsScreenState extends State<RewardsScreen> {
     }
   }
 
+  /// Builds the full rewards UI: stat cards, earning options (ad/coins/gems),
+  /// the remove-ads perk, rate/contact actions, and referral code UI.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -438,6 +467,8 @@ class _RewardsScreenState extends State<RewardsScreen> {
     );
   }
 
+  /// Builds a small card showing an emoji icon, a value, and a label —
+  /// used for the coins/gems/banked-lives summary row.
   Widget _statCard(String emoji, String value, String label) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18),

@@ -1,8 +1,12 @@
+// App launch screen: shows the logo with an entrance animation for a fixed
+// duration, then replaces itself with HomeScreen.
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import '../widgets/app_background.dart';
 
 // অ্যাপ খোলার সময় কয়েক সেকেন্ডের জন্য দেখানো হয় — services initialize হওয়া পর্যন্ত একটা পরিচ্ছন্ন loading look
+/// First screen shown on app start. Plays a brief scale-in animation of the
+/// logo/title, then automatically navigates to [HomeScreen].
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -10,6 +14,7 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
+/// Drives the entrance animation and the timed navigation to [HomeScreen].
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
@@ -17,6 +22,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 900))..forward();
+    // Fixed delay before navigating away; `mounted` check guards against
+    // navigating after the widget has already been disposed.
     Future.delayed(const Duration(milliseconds: 1600), () {
       if (mounted) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
@@ -30,6 +37,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     super.dispose();
   }
 
+  /// Builds the centered logo, title, and a small loading spinner inside a
+  /// scale-transition animation.
   @override
   Widget build(BuildContext context) {
     return Scaffold(

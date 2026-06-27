@@ -1,3 +1,5 @@
+// Screen that displays the level grid for a chosen Difficulty (easy/medium/hard)
+// in classic (non-story) mode, showing locked/unlocked state for each level.
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../utils/difficulty_config.dart';
@@ -8,6 +10,9 @@ import 'game_screen.dart';
 import '../widgets/app_background.dart';
 
 // একটা difficulty এর সব level এর grid — lock/unlock অবস্থা দেখায়
+/// Stateful widget that renders the level-selection grid for [difficulty].
+/// Delegates all state (unlock progress, loading/opening flags) to
+/// [_LevelSelectScreenState].
 class LevelSelectScreen extends StatefulWidget {
   final Difficulty difficulty;
 
@@ -17,6 +22,8 @@ class LevelSelectScreen extends StatefulWidget {
   State<LevelSelectScreen> createState() => _LevelSelectScreenState();
 }
 
+/// Holds the unlocked-level count for [LevelSelectScreen.difficulty] and
+/// drives maze generation when a level tile is tapped.
 class _LevelSelectScreenState extends State<LevelSelectScreen> {
   int _unlockedCount = 1;
   bool _loading = true;
@@ -28,6 +35,8 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
     _load();
   }
 
+  /// Loads the number of unlocked levels for this difficulty from
+  /// persistent storage and refreshes the UI.
   Future<void> _load() async {
     final unlocked = await ProgressManager.getUnlockedCount(widget.difficulty);
     setState(() {
@@ -36,6 +45,9 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
     });
   }
 
+  /// Generates the maze shape for [levelIndex] and navigates to [GameScreen].
+  /// Guards against double-taps via [_opening], and refreshes unlock state
+  /// (via [_load]) once the player returns from the game.
   Future<void> _openLevel(int levelIndex) async {
     if (_opening) return;
     setState(() => _opening = true);
@@ -71,6 +83,8 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
     ).then((_) => _load()); // ফিরে এসে unlock state রিফ্রেশ করো
   }
 
+  /// Builds the back button, difficulty header, level grid, and a loading
+  /// overlay shown while a maze shape is being generated.
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,3 +1,8 @@
+// This file implements the core gameplay screen for Maze Bloom.
+// Responsibilities: rendering the current maze/shape (via MazeBoard), handling
+// drag-to-trace path input, detecting win/loss conditions, advancing progression
+// for each game mode (level, story, daily, unlimited), and wiring in the
+// supporting economy/monetization systems (lives, coins, gems, hints, ads).
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,9 +29,19 @@ import '../widgets/maze_board.dart';
 import '../widgets/app_background.dart';
 
 // গেম চারভাবে খেলা যায় — fixed level, daily challenge, unlimited (endless), অথবা story chapter
+/// The four supported game modes. Each mode drives different progression and
+/// win-dialog behavior in [_GameScreenState._onShapeSolved]:
+/// - [level]: fixed difficulty-based levels with sequential unlock.
+/// - [daily]: a single daily challenge shape, tracks completion streaks.
+/// - [unlimited]: endless mode with increasing difficulty per solved shape.
+/// - [story]: narrative chapters, each containing multiple levels.
 enum GameMode { level, daily, unlimited, story }
 
 // মূল gameplay screen — শেপ দেখায়, drag করে path আঁকতে হয়
+/// The main gameplay screen widget (stateless config holder).
+/// Displays a [GridShape] maze and lets the player trace a path through it
+/// by dragging across cells. Actual mutable game state lives in
+/// [_GameScreenState].
 class GameScreen extends StatefulWidget {
   final GridShape shape;
   final GameMode mode;
@@ -51,29 +66,37 @@ class GameScreen extends StatefulWidget {
   State<GameScreen> createState() => _GameScreenState();
 }
 
+/// Holds all mutable state for a single gameplay session: the current shape,
+/// the player's traced path, lives/streak counters, hint state, theming, and
+/// the "generating next shape" loading flag. Methods on this class implement
+/// input handling, win/loss detection, mode-specific progression, and the
+/// dialogs/UI that surround the maze board.
 class _GameScreenState extends State<GameScreen> {
   static const int _startingLives = 3;
 
   late GridShape _shape;
-  List<Point<int>> _path = [];
+  List<Point<int>> _path = []; // cells visited so far, in order, for the current attempt
   int _lives = _startingLives;
   int _unlimitedStreak = 0; // unlimited mode এ কয়টা শেপ সমাধান হলো
-  Point<int>? _hintCell;
+  Point<int>? _hintCell; // cell to highlight as the next suggested move, or null if no hint active
   DateTime? _startTime; // speed bonus হিসাব করার জন্য
   bool _perfectRun = true; // এই attempt এ একবারও dead-end এ পড়েনি কিনা
-  int _lastCoinsEarned = 0;
+  int _lastCoinsEarned = 0; // coins awarded for the most recently solved shape, shown in the win dialog
   Color _pathColor = const Color(0xFF7C4DFF);
   Color _cellColor = const Color(0xFF1E1E3A);
   List<Color>? _bgGradientColors;
   String? _bgImagePath;
   bool _bgIsLight = false;
-  bool _freeHintAvailable = true;
+  bool _freeHintAvailable = true; // whether today's single free hint has not yet been used
   bool _generating = false; // পরের shape generate হওয়ার সময় (background isolate এ) loading দেখানোর জন্য
   late int? _levelIndex; // level mode এ পরের level এ in-place এগিয়ে যাওয়ার জন্য
   late int? _storyChapterIndex; // story mode এ পরের chapter এ in-place এগিয়ে যাওয়ার জন্য
   late int? _storyLevelIndex; // story mode এ chapter এর ভেতরের পরের level এ এগিয়ে যাওয়ার জন্য
   late CultureTheme? _theme;
 
+  /// Initializes session state from the widget's constructor params, starts the
+  /// solve-time clock, and kicks off async loads for the player's saved
+  /// cosmetic preferences (path/cell colors, background) and hint availability.
   @override
   void initState() {
     super.initState();
@@ -87,6 +110,9 @@ class _GameScreenState extends State<GameScreen> {
     _loadHintStatus();
   }
 
+  /// Loads the player's selected path color, cell skin color, and maze
+  /// background (including any custom photo) from persisted settings, then
+  /// applies them via `setState` once loaded.
   Future<void> _loadPathColor() async {
     final color = await PathColorManager.getSelectedColor();
     final cellColor = await CellSkinManager.getSelectedColor();
@@ -104,11 +130,17 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
+  /// Checks whether the player has already used today's free hint and updates
+  /// [_freeHintAvailable] accordingly.
   Future<void> _loadHintStatus() async {
     final hasFree = await HintManager.hasFreeHintToday();
     if (mounted) setState(() => _freeHintAvailable = hasFree);
   }
 
+  /// Callback from [MazeBoard] whenever the player's dragged path changes.
+  /// Plays tap feedback on forward progress, clears any active hint (since the
+  /// board state changed), and triggers win handling once every cell in the
+  /// shape has been visited (path length equals total cell count).
   void _onPathChanged(List<Point<int>> newPath) {
     if (newPath.length > _path.length) FeedbackService.tap();
     setState(() {
@@ -122,6 +154,11 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
+  /// Callback from [MazeBoard] when the player's path reaches a dead end
+  /// (no unvisited adjacent cell remains). Deducts one life and marks the run
+  /// as no longer "perfect". If lives are exhausted, hands off to
+  /// [_handleLivesExhausted]; otherwise shows a brief snackbar and resets the
+  /// path after a short delay so the player can retry the same shape.
   void _onStuck() {
     FeedbackService.fail();
     setState(() {
@@ -149,6 +186,9 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   // Hint button — দিনে একটা ফ্রি, তারপর ad দেখে বা coin দিয়ে নিতে হয়
+  /// Handles the hint button tap. If the free daily hint hasn't been used yet,
+  /// consumes it and reveals a hint immediately; otherwise shows the paywall
+  /// dialog offering an ad or coin-based hint purchase.
   Future<void> _useHint() async {
     if (_freeHintAvailable) {
       await HintManager.consumeFreeHint();
@@ -159,6 +199,9 @@ class _GameScreenState extends State<GameScreen> {
     _showHintPaywall();
   }
 
+  /// Displays the dialog shown once the free daily hint is used up, letting
+  /// the player choose between spending coins or watching a rewarded ad to
+  /// unlock another hint via [_revealHint].
   void _showHintPaywall() {
     showDialog(
       context: context,
@@ -214,6 +257,15 @@ class _GameScreenState extends State<GameScreen> {
 
   // Hamiltonian-path/continuation খোঁজা backtracking-heavy — বড় shape এ main thread
   // ব্লক করে ANR ("Not Responding") হতে পারে, তাই compute() দিয়ে আলাদা isolate এ চালানো হয়
+  /// Computes and shows the next suggested cell for the hint feature.
+  ///
+  /// Finding a Hamiltonian path (or a valid continuation from the current
+  /// path) requires exhaustive backtracking search, which is CPU-heavy and
+  /// would block the UI thread on larger shapes. `compute()` runs this work on
+  /// a background isolate so the app stays responsive while the hint is
+  /// calculated. Two cases are handled:
+  /// - No path started yet: solve the shape from scratch and reveal its first cell.
+  /// - Path in progress: search for a continuation from the last visited cell.
   Future<void> _revealHint() async {
     if (_path.isEmpty) {
       // path শুরুই হয়নি — solvable হলে যেকোনো cell থেকেই শুরু করা যায়,
@@ -242,6 +294,8 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
+  /// Resets the player's traced path on the current shape, clearing any
+  /// active hint and re-arming the "perfect run" flag.
   void _restart() {
     setState(() {
       _path = [];
@@ -250,6 +304,14 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
+  /// Central win-handling routine, invoked once [_onPathChanged] detects the
+  /// shape is fully traced. Computes and awards coins based on elapsed time
+  /// and whether the run was "perfect" (no dead-ends), unlocks relevant
+  /// achievements (first solve, speed solve, perfect solve, mode-specific
+  /// milestones), opportunistically shows an interstitial ad, and then
+  /// branches per [GameMode] to update progression (unlocking next
+  /// level/chapter, marking daily completion, bumping the unlimited streak)
+  /// and show the appropriate win dialog.
   Future<void> _onShapeSolved() async {
     final elapsed = DateTime.now().difference(_startTime!).inSeconds;
     final coins = RewardCalculator.calculate(
@@ -310,6 +372,9 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   // নতুন achievement unlock হলে বিরল gem currency reward দেয়
+  /// Unlocks the achievement with the given [id] if not already unlocked, and
+  /// grants a small gem reward (premium currency) the first time it's earned.
+  /// Safe to call repeatedly — only newly-unlocked achievements pay out.
   Future<void> _unlockAchievement(String id) async {
     final isNew = await AchievementManager.unlock(id);
     if (isNew) await GemManager.addGems(5);
@@ -317,6 +382,11 @@ class _GameScreenState extends State<GameScreen> {
 
   // Unlimited mode এ — পরের shape টা একটু কঠিন আকারে generate করে in-place চালিয়ে যাওয়া হয়
   // (generation compute() এ আলাদা isolate এ চলে যাতে main thread block হয়ে ANR না হয়)
+  /// Generates and loads the next shape for Unlimited mode, scaling difficulty
+  /// (cell count and shape style) with the current streak. Shape generation
+  /// runs on a background isolate via `compute()` to avoid blocking the UI
+  /// thread (and causing an ANR) for larger/more complex shapes; [_generating]
+  /// is toggled to show a loading overlay while this happens.
   Future<void> _loadNextUnlimitedShape() async {
     setState(() => _generating = true);
     final nextCells = 10 + (_unlimitedStreak * 2).clamp(0, 30);
@@ -336,6 +406,10 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   // Level mode এ জিতলে পরের level টা in-place লোড হয় — হোমে ফিরে আসার বদলে
+  /// Loads the next fixed level for Level mode in-place (without navigating
+  /// back to the home screen). Derives the next shape's cell count, seed, and
+  /// style from [DifficultyConfig] and the selected [Difficulty], then
+  /// generates it on a background isolate via `compute()`.
   Future<void> _loadNextLevel() async {
     final difficulty = widget.difficulty;
     if (difficulty == null) return;
@@ -366,6 +440,10 @@ class _GameScreenState extends State<GameScreen> {
 
   // Story mode এ জিতলে পরের level (একই chapter এ, অথবা chapter শেষ হলে পরের chapter এর
   // ১ম level) in-place লোড হয় — সব chapter এর সব level শেষ হলে আর এগোনোর কিছু নেই
+  /// Loads the next Story mode level in-place: either the next level within
+  /// the current chapter, or the first level of the next chapter once the
+  /// current chapter is exhausted. No-ops if there are no more chapters left.
+  /// Shape generation runs on a background isolate via `compute()`.
   Future<void> _loadNextStoryLevel() async {
     final currentChapter = _storyChapterIndex ?? 0;
     final currentLevel = _storyLevelIndex ?? 0;
@@ -401,6 +479,11 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
+  /// Shows the generic "shape solved" dialog with elapsed time and coins
+  /// earned. If [onNext] is provided, a button is shown to advance to the
+  /// next level/chapter using [nextLabel] as its text; otherwise only a
+  /// "Back to Home" option is offered (used for Daily mode, which has no
+  /// "next" step).
   void _showWinDialog({VoidCallback? onNext, String? nextLabel}) {
     final elapsed = DateTime.now().difference(_startTime!).inSeconds;
     final theme = _theme;
@@ -444,6 +527,9 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  /// Shows the Unlimited-mode-specific win dialog, which (unlike
+  /// [_showWinDialog]) offers a "Continue" action that loads a harder shape
+  /// via [_loadNextUnlimitedShape] instead of advancing a fixed level/chapter.
   void _showUnlimitedWinDialog() {
     final elapsed = DateTime.now().difference(_startTime!).inSeconds;
     showDialog(
@@ -481,6 +567,12 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   // লাইফ শেষ হয়ে গেলে — ব্যাংক করা লাইফ বা ad দেখে continue করার সুযোগ দাও
+  /// Invoked when [_lives] reaches 0 (from [_onStuck]). Checks whether the
+  /// player has any banked extra lives (earned/purchased separately) and
+  /// offers to spend one to continue; if none are banked, offers a rewarded
+  /// ad instead. Either path grants exactly one life and clears the path so
+  /// the player can retry. If the player declines both options, falls back to
+  /// [_showGameOverDialog].
   Future<void> _handleLivesExhausted() async {
     final bankedLives = await LivesManager.getBankedLives();
 
@@ -543,6 +635,10 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  /// Shows the final "game over" dialog (no banked lives, ad declined/failed,
+  /// or player chose to stop). Offers returning to home, or restarting the
+  /// current attempt with lives and run-state reset (and the unlimited streak
+  /// reset to 0, if applicable).
   void _showGameOverDialog() {
     showDialog(
       context: context,
@@ -579,6 +675,10 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  /// Builds the screen layout: top bar (back/restart/hint buttons, lives,
+  /// theme title, streak counter), the [MazeBoard] itself with an optional
+  /// loading overlay while the next shape is generating, and a progress
+  /// label showing cells filled out of the shape's total.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -645,6 +745,10 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  /// Builds the top bar row: back button, restart button, optional theme
+  /// title (story/festival), unlimited-mode streak badge, life-heart icons,
+  /// and the hint button (label switches between "Free Hint" and the coin
+  /// cost depending on [_freeHintAvailable]).
   Widget _buildTopBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

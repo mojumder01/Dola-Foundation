@@ -1,3 +1,5 @@
+// This file defines cultural theme presets (Bangladeshi culture motifs) used to
+// visually skin mazes across Story/Journey mode and festival-based daily challenges.
 import 'package:flutter/material.dart';
 import 'app_language.dart';
 import 'shape_factory.dart';
@@ -8,6 +10,13 @@ import 'shape_factory.dart';
 // আগে প্রতি chapter এ একটাই fixed maze ছিল ("only one game per section" feedback) —
 // এখন প্রতিটা chapter এ অনেকগুলো level আছে, আর style ভিন্ন রাখা হয়েছে যাতে maze design
 // আরও বৈচিত্র্যময়/আকর্ষণীয় লাগে।
+// English: A cultural theme (e.g. "Bangladesh Rickshaw") used to skin a maze —
+// shapes are always procedurally generated via ShapeFactory (so solvability is
+// guaranteed); this class only supplies cosmetic data (name, colors, emoji,
+// base cell count, seed, shape style) plus per-sub-level scaling helpers.
+/// Represents a single cultural theme: localized title/description, emoji,
+/// color palette, base maze size/seed, and shape style. Used both for
+/// Story/Journey chapters and festival-specific daily challenges.
 class CultureTheme {
   final String id;
   final String title;
@@ -15,8 +24,11 @@ class CultureTheme {
   final String emoji;
   final String description;
   final String descriptionEn;
+  // Gradient/accent colors applied to the maze UI for this theme
   final List<Color> colors;
+  // Base maze size (cell count) for level 0 of this theme
   final int targetCells;
+  // Base deterministic seed; combined with level index for per-level seeds
   final int seed;
   final ShapeStyle style;
 
@@ -33,19 +45,29 @@ class CultureTheme {
     this.style = ShapeStyle.blob,
   });
 
+  /// Localized title selected via current app language (Bangla/English).
   String get displayTitle => tr(title, titleEn);
+  /// Localized description selected via current app language (Bangla/English).
   String get displayDescription => tr(description, descriptionEn);
 
   // chapter এর ভেতরের level (0-based) অনুযায়ী cell সংখ্যা বাড়তে থাকে
+  /// Computes the maze size (cell count) for a given level within this
+  /// theme's chapter — grows linearly (+6 cells per level) so later levels
+  /// in the same chapter are progressively larger/harder.
   int cellsForLevel(int levelIndex) => targetCells + levelIndex * 6;
 
   // প্রতিটা sub-level এর জন্য আলাদা deterministic seed
+  /// Derives a unique, deterministic seed per sub-level so every player
+  /// sees the same maze for a given theme + level combination.
   int seedForLevel(int levelIndex) => seed * 100 + levelIndex;
 }
 
 // Story/Journey mode — বাংলাদেশের সংস্কৃতি ঘুরে দেখার একটা ধারাবাহিক যাত্রা
+/// Story/Journey mode: an ordered sequence of cultural "chapters" (each a
+/// CultureTheme) the player progresses through, each containing multiple levels.
 class StoryJourney {
   // প্রতিটা chapter (section) এ এখন একটার বদলে একাধিক maze খেলা যায়
+  /// Number of playable levels contained within each chapter.
   static const int levelsPerChapter = 5;
 
   static const List<CultureTheme> chapters = [
@@ -125,7 +147,11 @@ class StoryJourney {
 }
 
 // বছরের নির্দিষ্ট তারিখে বিশেষ উৎসব থিম — daily challenge কে সেদিন এই থিমে সাজানো হয়
+/// Maps specific calendar dates (month-day) to a special festival CultureTheme,
+/// so the daily challenge is automatically re-skinned on Bangladeshi festival days.
 class FestivalCalendar {
+  /// Returns the festival theme for the given date, or null if the date is
+  /// not a recognized festival (in which case the regular daily challenge applies).
   static CultureTheme? themeForDate(DateTime date) {
     final key = '${date.month}-${date.day}';
     switch (key) {

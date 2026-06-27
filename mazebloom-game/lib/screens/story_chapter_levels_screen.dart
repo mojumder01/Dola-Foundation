@@ -1,3 +1,5 @@
+// Story Mode level-select screen for a single chapter: lists the chapter's
+// levels with sequential unlock and theme-aware maze generation.
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../utils/app_language.dart';
@@ -9,6 +11,9 @@ import '../widgets/app_background.dart';
 
 // একটা chapter এর ভেতরের সব level — আগে chapter এ একটাই maze ছিল,
 // এখন এখান থেকে একাধিক maze বেছে খেলা যায় (sequential unlock)
+/// Shows the level grid within a single Story Mode chapter (identified by
+/// [chapterIndex]), where levels unlock sequentially as the player
+/// progresses.
 class StoryChapterLevelsScreen extends StatefulWidget {
   final int chapterIndex;
 
@@ -18,11 +23,14 @@ class StoryChapterLevelsScreen extends StatefulWidget {
   State<StoryChapterLevelsScreen> createState() => _StoryChapterLevelsScreenState();
 }
 
+/// Tracks unlocked-level progress for the chapter and generates maze shapes
+/// themed to that chapter when a level is opened.
 class _StoryChapterLevelsScreenState extends State<StoryChapterLevelsScreen> {
   int _unlockedCount = 1;
   bool _loading = true;
   bool _opening = false;
 
+  // Resolves the CultureTheme (colors, maze style, seeds) for this chapter.
   CultureTheme get _theme => StoryJourney.chapters[widget.chapterIndex];
 
   @override
@@ -31,6 +39,7 @@ class _StoryChapterLevelsScreenState extends State<StoryChapterLevelsScreen> {
     _load();
   }
 
+  /// Loads how many levels are unlocked within this chapter.
   Future<void> _load() async {
     final unlocked = await ProgressManager.getUnlockedStoryLevelCount(widget.chapterIndex);
     setState(() {
@@ -39,6 +48,9 @@ class _StoryChapterLevelsScreenState extends State<StoryChapterLevelsScreen> {
     });
   }
 
+  /// Generates the chapter-themed maze shape for [levelIndex] and pushes
+  /// [GameScreen] in story mode. Guards against double taps via [_opening]
+  /// and refreshes unlock state on return.
   Future<void> _openLevel(int levelIndex) async {
     if (_opening) return;
     setState(() => _opening = true);
@@ -70,6 +82,9 @@ class _StoryChapterLevelsScreenState extends State<StoryChapterLevelsScreen> {
     ).then((_) => _load());
   }
 
+  /// Builds the header (back button, chapter title/emoji, description) and
+  /// the level grid styled with the chapter's theme colors, plus a loading
+  /// overlay while a maze is being generated.
   @override
   Widget build(BuildContext context) {
     final theme = _theme;

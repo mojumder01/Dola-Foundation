@@ -4,6 +4,14 @@ import 'package:flutter/services.dart';
 import '../models/grid_shape.dart';
 
 // মূল গেমবোর্ড — শেপ দেখায়, আঙুল দিয়ে drag করে path আঁকা যায়
+// This file implements the core interactive game board: it renders the
+// current maze shape, the player's drag-traced path, hint highlighting,
+// and pinch-to-zoom/pan, plus the touch handling and hit-testing logic
+// that drives gameplay.
+
+/// The interactive maze board widget. Displays the [shape]'s cells, the
+/// currently traced [path], and an optional [hintCell], and reports path
+/// changes and dead-end ("stuck") events back to the parent via callbacks.
 class MazeBoard extends StatefulWidget {
   final GridShape shape;
   final List<Point<int>> path; // বর্তমান traced path (parent থেকে আসে)
@@ -28,11 +36,17 @@ class MazeBoard extends StatefulWidget {
   State<MazeBoard> createState() => _MazeBoardState();
 }
 
+/// State for [MazeBoard]: owns layout/zoom state, the hint pulse animation,
+/// and all touch-to-cell hit-testing and path-editing logic.
 class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMixin {
+  // current rendered size (px) of one grid cell, computed in build()
   double _cellSize = 0;
   Offset _boardOffset = Offset.zero; // shape কে center করার জন্য padding
+  // drives the pulsing glow animation on the hint cell
   late final AnimationController _hintPulse;
+  // tracks pinch-zoom/pan state for InteractiveViewer
   final TransformationController _transformController = TransformationController();
+  // whether single-finger pan is currently allowed (vs. reserved for path drag-tracing)
   bool _panEnabled = false;
 
   // shape.rows/cols আসলে generation এর সময়কার abstract grid size — শেপ সেই
@@ -40,6 +54,8 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
   // জন্য canvas বানানো হতো, তাই শেপ একপাশে চাপা/ছোট দেখাতো আর zoom/pan করলেও
   // আসল শেপটা viewport এর বাইরে কাটা থাকতো। তাই শেপের নিজের bounding box (যতটুকু
   // cell আসলে আছে) ধরে trim করে নেওয়া হয় — এতে শেপ সবসময় ঠিক viewport এ ফিট হয়।
+  // _minRow/_minCol: top-left origin of the shape's bounding box within the
+  // abstract grid; _boundRows/_boundCols: the trimmed box's dimensions.
   int _minRow = 0, _minCol = 0, _boundRows = 1, _boundCols = 1;
 
   @override
@@ -53,6 +69,10 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
     _transformController.addListener(_onTransformChanged);
   }
 
+  /// Recomputes the shape's bounding box (_minRow/_minCol/_boundRows/_boundCols)
+  /// from its actual cell coordinates, so rendering and hit-testing only use
+  /// the space the shape really occupies instead of the full abstract grid
+  /// used during generation (avoids the shape looking tiny/off-center).
   void _computeBounds() {
     if (widget.shape.cells.isEmpty) {
       _minRow = 0;
@@ -75,6 +95,9 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
     _boundCols = maxCol - minCol + 1;
   }
 
+  /// Enables single-finger panning once the board is zoomed in (or already
+  /// overflows the viewport even at default zoom), so dragging moves the
+  /// view instead of being captured for path tracing.
   void _onTransformChanged() {
     // জুম-ইন করার পরই single-finger দিয়ে move/pan করা চালু হয় — bound trim করার
     // পরও কোনো কোনো লম্বা শেপে এক পাশে viewport এর চেয়ে বড় হয়ে যেতে পারে, তাই
@@ -85,8 +108,12 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
     if (shouldPan != _panEnabled) setState(() => _panEnabled = shouldPan);
   }
 
+  // true when the board's rendered size exceeds the available viewport, even before zooming
   bool _boardOverflowsViewport = false;
 
+  /// Restarts/stops the hint pulse animation when the hint cell appears or
+  /// disappears, and recomputes bounds/resets zoom when the shape changes
+  /// (e.g. moving to a new level).
   @override
   void didUpdateWidget(covariant MazeBoard oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -102,6 +129,8 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
     }
   }
 
+  /// Cleans up the animation controller and transform listener/controller
+  /// to avoid leaks when the widget is removed from the tree.
   @override
   void dispose() {
     _hintPulse.dispose();
@@ -111,6 +140,11 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
   }
 
   // আঙুলের position থেকে কোন grid cell এ আছে বের করো (bounding-box trimmed coordinate থেকে আসল shape coordinate এ ফিরিয়ে আনা হয়)
+  /// Hit-tests a local pointer/touch [Offset] against the rendered grid,
+  /// converting pixel coordinates into a trimmed-bounding-box cell index
+  /// and then translating back to absolute shape coordinates (by adding
+  /// back _minRow/_minCol). Returns null if outside the board or the
+  /// resolved cell isn't part of the shape.
   Point<int>? _cellFromOffset(Offset local) {
     if (_cellSize <= 0) return null;
     final adjusted = local - _boardOffset;
@@ -123,6 +157,7 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
     return widget.shape.contains(p) ? p : null;
   }
 
+  /// True if cells [a] and [b] are orthogonally adjacent (Manhattan distance == 1).
   bool _isAdjacent(Point<int> a, Point<int> b) {
     final dr = (a.x - b.x).abs();
     final dc = (a.y - b.y).abs();
@@ -130,6 +165,14 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
   }
 
   // নতুন cell এ touch/drag হলে কী হবে তার সব লজিক এখানে
+  /// Core drag-trace gesture logic, invoked on every pan start/update. Maps
+  /// the touch point to a cell and applies one of several path-editing
+  /// rules in priority order: start a new path, ignore re-touching the same
+  /// cell, backtrack (undo) when returning to the previous cell, truncate
+  /// the path when re-touching an earlier visited cell, or extend the path
+  /// to a new adjacent unvisited cell. Also detects shape completion and
+  /// dead-ends (no unvisited adjacent cell), firing haptic feedback and the
+  /// onStuck callback respectively.
   void _handleTouch(Offset local) {
     final cell = _cellFromOffset(local);
     if (cell == null) return;
@@ -181,6 +224,8 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
     }
   }
 
+  /// Returns the 4 cardinal-direction neighbor coordinates of [p] (not
+  /// bounds-checked against the shape; callers filter with shape.contains).
   List<Point<int>> _neighbors(Point<int> p) => [
         Point(p.x - 1, p.y),
         Point(p.x + 1, p.y),
@@ -188,6 +233,11 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
         Point(p.x, p.y + 1),
       ];
 
+  /// Lays out the board: computes a clamped cell size that fits the
+  /// available space, expands the canvas if the board would overflow the
+  /// viewport (so the rest can be reached via zoom/pan), and wraps the
+  /// painted board in an [InteractiveViewer] for pinch-zoom/pan plus a
+  /// [GestureDetector] for drag-trace path input.
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -246,11 +296,15 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
 }
 
 // Grid cell এবং আঁকা path draw করার painter
+/// CustomPainter that renders the shape's cells, the hint highlight, and
+/// the player's traced path onto a canvas. Pure rendering — no gesture or
+/// state logic lives here.
 class _MazePainter extends CustomPainter {
   final GridShape shape;
   final List<Point<int>> path;
   final double cellSize;
   final Offset boardOffset;
+  // minRow/minCol: bounding-box origin used to translate shape coordinates into canvas pixels
   final int minRow;
   final int minCol;
   final Point<int>? hintCell;
@@ -271,11 +325,16 @@ class _MazePainter extends CustomPainter {
     this.hintCell,
   });
 
+  /// Converts a shape-space cell coordinate [p] to the pixel center of that
+  /// cell on the canvas, accounting for the bounding-box offset and board centering.
   Offset _centerOf(Point<int> p) => Offset(
         boardOffset.dx + (p.y - minCol) * cellSize + cellSize / 2,
         boardOffset.dy + (p.x - minRow) * cellSize + cellSize / 2,
       );
 
+  /// Paints the board in three layers (back to front): all shape cells as
+  /// rounded background tiles, the pulsing hint highlight (if any), and the
+  /// traced path as a connected line with start (green) and end (white) dots.
   @override
   void paint(Canvas canvas, Size size) {
     // cellColor কে background এর তুলনায় একটু হালকা/উজ্জ্বল করে দেওয়া হয়, আর একটা
@@ -338,6 +397,8 @@ class _MazePainter extends CustomPainter {
     }
   }
 
+  /// Only repaints when something visually relevant changed, avoiding
+  /// unnecessary redraws of the (potentially large) board on every frame.
   @override
   bool shouldRepaint(covariant _MazePainter oldDelegate) {
     return oldDelegate.path != path ||

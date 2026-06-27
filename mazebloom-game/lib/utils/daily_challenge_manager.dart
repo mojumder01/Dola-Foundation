@@ -1,12 +1,18 @@
+// Manages the "daily challenge" feature: generates a deterministic maze shape
+// for the current day (optionally festival-themed) and tracks completion/streaks.
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/grid_shape.dart';
 import 'shape_factory.dart';
 import 'culture_theme.dart';
 
 // প্রতিদিন একটা fixed shape — তারিখ থেকে seed বানানো হয় বলে সবার phone এ একই shape আসে
+/// Handles generation of the daily challenge maze (same shape for every
+/// player on a given date) plus completion tracking and streak counting.
 class DailyChallengeManager {
   static const _completedKey = 'mazebloom_daily_completed_date';
 
+  /// Builds a deterministic seed from the calendar date so every device
+  /// generates the same daily shape on the same day.
   static int _seedForDate(DateTime date) {
     return date.year * 10000 + date.month * 100 + date.day;
   }
@@ -15,10 +21,15 @@ class DailyChallengeManager {
       '${date.year}-${date.month}-${date.day}';
 
   // আজ কোনো উৎসব থাকলে সেই থিম দেওয়া হয় — না থাকলে null (সাধারণ daily challenge)
+  /// Returns today's festival theme if today is a recognized festival date,
+  /// otherwise null (meaning the regular/non-themed daily challenge applies).
   static CultureTheme? todaysFestivalTheme() {
     return FestivalCalendar.themeForDate(DateTime.now());
   }
 
+  /// Produces today's maze shape: festival-themed (fixed size/seed from the
+  /// theme) when a festival is active, otherwise a date-seeded shape with a
+  /// slightly varying size so each regular day still feels distinct.
   static GridShape todaysShape() {
     final now = DateTime.now();
     final festival = todaysFestivalTheme();
@@ -32,12 +43,17 @@ class DailyChallengeManager {
     return ShapeFactory.generate(targetCells: targetCells, seed: seed);
   }
 
+  /// Checks whether the player has already completed today's challenge,
+  /// based on the locally stored last-completed date.
   static Future<bool> isCompletedToday() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getString(_completedKey);
     return saved == _dateKey(DateTime.now());
   }
 
+  /// Records today's challenge as completed and updates the streak: the
+  /// streak increments only if yesterday was also completed (consecutive
+  /// days), otherwise it resets to 1 since the chain was broken.
   static Future<void> markCompletedToday() async {
     final prefs = await SharedPreferences.getInstance();
     final now = DateTime.now();
@@ -52,6 +68,7 @@ class DailyChallengeManager {
   }
 
   // কতদিন ধরে পরপর daily challenge সমাধান করছে — streak system (Part 3/4 এ reward এ ব্যবহার হবে)
+  /// Returns the player's current consecutive-day completion streak.
   static Future<int> getStreak() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt('mazebloom_daily_streak') ?? 0;

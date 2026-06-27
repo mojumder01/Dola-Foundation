@@ -1,3 +1,6 @@
+// Main menu screen of the app: entry point for picking a game mode
+// (difficulty-based levels, Daily Challenge, Culture Journey/story mode,
+// Unlimited mode), and for navigating to Gallery, Rewards, and Profile.
 import 'package:flutter/material.dart';
 import '../utils/difficulty_config.dart';
 import '../utils/daily_challenge_manager.dart';
@@ -17,6 +20,8 @@ import 'profile_screen.dart';
 import '../widgets/app_background.dart';
 
 // মূল মেনু — Levels (৩টা difficulty), Daily Challenge, Unlimited mode বেছে নেওয়ার জায়গা
+/// Stateful screen widget for the home/main menu. Logic and data loading
+/// live in [_HomeScreenState].
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -24,10 +29,16 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+/// State for [HomeScreen]. Loads player progress/currency on init, checks
+/// for a daily login reward, and exposes navigation handlers to every
+/// other screen reachable from the main menu.
 class _HomeScreenState extends State<HomeScreen> {
+  // whether today's Daily Challenge is already completed
   bool _dailyDone = false;
+  // current daily-challenge streak length
   int _streak = 0;
   int _coins = 0;
+  // extra lives stored for Unlimited mode
   int _bankedLives = 0;
   String _avatar = ProfileManager.defaultAvatar;
   String? _name;
@@ -40,6 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // রোজ অ্যাপ খোলার জন্য — শুধু খোলার জন্যই — coin reward, ৭ দিনের চক্রে বাড়তে থাকে
+  /// Claims the daily login reward (if due) and shows a celebratory dialog.
+  /// Runs once per app open; awards coins on a rolling 7-day streak cycle
+  /// and re-loads screen data afterward so the new coin total is reflected.
   Future<void> _checkLoginReward() async {
     final reward = await LoginStreakManager.claimIfDue();
     if (reward == null) return;
@@ -70,6 +84,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Reloads all player-facing data shown on the home screen (daily
+  /// challenge status, streak, coins, banked lives, avatar, name) from
+  /// their respective managers and triggers a rebuild via [setState].
   Future<void> _loadData() async {
     final done = await DailyChallengeManager.isCompletedToday();
     final streak = await DailyChallengeManager.getStreak();
@@ -87,18 +104,28 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  /// Navigates to the Gallery screen; reloads home data on return since
+  /// achievements/rewards earned there can affect home screen state.
   void _openGallery() {
     Navigator.push(context, MaterialPageRoute(builder: (_) => const GalleryScreen())).then((_) => _loadData());
   }
 
+  /// Navigates to the Rewards screen; reloads home data on return (e.g.
+  /// coins or banked lives may have changed).
   void _openRewards() {
     Navigator.push(context, MaterialPageRoute(builder: (_) => const RewardsScreen())).then((_) => _loadData());
   }
 
+  /// Navigates to the Profile screen; reloads home data on return (e.g.
+  /// avatar or name may have changed).
   void _openProfile() {
     Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen())).then((_) => _loadData());
   }
 
+  /// Starts the Daily Challenge flow. If already completed today, shows an
+  /// informational dialog instead of re-opening the same maze (the daily
+  /// shape is deterministic per-day, so replaying it would be pointless).
+  /// Otherwise launches [GameScreen] with today's shape/theme in daily mode.
   void _openDailyChallenge() {
     if (_dailyDone) {
       // আজকেরটা আগেই শেষ — পুরোনো maze আবার না দেখিয়ে শুধু জানিয়ে দাও কালকে আসতে হবে
@@ -136,10 +163,13 @@ class _HomeScreenState extends State<HomeScreen> {
     ).then((_) => _loadData());
   }
 
+  /// Navigates to the Culture Journey (story mode) screen.
   void _openStoryMode() {
     Navigator.push(context, MaterialPageRoute(builder: (_) => const StoryModeScreen()));
   }
 
+  /// Generates a fresh random shape and starts a new Unlimited-mode game
+  /// (play until lives run out).
   void _openUnlimited() {
     final shape = ShapeFactory.generate(targetCells: 10);
     Navigator.push(
@@ -150,6 +180,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Opens the bottom sheet that lets the player quickly buy an extra life
+  /// (via ad or coins) without leaving the home screen for the full
+  /// Rewards screen.
   void _openLifeQuickBuy() {
     showModalBottomSheet(
       context: context,
@@ -165,6 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Navigates to the level-select screen filtered to the given [d]ifficulty.
   void _openDifficulty(Difficulty d) {
     Navigator.push(
       context,
@@ -262,6 +296,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Builds the top status bar: coin count, banked-lives counter (tap to
+  /// quick-buy), avatar/profile shortcut, gallery shortcut, and rewards
+  /// shortcut.
   Widget _buildTopBar() {
     return Row(
       children: [
@@ -339,6 +376,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Builds the Daily Challenge card. Visual style (colors/icon/text)
+  /// depends on whether today's challenge is completed and whether a
+  /// festival theme is active for today.
   Widget _dailyChallengeCard() {
     final festival = DailyChallengeManager.todaysFestivalTheme();
     // আজকেরটা শেষ হয়ে গেলে — সোনালি "completed" look, না হলে festival/সবুজ gradient
@@ -413,6 +453,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Generic gradient button used for the various game-mode entry points
+  /// (Culture Journey, Unlimited, each difficulty level) on the home screen.
   Widget _modeButton(String title, String subtitle, List<Color> colors, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -445,8 +487,12 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 // Home থেকেই সরাসরি extra life নেওয়ার ছোট quick-buy sheet — পুরো Rewards screen এ যেতে হয় না
+/// Bottom sheet widget that lets the player quickly acquire an extra
+/// "banked" life either by watching a rewarded ad or by spending coins,
+/// without navigating away from the home screen.
 class _LifeQuickBuySheet extends StatefulWidget {
   final int bankedLives;
+  // called after a successful purchase to refresh parent state
   final VoidCallback onChanged;
   final VoidCallback onOpenRewards;
 
@@ -460,8 +506,13 @@ class _LifeQuickBuySheet extends StatefulWidget {
   State<_LifeQuickBuySheet> createState() => _LifeQuickBuySheetState();
 }
 
+/// State for [_LifeQuickBuySheet]. Tracks the current coin cost for the
+/// next life (which scales via [LivesManager]) and a busy flag while an ad
+/// is loading/playing.
 class _LifeQuickBuySheetState extends State<_LifeQuickBuySheet> {
+  // fallback shown until the real cost loads
   int _lifeCoinCost = 150;
+  // true while a rewarded ad is being requested/shown
   bool _busy = false;
 
   @override
@@ -472,6 +523,8 @@ class _LifeQuickBuySheetState extends State<_LifeQuickBuySheet> {
     });
   }
 
+  /// Shows a rewarded ad; on success grants a banked life and closes the
+  /// sheet, on failure re-enables the button and surfaces the reason.
   Future<void> _watchAd() async {
     setState(() => _busy = true);
     AdService.showRewardedAd(
@@ -489,6 +542,9 @@ class _LifeQuickBuySheetState extends State<_LifeQuickBuySheet> {
     );
   }
 
+  /// Validates the life bank isn't full and the player has enough coins,
+  /// then spends coins, records the purchase (for cost scaling), grants a
+  /// banked life, and closes the sheet.
   Future<void> _buyWithCoins() async {
     if (widget.bankedLives >= LivesManager.maxBankedLives) {
       ScaffoldMessenger.of(context).showSnackBar(

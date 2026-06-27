@@ -1,3 +1,5 @@
+// Story Mode entry screen: lists chapters representing a journey through
+// Bangladeshi culture, unlocked one at a time as the player progresses.
 import 'package:flutter/material.dart';
 import '../utils/app_language.dart';
 import '../utils/culture_theme.dart';
@@ -6,6 +8,8 @@ import 'story_chapter_levels_screen.dart';
 import '../widgets/app_background.dart';
 
 // বাংলাদেশের সংস্কৃতি ঘুরে দেখার journey — chapter ধরে ধরে unlock হয়
+/// Top-level Story Mode screen showing the list of chapters (each a
+/// [CultureTheme]) with their locked/unlocked state.
 class StoryModeScreen extends StatefulWidget {
   const StoryModeScreen({super.key});
 
@@ -13,6 +17,8 @@ class StoryModeScreen extends StatefulWidget {
   State<StoryModeScreen> createState() => _StoryModeScreenState();
 }
 
+/// Tracks how many story chapters are unlocked and handles navigation into
+/// a chapter's level list.
 class _StoryModeScreenState extends State<StoryModeScreen> {
   int _unlockedCount = 1;
   bool _loading = true;
@@ -23,6 +29,7 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
     _load();
   }
 
+  /// Loads the number of unlocked story chapters from persistent storage.
   Future<void> _load() async {
     final unlocked = await ProgressManager.getUnlockedStoryCount();
     setState(() {
@@ -31,6 +38,9 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
     });
   }
 
+  /// Navigates to [StoryChapterLevelsScreen] for the chapter at [index] and
+  /// refreshes unlock state once the player returns (chapter unlocks may
+  /// have changed by completing levels).
   void _openChapter(int index) {
     Navigator.push(
       context,
@@ -38,6 +48,9 @@ class _StoryModeScreenState extends State<StoryModeScreen> {
     ).then((_) => _load());
   }
 
+  /// Builds the header and the scrollable list of chapter cards, each
+  /// showing its theme emoji/title/description when unlocked, or a locked
+  /// placeholder otherwise.
   @override
   Widget build(BuildContext context) {
     return Scaffold(

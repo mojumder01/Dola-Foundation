@@ -1,3 +1,7 @@
+// Profile/settings screen: lets the player set their name and avatar,
+// switch language, choose cosmetic options (path color, cell skin, maze
+// background), toggle sound/vibration, and purchase cosmetics with coins
+// or real-money IAP.
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../utils/app_language.dart';
@@ -11,6 +15,8 @@ import '../services/iap_service.dart';
 import '../widgets/app_background.dart';
 
 // স্থানীয় প্রোফাইল — কোনো real login/Google sign-in নেই, শুধু নাম + avatar emoji local এ সেভ হয়
+/// Stateful screen widget for the profile/settings screen. Logic and data
+/// loading live in [_ProfileScreenState].
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -18,10 +24,14 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
+/// State for [ProfileScreen]. Loads the player's saved profile, settings,
+/// and cosmetic unlock/selection state on init, and handles purchasing or
+/// selecting cosmetics (path colors, cell skins, maze backgrounds).
 class _ProfileScreenState extends State<ProfileScreen> {
   final _nameController = TextEditingController();
   String _avatar = ProfileManager.defaultAvatar;
   bool _loading = true;
+  // shows a brief "saved" confirmation after _save()
   bool _saved = false;
   bool _soundOn = true;
   bool _vibrationOn = true;
@@ -45,6 +55,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
+  /// Loads all profile, settings, and cosmetic data from their respective
+  /// managers. Also re-checks the diamond-color IAP entitlement on every
+  /// load so a completed purchase is reflected even if it settled after
+  /// this screen first opened.
   Future<void> _load() async {
     if (IapService.diamondColorUnlocked) {
       await PathColorManager.unlockPremium(PathColorManager.diamondId);
@@ -74,6 +88,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  /// Handles tapping a path-color swatch: for premium colors, kicks off
+  /// the real-money IAP flow if not yet unlocked; for coin-priced colors,
+  /// checks the player has enough coins before purchasing/selecting.
   Future<void> _buyOrSelectColor(PathColorOption option) async {
     final alreadyUnlocked = _unlockedColorIds.contains(option.id);
     if (option.isPremium && !alreadyUnlocked) {
@@ -95,6 +112,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (ok) await _load();
   }
 
+  /// Handles tapping a cell-skin swatch: validates coin balance for
+  /// locked skins, then purchases/selects via [CellSkinManager].
   Future<void> _buyOrSelectSkin(CellSkinOption option) async {
     final alreadyUnlocked = _unlockedSkinIds.contains(option.id);
     if (!alreadyUnlocked && _coins < option.cost) {
@@ -107,6 +126,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (ok) await _load();
   }
 
+  /// Handles tapping a maze-background option. Custom photo backgrounds
+  /// open the device gallery picker directly. Built-in backgrounds must be
+  /// unlocked in order (each one requires the previous tier to be unlocked
+  /// first) and require enough coins before purchase/selection.
   Future<void> _buyOrSelectBackground(MazeBackgroundOption option) async {
     if (option.isCustomPhoto) {
       final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -116,6 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
     final alreadyUnlocked = _unlockedBgIds.contains(option.id);
+    // Backgrounds unlock progressively — this one requires the prior tier first.
     if (!alreadyUnlocked && !MazeBackgroundManager.isPurchasable(option.id, _unlockedBgIds)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(tr('আগের ব্যাকগ্রাউন্ডটা আগে আনলক করো', 'Unlock the previous background first'))),
@@ -132,6 +156,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (ok) await _load();
   }
 
+  /// Persists the name/avatar changes via [ProfileManager] and briefly
+  /// shows a "saved" confirmation snackbar and inline message.
   Future<void> _save() async {
     if (_nameController.text.trim().isEmpty) return;
     await ProfileManager.save(name: _nameController.text, avatar: _avatar);
@@ -463,6 +489,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   // ভাষা টগল করার সাথে সাথে এই screen টা নিজেই rebuild হয়, তাই সাথে সাথে দেখা যায়
+  /// Builds a single language-choice chip (English/Bengali). Toggling
+  /// triggers [AppLanguage.toggle], which also rebuilds this screen
+  /// immediately via local setState (the whole app rebuild from
+  /// [AppLanguage] notifications happens separately at the root).
   Widget _langOption(String label, AppLang lang) {
     final selected = AppLanguage.instance.lang == lang;
     return GestureDetector(

@@ -1,9 +1,13 @@
+// Screen that displays the "Mosaic Gallery": a grid of all achievement
+// badges, showing unlocked ones in full color and locked ones as silhouettes.
 import 'package:flutter/material.dart';
 import '../utils/achievement_manager.dart';
 import '../utils/app_language.dart';
 import '../widgets/app_background.dart';
 
 // Mosaic Gallery — অর্জন করা সব badge পাশাপাশি দেখা যায়, ফাঁকা গুলো lock করা থাকে
+/// Stateful screen widget for the achievement gallery. Holds no logic
+/// itself; state and data loading live in [_GalleryScreenState].
 class GalleryScreen extends StatefulWidget {
   const GalleryScreen({super.key});
 
@@ -11,7 +15,10 @@ class GalleryScreen extends StatefulWidget {
   State<GalleryScreen> createState() => _GalleryScreenState();
 }
 
+/// State for [GalleryScreen]. Loads the set of unlocked achievement IDs on
+/// init and renders a grid of all known achievements, masking locked ones.
 class _GalleryScreenState extends State<GalleryScreen> {
+  // IDs of achievements the player has earned
   Set<String> _unlocked = {};
   bool _loading = true;
 
@@ -21,6 +28,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
     _load();
   }
 
+  /// Fetches the persisted set of unlocked achievement IDs and updates
+  /// state, ending the loading spinner.
   Future<void> _load() async {
     final unlocked = await AchievementManager.getUnlockedIds();
     setState(() {

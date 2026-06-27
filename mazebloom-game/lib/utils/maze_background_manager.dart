@@ -1,3 +1,6 @@
+// Manages the game screen's background: a catalog of preset gradients plus
+// one slot for a custom device photo, with serial unlocking via coins or
+// by reaching certain player levels.
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'coin_manager.dart';
@@ -5,6 +8,8 @@ import 'difficulty_config.dart';
 import 'progress_manager.dart';
 
 // গেম স্ক্রিনের background — কিছু আগে থেকে বানানো gradient, আর একটা স্লট নিজের ফোনের ছবি দিয়ে customize করার জন্য
+/// Describes a single selectable background: either a preset gradient or
+/// the special custom-photo slot, with its unlock cost/conditions.
 class MazeBackgroundOption {
   final String id;
   final List<Color> colors;
@@ -23,9 +28,15 @@ class MazeBackgroundOption {
   });
 }
 
+/// Manages the catalog of background options, their serial unlock order,
+/// purchasing with coins, free unlocks by player level, and the custom
+/// photo background slot. State is persisted via SharedPreferences.
 class MazeBackgroundManager {
+  // SharedPreferences key storing the list of unlocked background ids.
   static const _unlockedKey = 'mazebloom_unlocked_bg';
+  // SharedPreferences key storing the currently selected background id.
   static const _selectedKey = 'mazebloom_selected_bg';
+  // SharedPreferences key storing the filesystem path of the custom photo.
   static const _customPathKey = 'mazebloom_custom_bg_path';
   static const String defaultId = 'default';
   static const String customId = 'custom_photo';
@@ -80,14 +91,21 @@ class MazeBackgroundManager {
     MazeBackgroundOption(id: customId, colors: [Color(0xFF1A1A2E), Color(0xFF16213E)], cost: 0, isCustomPhoto: true),
   ];
 
+  /// Looks up a background option by id, falling back to the first option
+  /// (default background) if the id isn't found.
   static MazeBackgroundOption optionFor(String id) =>
       options.firstWhere((o) => o.id == id, orElse: () => options.first);
 
   // serial order — default আর custom বাদে বাকিগুলো ক্রমানুসারে আনলক করতে হয়
+  /// The subset of options that must be unlocked in sequence (excludes the
+  /// always-free default and the separately-handled custom photo slot).
   static List<MazeBackgroundOption> get _serialOptions =>
       options.where((o) => o.id != defaultId && !o.isCustomPhoto).toList();
 
   // আগের সব serial option আনলক হয়ে থাকলেই এটা কেনা/আনলক করা যাবে
+  /// Returns whether [id] can be purchased right now: true if it's the
+  /// first item in the serial sequence, or if the option immediately
+  /// preceding it in the sequence has already been unlocked.
   static bool isPurchasable(String id, Set<String> unlockedIds) {
     final serial = _serialOptions;
     final index = serial.indexWhere((o) => o.id == id);
@@ -96,6 +114,9 @@ class MazeBackgroundManager {
   }
 
   // সর্বোচ্চ level (যেকোনো difficulty এর মধ্যে) দিয়ে level-ভিত্তিক ফ্রি আনলক চেক করা হয়
+  /// Computes the player's highest unlocked level across all difficulties,
+  /// used to determine which backgrounds should be freely unlocked by
+  /// progression rather than purchased with coins.
   static Future<int> _highestUnlockedLevel() async {
     final counts = await Future.wait(
       Difficulty.values.map((d) => ProgressManager.getUnlockedCount(d)),
@@ -104,6 +125,9 @@ class MazeBackgroundManager {
   }
 
   // level দিয়ে যেগুলো ফ্রি আনলক হওয়ার কথা সেগুলো unlocked set এ যুক্ত করে দেয়
+  /// Adds any background ids that should now be free-unlocked (because the
+  /// player's highest level meets or exceeds their unlockLevel) to the
+  /// unlocked set, persisting the change if anything was newly added.
   static Future<Set<String>> _applyLevelUnlocks(SharedPreferences prefs, Set<String> unlocked) async {
     final highest = await _highestUnlockedLevel();
     var changed = false;
@@ -117,27 +141,35 @@ class MazeBackgroundManager {
     return unlocked;
   }
 
+  /// Returns the set of unlocked background ids, always including
+  /// [defaultId], after applying any newly-earned level-based free unlocks.
   static Future<Set<String>> getUnlockedIds() async {
     final prefs = await SharedPreferences.getInstance();
     final unlocked = (prefs.getStringList(_unlockedKey) ?? [defaultId]).toSet()..add(defaultId);
     return _applyLevelUnlocks(prefs, unlocked);
   }
 
+  /// Returns the currently selected background id, defaulting to [defaultId].
   static Future<String> getSelectedId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_selectedKey) ?? defaultId;
   }
 
+  /// Persists the given background id as the currently selected background.
   static Future<void> select(String id) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_selectedKey, id);
   }
 
+  /// Returns the filesystem path of the saved custom photo background,
+  /// or null if the player hasn't picked one yet.
   static Future<String?> getCustomPhotoPath() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_customPathKey);
   }
 
+  /// Saves the path of a device photo chosen as the custom background,
+  /// unlocks the custom-photo option, and selects it immediately.
   static Future<void> setCustomPhotoPath(String path) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_customPathKey, path);
@@ -147,6 +179,11 @@ class MazeBackgroundManager {
     await select(customId);
   }
 
+  /// Attempts to purchase (or, if already unlocked, simply select) the
+  /// given background id using coins. The custom-photo option can't be
+  /// purchased this way (only via [setCustomPhotoPath]), and a background
+  /// can't be bought until its predecessor in the serial sequence is
+  /// unlocked. Returns true on success.
   static Future<bool> purchase(String id) async {
     final option = optionFor(id);
     if (option.isCustomPhoto) return false; // এটা ছবি বাছার মাধ্যমেই আনলক হয়
