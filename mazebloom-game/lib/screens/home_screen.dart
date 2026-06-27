@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import '../utils/difficulty_config.dart';
 import '../utils/daily_challenge_manager.dart';
+import '../utils/progress_manager.dart';
 import '../utils/shape_factory.dart';
 import '../utils/coin_manager.dart';
 import '../utils/lives_manager.dart';
@@ -168,14 +169,24 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (_) => const StoryModeScreen()));
   }
 
-  /// Generates a fresh random shape and starts a new Unlimited-mode game
-  /// (play until lives run out).
-  void _openUnlimited() {
-    final shape = ShapeFactory.generate(targetCells: 10);
+  /// Resumes Unlimited mode from the player's saved streak (instead of
+  /// always restarting at 0), generating a shape sized/styled to match that
+  /// streak's difficulty so progression feels continuous across sessions.
+  Future<void> _openUnlimited() async {
+    final streak = await ProgressManager.getUnlimitedStreak();
+    final cells = 10 + (streak * 2).clamp(0, 30);
+    const styleCycle = [ShapeStyle.blob, ShapeStyle.snake, ShapeStyle.cross, ShapeStyle.spiral, ShapeStyle.branchy];
+    final style = styleCycle[(streak ~/ 3) % styleCycle.length];
+    final shape = ShapeFactory.generate(targetCells: cells, style: style);
+    if (!mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => GameScreen(shape: shape, mode: GameMode.unlimited),
+        builder: (_) => GameScreen(
+          shape: shape,
+          mode: GameMode.unlimited,
+          initialUnlimitedStreak: streak,
+        ),
       ),
     );
   }

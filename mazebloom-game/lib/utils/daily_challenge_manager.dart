@@ -35,12 +35,19 @@ class DailyChallengeManager {
     final festival = todaysFestivalTheme();
     if (festival != null) {
       // উৎসবের দিনে থিমের seed/size দিয়ে শেপ বানানো হয় — তাও deterministic, সবার জন্য একই
-      return ShapeFactory.generate(targetCells: festival.targetCells, seed: festival.seed);
+      return ShapeFactory.generate(
+        targetCells: festival.targetCells,
+        seed: festival.seed,
+        style: festival.styleForLevel(now.day),
+      );
     }
     final seed = _seedForDate(now);
     // দিনের cell সংখ্যা একটু ঘোরাফেরা করে যাতে প্রতিদিন আলাদা অনুভূতি হয়
     final targetCells = 14 + (seed % 12);
-    return ShapeFactory.generate(targetCells: targetCells, seed: seed);
+    // shape style ও দিনভেদে ঘোরে — না হলে daily challenge সবসময় একই ধরনের blob দেখাতো
+    const styleCycle = [ShapeStyle.blob, ShapeStyle.snake, ShapeStyle.cross, ShapeStyle.spiral, ShapeStyle.branchy];
+    final style = styleCycle[now.day % styleCycle.length];
+    return ShapeFactory.generate(targetCells: targetCells, seed: seed, style: style);
   }
 
   /// Checks whether the player has already completed today's challenge,

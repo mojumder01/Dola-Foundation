@@ -50,6 +50,7 @@ class GameScreen extends StatefulWidget {
   final CultureTheme? theme; // mode == story/festival daily হলে — নাম, রঙ, ইমোজি দেখানোর জন্য
   final int? storyChapterIndex; // mode == story হলে লাগবে
   final int? storyLevelIndex; // mode == story হলে — chapter এর ভেতরের কোন level
+  final int initialUnlimitedStreak; // mode == unlimited হলে — সেভ করা streak থেকে resume করার জন্য
 
   const GameScreen({
     super.key,
@@ -60,6 +61,7 @@ class GameScreen extends StatefulWidget {
     this.theme,
     this.storyChapterIndex,
     this.storyLevelIndex,
+    this.initialUnlimitedStreak = 0,
   });
 
   @override
@@ -105,6 +107,7 @@ class _GameScreenState extends State<GameScreen> {
     _storyLevelIndex = widget.storyLevelIndex;
     _theme = widget.theme;
     _shape = widget.shape;
+    _unlimitedStreak = widget.initialUnlimitedStreak;
     _startTime = DateTime.now();
     _loadPathColor();
     _loadHintStatus();
@@ -343,6 +346,7 @@ class _GameScreenState extends State<GameScreen> {
         break;
       case GameMode.unlimited:
         setState(() => _unlimitedStreak++);
+        await ProgressManager.setUnlimitedStreak(_unlimitedStreak);
         if (_unlimitedStreak >= 10) await _unlockAchievement('unlimited_legend');
         _showUnlimitedWinDialog();
         break;
@@ -390,9 +394,11 @@ class _GameScreenState extends State<GameScreen> {
   Future<void> _loadNextUnlimitedShape() async {
     setState(() => _generating = true);
     final nextCells = 10 + (_unlimitedStreak * 2).clamp(0, 30);
-    final style = _unlimitedStreak < 4
-        ? ShapeStyle.blob
-        : (_unlimitedStreak < 9 ? ShapeStyle.snake : ShapeStyle.branchy);
+    // cycle through all shape families (instead of locking onto one style for
+    // the rest of the run) so long Unlimited sessions don't keep showing the
+    // same kind of maze over and over
+    const styleCycle = [ShapeStyle.blob, ShapeStyle.snake, ShapeStyle.cross, ShapeStyle.spiral, ShapeStyle.branchy];
+    final style = styleCycle[(_unlimitedStreak ~/ 3) % styleCycle.length];
     final next = await compute(generateShapeInBackground, ShapeGenRequest(targetCells: nextCells, style: style));
     if (!mounted) return;
     setState(() {
@@ -417,11 +423,7 @@ class _GameScreenState extends State<GameScreen> {
     final nextIndex = (_levelIndex ?? 0) + 1;
     final cells = DifficultyConfig.cellsForLevel(difficulty, nextIndex);
     final seed = DifficultyConfig.seedForLevel(difficulty, nextIndex);
-    final style = switch (difficulty) {
-      Difficulty.easy => ShapeStyle.blob,
-      Difficulty.medium => ShapeStyle.snake,
-      Difficulty.hard => ShapeStyle.branchy,
-    };
+    final style = DifficultyConfig.styleForLevel(difficulty, nextIndex);
     final shape = await compute(
       generateShapeInBackground,
       ShapeGenRequest(targetCells: cells, seed: seed, style: style),
@@ -462,7 +464,7 @@ class _GameScreenState extends State<GameScreen> {
       ShapeGenRequest(
         targetCells: theme.cellsForLevel(nextLevel),
         seed: theme.seedForLevel(nextLevel),
-        style: theme.style,
+        style: theme.styleForLevel(nextLevel),
       ),
     );
     if (!mounted) return;
@@ -659,7 +661,7 @@ class _GameScreenState extends State<GameScreen> {
             child: Text(tr('হোম এ ফিরো', 'Back to Home')),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
               setState(() {
                 _lives = _startingLives;
@@ -667,6 +669,9 @@ class _GameScreenState extends State<GameScreen> {
                 _perfectRun = true;
                 if (widget.mode == GameMode.unlimited) _unlimitedStreak = 0;
               });
+              if (widget.mode == GameMode.unlimited) {
+                await ProgressManager.setUnlimitedStreak(0);
+              }
             },
             child: Text(tr('আবার খেলো', 'Play again'), style: const TextStyle(color: Color(0xFF7C4DFF))),
           ),

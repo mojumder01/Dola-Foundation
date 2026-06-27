@@ -34,7 +34,12 @@ GridShape generateShapeInBackground(ShapeGenRequest req) =>
 /// [blob] is compact and easy, [snake] is a winding corridor of medium
 /// difficulty, and [branchy] is a tree-like structure with many dead ends
 /// (hardest to plan a path through).
-enum ShapeStyle { blob, snake, branchy }
+/// [spiral] winds outward in a rotating arm (distinct swirl look from the
+/// meandering [snake]); [cross] grows four arms from the start point with
+/// occasional perpendicular branching (a "starfish" look, distinct from the
+/// fully-random branching of [branchy]). Added for visual variety so
+/// consecutive levels don't all look like the same shape family.
+enum ShapeStyle { blob, snake, branchy, spiral, cross }
 
 // Random কিন্তু সবসময় সমাধানযোগ্য একটা connected shape generate করে।
 // seed দিলে একই input এ একই shape পাওয়া যায় — fixed levels আর daily challenge
@@ -68,6 +73,8 @@ class ShapeFactory {
         ShapeStyle.blob => _growBlob(targetCells, gridSize, random),
         ShapeStyle.snake => _growSnake(targetCells, gridSize, random),
         ShapeStyle.branchy => _growBranchy(targetCells, gridSize, random),
+        ShapeStyle.spiral => _growSpiral(targetCells, gridSize, random),
+        ShapeStyle.cross => _growCross(targetCells, gridSize, random),
       };
       if (shape.totalCells == targetCells &&
           MazeGenerator.findHamiltonianPath(shape) != null) {
@@ -86,7 +93,7 @@ class ShapeFactory {
   /// adjacent to the shape) and absorbing it. This produces an easy,
   /// roughly circular shape since growth happens uniformly in all directions.
   static GridShape _growBlob(int targetCells, int gridSize, Random random) {
-    final center = Point(gridSize ~/ 2, gridSize ~/ 2);
+    final center = _randomStart(gridSize, random);
     final cells = <Point<int>>{center};
     // candidate cells adjacent to the shape
     final frontier = <Point<int>>{..._neighbors(center, gridSize)};
@@ -113,7 +120,7 @@ class ShapeFactory {
   /// Produces a narrower, more winding shape than [_growBlob] — medium
   /// difficulty to visually trace a path through.
   static GridShape _growSnake(int targetCells, int gridSize, Random random) {
-    final start = Point(gridSize ~/ 2, gridSize ~/ 2);
+    final start = _randomStart(gridSize, random);
     final cells = <Point<int>>{start};
     // tracks the walk so we can backtrack on dead ends
     final stack = <Point<int>>[start];
@@ -160,7 +167,7 @@ class ShapeFactory {
   /// The tip list is capped at 40 entries (oldest trimmed) to bound the
   /// cost of picking a random tip as the shape grows large.
   static GridShape _growBranchy(int targetCells, int gridSize, Random random) {
-    final start = Point(gridSize ~/ 2, gridSize ~/ 2);
+    final start = _randomStart(gridSize, random);
     final cells = <Point<int>>{start};
     // active growth points (branch ends)
     var tips = <Point<int>>[start];
@@ -193,6 +200,108 @@ class ShapeFactory {
     }
 
     return GridShape(rows: gridSize, cols: gridSize, cells: cells);
+  }
+
+  // মূল করিডোর একটা নির্দিষ্ট দিকে ঘুরতে ঘুরতে বাড়ে — দেখতে ঘূর্ণায়মান spiral-এর মতো
+  // (snake থেকে আলাদা — snake সোজা দিকে বায়াস করে, এটা নিয়মিত ঘোরে)
+  /// Grows a rotating spiral arm: walks a short run of steps in the current
+  /// direction, then turns 90° clockwise and continues, producing a winding
+  /// swirl shape distinct from [_growSnake]'s straight-biased corridor.
+  /// Backtracks via the stack when boxed in.
+  static GridShape _growSpiral(int targetCells, int gridSize, Random random) {
+    final start = _randomStart(gridSize, random);
+    final cells = <Point<int>>{start};
+    final stack = <Point<int>>[start];
+    // clockwise rotation order: up, right, down, left
+    const rotation = [Point(0, -1), Point(1, 0), Point(0, 1), Point(-1, 0)];
+    int dirIndex = random.nextInt(rotation.length);
+    int stepsInDir = 0;
+    final runLength = 2 + random.nextInt(3); // steps before rotating to the next direction
+
+    while (cells.length < targetCells && stack.isNotEmpty) {
+      final current = stack.last;
+      if (stepsInDir >= runLength) {
+        dirIndex = (dirIndex + 1) % rotation.length;
+        stepsInDir = 0;
+      }
+      final d = rotation[dirIndex];
+      final next = Point(current.x + d.x, current.y + d.y);
+
+      if (_inBounds(next, gridSize) && !cells.contains(next)) {
+        cells.add(next);
+        stack.add(next);
+        stepsInDir++;
+      } else {
+        // preferred direction is blocked — try any other direction before backtracking
+        Point<int>? moved;
+        for (final alt in _directions(random)) {
+          final altNext = Point(current.x + alt.x, current.y + alt.y);
+          if (_inBounds(altNext, gridSize) && !cells.contains(altNext)) {
+            cells.add(altNext);
+            stack.add(altNext);
+            moved = altNext;
+            break;
+          }
+        }
+        if (moved == null) {
+          stack.removeLast(); // fully boxed in — backtrack
+        } else {
+          stepsInDir = runLength; // force a rotation next time after this forced deviation
+        }
+      }
+    }
+
+    return GridShape(rows: gridSize, cols: gridSize, cells: cells);
+  }
+
+  // চারটা বাহু (উপর/নিচ/বাম/ডান) একসাথে বাড়ে, কখনো কখনো পাশে নতুন বাহু ছড়ায় —
+  // দেখতে starfish/cross এর মতো (branchy থেকে আলাদা, কারণ branchy এলোমেলো জায়গা থেকে শাখা ছড়ায়)
+  /// Grows four arms outward from the start point (one per cardinal
+  /// direction), each independently extending step by step, with an 18%
+  /// chance per step of spawning a perpendicular side-branch (capped at 16
+  /// total arms). Produces a starfish/cross silhouette distinct from
+  /// [_growBranchy]'s fully random branch origins.
+  static GridShape _growCross(int targetCells, int gridSize, Random random) {
+    final start = _randomStart(gridSize, random);
+    final cells = <Point<int>>{start};
+    // armDirs[i]/armTips[i] together describe one active growth arm: the
+    // direction it extends in, and the current end cell of that arm.
+    final armDirs = <Point<int>>[const Point(-1, 0), const Point(1, 0), const Point(0, -1), const Point(0, 1)];
+    final armTips = <Point<int>>[start, start, start, start];
+
+    while (cells.length < targetCells && armDirs.isNotEmpty) {
+      final i = random.nextInt(armDirs.length);
+      final dir = armDirs[i];
+      final next = Point(armTips[i].x + dir.x, armTips[i].y + dir.y);
+
+      if (_inBounds(next, gridSize) && !cells.contains(next)) {
+        cells.add(next);
+        armTips[i] = next;
+        if (random.nextDouble() < 0.18 && armDirs.length < 16) {
+          final perp = dir.x == 0 ? const Point(1, 0) : const Point(0, 1);
+          armDirs.add(random.nextBool() ? perp : Point(-perp.x, -perp.y));
+          armTips.add(next);
+        }
+      } else {
+        // this arm hit the grid edge or itself — stop extending it
+        armDirs.removeAt(i);
+        armTips.removeAt(i);
+      }
+    }
+
+    return GridShape(rows: gridSize, cols: gridSize, cells: cells);
+  }
+
+  /// Picks a randomized starting point within roughly the central half of
+  /// the grid (instead of always the exact center), so shapes explore
+  /// different areas of the canvas and look less repetitive across
+  /// generations/levels even when the growth algorithm is the same.
+  static Point<int> _randomStart(int gridSize, Random random) {
+    final margin = (gridSize * 0.25).round().clamp(0, gridSize ~/ 2 - 1);
+    final range = (gridSize - margin * 2).clamp(1, gridSize);
+    final x = (margin + random.nextInt(range)).clamp(0, gridSize - 1);
+    final y = (margin + random.nextInt(range)).clamp(0, gridSize - 1);
+    return Point(x, y);
   }
 
   /// Checks whether point [p] lies within the [gridSize] x [gridSize] grid.

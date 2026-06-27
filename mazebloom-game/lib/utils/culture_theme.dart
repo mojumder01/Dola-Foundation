@@ -56,6 +56,25 @@ class CultureTheme {
   /// in the same chapter are progressively larger/harder.
   int cellsForLevel(int levelIndex) => targetCells + levelIndex * 6;
 
+  // আগে chapter এর সব level এ এই একটাই fixed style ব্যবহার হতো, তাই ৫টা level
+  // একই রকম দেখাতো — এখন level index অনুযায়ী [style] আর একটা দ্বিতীয় সম্পর্কিত
+  // style এর মধ্যে ঘোরে, আর chapter ভেদে cycle এর শুরুর ধাপও আলাদা (seed দিয়ে অফসেট)
+  /// Returns the shape style for a level within this chapter, alternating
+  /// between this theme's base [style] and a complementary one so the 5
+  /// levels in a chapter don't all look like the same maze family. The
+  /// starting phase of the alternation is offset by [seed] so different
+  /// chapters don't all switch styles on the same level index.
+  ShapeStyle styleForLevel(int levelIndex) {
+    final complement = switch (style) {
+      ShapeStyle.blob => ShapeStyle.spiral,
+      ShapeStyle.snake => ShapeStyle.cross,
+      ShapeStyle.branchy => ShapeStyle.spiral,
+      ShapeStyle.spiral => ShapeStyle.blob,
+      ShapeStyle.cross => ShapeStyle.snake,
+    };
+    return (levelIndex + seed) % 2 == 0 ? style : complement;
+  }
+
   // প্রতিটা sub-level এর জন্য আলাদা deterministic seed
   /// Derives a unique, deterministic seed per sub-level so every player
   /// sees the same maze for a given theme + level combination.

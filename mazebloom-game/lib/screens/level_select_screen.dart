@@ -54,11 +54,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
 
     final cells = DifficultyConfig.cellsForLevel(widget.difficulty, levelIndex);
     final seed = DifficultyConfig.seedForLevel(widget.difficulty, levelIndex);
-    final style = switch (widget.difficulty) {
-      Difficulty.easy => ShapeStyle.blob,
-      Difficulty.medium => ShapeStyle.snake,
-      Difficulty.hard => ShapeStyle.branchy,
-    };
+    final style = DifficultyConfig.styleForLevel(widget.difficulty, levelIndex);
     // Hard difficulty এর বড় shape এ Hamiltonian-path backtracking অনেকক্ষণ লাগতে
     // পারে — compute() দিয়ে background isolate এ চালানো হয় যাতে UI thread না
     // আটকায় এবং Android ANR/force-close না হয়

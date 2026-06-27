@@ -61,7 +61,7 @@ class _StoryChapterLevelsScreenState extends State<StoryChapterLevelsScreen> {
       ShapeGenRequest(
         targetCells: theme.cellsForLevel(levelIndex),
         seed: theme.seedForLevel(levelIndex),
-        style: theme.style,
+        style: theme.styleForLevel(levelIndex),
       ),
     );
 

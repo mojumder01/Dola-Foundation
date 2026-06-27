@@ -80,4 +80,23 @@ class ProgressManager {
       await prefs.setInt(_storyLevelKey(chapterIndex), nextUnlocked.clamp(1, levelsPerChapter));
     }
   }
+
+  // Unlimited mode এর streak আগে শুধু in-memory ছিল, app থেকে বের হয়ে আবার ঢুকলে
+  // ০ থেকে শুরু হতো — এখন persist করা হয় যাতে session এর মাঝে count মনে থাকে
+  static const _unlimitedStreakKey = 'mazebloom_unlimited_streak';
+
+  /// Returns the player's saved Unlimited-mode streak (shapes solved without
+  /// losing all lives), so resuming Unlimited mode continues where they left
+  /// off instead of restarting from 0.
+  static Future<int> getUnlimitedStreak() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_unlimitedStreakKey) ?? 0;
+  }
+
+  /// Persists the current Unlimited-mode streak; call after each shape solved
+  /// and when the streak resets to 0 (lives exhausted, "Start Over" chosen).
+  static Future<void> setUnlimitedStreak(int streak) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_unlimitedStreakKey, streak);
+  }
 }

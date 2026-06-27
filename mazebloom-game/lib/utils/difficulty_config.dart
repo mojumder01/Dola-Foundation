@@ -1,6 +1,7 @@
 // Centralizes difficulty-related configuration: labels, emoji, and the
 // formulas that scale maze size and seed per difficulty and level index.
 import 'app_language.dart';
+import 'shape_factory.dart';
 
 // তিনটা difficulty — প্রতিটার level অনুযায়ী shape এর cell সংখ্যা বাড়ে
 /// The three selectable difficulty tiers; each scales maze size differently
@@ -74,5 +75,19 @@ class DifficultyConfig {
   /// same maze is generated for that combination on every device.
   static int seedForLevel(Difficulty d, int levelIndex) {
     return d.index * 10000 + levelIndex;
+  }
+
+  // আগে প্রতি difficulty এ permanently একটাই shape style (blob/snake/branchy) fixed
+  // ছিল, তাই একই difficulty এর সব level একই ধরনের দেখাতো — এখন level index অনুযায়ী
+  // ২টা সম্পর্কিত style এর মধ্যে ঘোরে যাতে একটানা একই রকম maze না আসে
+  /// Returns the shape style for a difficulty + level index, alternating
+  /// between two related styles per tier (instead of one fixed style for
+  /// every level of that difficulty) so consecutive levels look more varied.
+  static ShapeStyle styleForLevel(Difficulty d, int levelIndex) {
+    return switch (d) {
+      Difficulty.easy => levelIndex % 2 == 0 ? ShapeStyle.blob : ShapeStyle.spiral,
+      Difficulty.medium => levelIndex % 2 == 0 ? ShapeStyle.snake : ShapeStyle.cross,
+      Difficulty.hard => levelIndex % 3 == 0 ? ShapeStyle.spiral : ShapeStyle.branchy,
+    };
   }
 }

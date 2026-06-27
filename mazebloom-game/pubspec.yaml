@@ -29,6 +29,10 @@ dependencies:
 
   cupertino_icons: ^1.0.8
 
+  # Plays short tap/win/fail sound effects — system sounds were unreliable/silent
+  # on many Android devices, so real bundled audio clips are used instead
+  audioplayers: ^6.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -36,3 +40,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/sounds/
