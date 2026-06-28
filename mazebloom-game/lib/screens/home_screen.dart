@@ -294,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: _modeButton(
                       '${DifficultyConfig.emoji(d)} ${DifficultyConfig.label(d)}',
                       tr('অসীম সংখ্যক লেভেল', 'Endless levels'),
-                      const [Color(0xFF7C4DFF), Color(0xFF448AFF)],
+                      DifficultyConfig.colors(d),
                       () => _openDifficulty(d),
                     ),
                   ),

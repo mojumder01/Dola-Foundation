@@ -1,5 +1,6 @@
 // Centralizes difficulty-related configuration: labels, emoji, and the
 // formulas that scale maze size and seed per difficulty and level index.
+import 'package:flutter/material.dart';
 import 'app_language.dart';
 import 'shape_factory.dart';
 
@@ -38,6 +39,22 @@ class DifficultyConfig {
         return '🌿';
       case Difficulty.hard:
         return '🌳';
+    }
+  }
+
+  // আগে তিনটা difficulty বাটনেই একই purple-blue color ছিল, easy/medium/hard
+  // আলাদা করা যেত না — এখন প্রতিটার নিজের রঙ (সবুজ=সহজ, কমলা=মাঝারি, লাল=কঠিন)
+  /// Returns the gradient colors representing a difficulty tier's button on
+  /// the home screen (green=easy, amber/orange=medium, red=hard), so the
+  /// three difficulty buttons are visually distinct instead of identical.
+  static List<Color> colors(Difficulty d) {
+    switch (d) {
+      case Difficulty.easy:
+        return const [Color(0xFF66BB6A), Color(0xFF2E7D32)];
+      case Difficulty.medium:
+        return const [Color(0xFFFFA726), Color(0xFFEF6C00)];
+      case Difficulty.hard:
+        return const [Color(0xFFEF5350), Color(0xFFB71C1C)];
     }
   }
 

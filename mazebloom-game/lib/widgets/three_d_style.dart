@@ -16,14 +16,14 @@ class ThreeD {
   static List<BoxShadow> shadow({Color color = Colors.black, double elevation = 8}) {
     return [
       BoxShadow(
-        color: color.withOpacity(0.35),
+        color: color.withOpacity(0.5),
         blurRadius: elevation,
-        offset: Offset(0, elevation * 0.45),
+        offset: Offset(0, elevation * 0.55),
       ),
       BoxShadow(
-        color: color.withOpacity(0.18),
-        blurRadius: elevation * 2.2,
-        offset: Offset(0, elevation * 0.9),
+        color: color.withOpacity(0.28),
+        blurRadius: elevation * 2.6,
+        offset: Offset(0, elevation * 1.1),
       ),
     ];
   }
@@ -49,24 +49,24 @@ class ThreeD {
       return LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [_lighten(c, 0.12), c, _darken(c, 0.10)],
+        colors: [_lighten(c, 0.18), c, _darken(c, 0.16)],
       );
     }
     return LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [_lighten(colors.first, 0.12), ...colors, _darken(colors.last, 0.10)],
+      colors: [_lighten(colors.first, 0.18), ...colors, _darken(colors.last, 0.16)],
     );
   }
 
   /// A thin semi-transparent top-left highlight border, layered on top of a
   /// gradient/solid fill to fake a beveled edge catching light.
-  static Border bevelBorder({double opacity = 0.35}) {
+  static Border bevelBorder({double opacity = 0.5}) {
     return Border(
-      top: BorderSide(color: Colors.white.withOpacity(opacity), width: 1),
-      left: BorderSide(color: Colors.white.withOpacity(opacity * 0.7), width: 1),
-      right: BorderSide(color: Colors.black.withOpacity(0.18), width: 1),
-      bottom: BorderSide(color: Colors.black.withOpacity(0.18), width: 1),
+      top: BorderSide(color: Colors.white.withOpacity(opacity), width: 1.5),
+      left: BorderSide(color: Colors.white.withOpacity(opacity * 0.7), width: 1.5),
+      right: BorderSide(color: Colors.black.withOpacity(0.28), width: 1.5),
+      bottom: BorderSide(color: Colors.black.withOpacity(0.28), width: 1.5),
     );
   }
 
