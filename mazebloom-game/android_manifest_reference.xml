@@ -13,6 +13,15 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713"/>
 
+        <!-- নতুন "Impeller" renderer অনেক mid/low-end Android GPU (বিশেষ করে
+             Mali) তে gradient + shadow + text একসাথে থাকা widget গুলোতে text/icon
+             অদৃশ্য হয়ে যাওয়া এবং মাঝে মাঝে স্ক্রিন black হয়ে freeze হয়ে যাওয়ার
+             মতো রেন্ডারিং bug তৈরি করে (এটা Flutter এর নিজের known issue) —
+             পুরোনো, বেশি স্থিতিশীল Skia renderer ব্যবহার করতে এটা off করা হলো -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
