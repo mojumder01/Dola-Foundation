@@ -62,11 +62,20 @@ class FeedbackService {
     await prefs.setBool(_vibrationKey, value);
   }
 
+  // দ্রুত পরপর drag করার সময় tap() অনেকবার কল হয় — শুধু resume() করলে clip আগের
+  // play এখনো চলতে থাকলে নতুন করে আবার শোনা যেত না, তাই প্রতিবার শুরু থেকে
+  // seek করে দেওয়া হয় যাতে maze এর প্রতিটা cell এ আঙুল গেলে আলাদা করে শোনা যায়
   /// Light feedback for routine interactions (e.g. selecting/moving a cell).
-  /// Uses [HapticFeedback.lightImpact] rather than the much subtler
+  /// Seeks the tap clip back to the start before resuming so each cell
+  /// visited during a continuous drag produces its own audible tick instead
+  /// of being swallowed by an still-playing previous tap. Uses
+  /// [HapticFeedback.lightImpact] rather than the much subtler
   /// `selectionClick` so taps are actually felt on most devices.
   static void tap() {
-    if (_soundOn) _tapPlayer.resume();
+    if (_soundOn) {
+      _tapPlayer.seek(Duration.zero);
+      _tapPlayer.resume();
+    }
     if (_vibrationOn) HapticFeedback.lightImpact();
   }
 

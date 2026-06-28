@@ -10,20 +10,20 @@ import 'package:flutter/material.dart';
 class ThreeD {
   ThreeD._();
 
-  /// Returns a layered drop-shadow list that reads as "raised off the
-  /// background." [color] tints the shadow (defaults to black) and
-  /// [elevation] scales blur/offset/opacity together.
-  static List<BoxShadow> shadow({Color color = Colors.black, double elevation = 8}) {
+  // আগে প্রতিটা shadow ২টা stacked BoxShadow (বড় blurRadius সহ) রিটার্ন করতো,
+  // আর প্রায় প্রতিটা button/badge/card এ একসাথে এটা+border+gradient বসানো
+  // ছিল — কম শক্তিশালী ফোনে এতগুলো ভারী blur layer একসাথে rasterize করতে
+  // গিয়ে UI freeze/black-out হয়ে যাচ্ছিলো। তাই এখন একটাই lightweight shadow।
+  /// Returns a single, cheap drop-shadow that reads as "raised off the
+  /// background" without the rendering cost of multiple stacked blurred
+  /// layers (which caused freezes/black screens on lower-end devices when
+  /// many shadowed widgets were on screen at once).
+  static List<BoxShadow> shadow({Color color = Colors.black, double elevation = 6}) {
     return [
       BoxShadow(
-        color: color.withOpacity(0.5),
+        color: color.withOpacity(0.4),
         blurRadius: elevation,
-        offset: Offset(0, elevation * 0.55),
-      ),
-      BoxShadow(
-        color: color.withOpacity(0.28),
-        blurRadius: elevation * 2.6,
-        offset: Offset(0, elevation * 1.1),
+        offset: Offset(0, elevation * 0.5),
       ),
     ];
   }

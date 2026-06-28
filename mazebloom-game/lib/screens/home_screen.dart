@@ -339,7 +339,6 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.white.withOpacity(0.08),
               borderRadius: BorderRadius.circular(20),
               border: ThreeD.bevelBorder(),
-              boxShadow: ThreeD.shadow(elevation: 4),
             ),
             child: Row(
               children: [
@@ -374,7 +373,6 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.white.withOpacity(0.08),
               borderRadius: BorderRadius.circular(14),
               border: ThreeD.bevelBorder(),
-              boxShadow: ThreeD.shadow(elevation: 4),
             ),
             child: const Text('🌺', style: TextStyle(fontSize: 18)),
           ),
@@ -388,7 +386,6 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.white.withOpacity(0.08),
               borderRadius: BorderRadius.circular(14),
               border: ThreeD.bevelBorder(),
-              boxShadow: ThreeD.shadow(elevation: 4),
             ),
             child: const Text('🎁', style: TextStyle(fontSize: 18)),
           ),
@@ -414,10 +411,7 @@ class _HomeScreenState extends State<HomeScreen> {
           gradient: ThreeD.bevelGradient(colors),
           borderRadius: BorderRadius.circular(18),
           border: _dailyDone ? Border.all(color: Colors.white.withOpacity(0.5), width: 1.5) : ThreeD.bevelBorder(),
-          boxShadow: [
-            BoxShadow(color: colors.first.withOpacity(0.45), blurRadius: 22, spreadRadius: _dailyDone ? 1 : 0),
-            ...ThreeD.shadow(elevation: 8),
-          ],
+          boxShadow: ThreeD.shadow(color: colors.first, elevation: 10),
         ),
         child: Row(
           children: [
@@ -426,7 +420,6 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(_dailyDone ? 0.25 : 0.15),
                 shape: BoxShape.circle,
-                boxShadow: ThreeD.shadow(elevation: 4),
               ),
               child: Text(_dailyDone ? '🏆' : (festival?.emoji ?? '📅'), style: const TextStyle(fontSize: 26)),
             ),
@@ -485,10 +478,7 @@ class _HomeScreenState extends State<HomeScreen> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
         decoration: ThreeD.decoration(colors: colors, radius: 18).copyWith(
-          boxShadow: [
-            BoxShadow(color: colors.first.withOpacity(0.4), blurRadius: 16),
-            ...ThreeD.shadow(elevation: 8),
-          ],
+          boxShadow: ThreeD.shadow(color: colors.first, elevation: 10),
         ),
         child: Row(
           children: [

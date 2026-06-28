@@ -840,11 +840,8 @@ class _GameScreenState extends State<GameScreen> {
           Row(
             children: List.generate(
               _startingLives,
-              (i) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 1),
-                decoration: BoxDecoration(
-                  boxShadow: i < _lives ? ThreeD.shadow(elevation: 3, color: const Color(0xFFF44336)) : null,
-                ),
+              (i) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 1),
                 child: Icon(
                   i < _lives ? Icons.favorite : Icons.favorite_border,
                   color: const Color(0xFFF44336),
