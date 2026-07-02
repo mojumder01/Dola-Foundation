@@ -59,15 +59,20 @@ class ThreeD {
     );
   }
 
-  /// A thin semi-transparent top-left highlight border, layered on top of a
-  /// gradient/solid fill to fake a beveled edge catching light.
+  // আগে এটা চার পাশে চার রকম রঙের border দিতো (উপরে-বামে সাদা, নিচে-ডানে
+  // কালো) — কিন্তু Flutter এ ভিন্ন রঙের side ওয়ালা Border কে borderRadius এর
+  // সাথে আঁকা যায় না: প্রতিটা frame এ paint-এর সময় exception ছুঁড়তো, ফলে
+  // gradient আঁকা হলেও ভেতরের Text/Icon (button এর title সহ!) আর আঁকা হতো না,
+  // আর একটানা exception এ স্ক্রিন black হয়ে আটকে যেত। তাই এখন এক রঙের
+  // (uniform) হালকা সাদা border — bevel এর আলো-ছায়ার কাজটা bevelGradient
+  // এমনিতেই করে দেয়।
+  /// A thin uniform semi-transparent highlight border giving the edge a
+  /// glossy rim. Must stay uniform (same color on all sides): Flutter cannot
+  /// paint a mixed-color Border together with a borderRadius — it throws
+  /// during paint, which stopped the children (button titles/icons) from
+  /// ever rendering.
   static Border bevelBorder({double opacity = 0.5}) {
-    return Border(
-      top: BorderSide(color: Colors.white.withOpacity(opacity), width: 1.5),
-      left: BorderSide(color: Colors.white.withOpacity(opacity * 0.7), width: 1.5),
-      right: BorderSide(color: Colors.black.withOpacity(0.28), width: 1.5),
-      bottom: BorderSide(color: Colors.black.withOpacity(0.28), width: 1.5),
-    );
+    return Border.all(color: Colors.white.withOpacity(opacity * 0.7), width: 1.5);
   }
 
   /// One-call decoration combining [bevelGradient], [bevelBorder], a raised

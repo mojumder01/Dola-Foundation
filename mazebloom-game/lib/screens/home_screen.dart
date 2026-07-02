@@ -586,9 +586,9 @@ class _LifeQuickBuySheetState extends State<_LifeQuickBuySheet> {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A2E),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border(
-          top: BorderSide(color: Colors.white.withOpacity(0.25), width: 1),
-        ),
+        // borderRadius এর সাথে শুধু-এক-পাশের Border কিছু Flutter version এ
+        // paint-এর সময় exception দেয় — তাই uniform Border.all ব্যবহার করা হলো
+        border: Border.all(color: Colors.white.withOpacity(0.25), width: 1),
         boxShadow: ThreeD.shadow(elevation: 10),
       ),
       child: Column(
