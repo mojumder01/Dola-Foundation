@@ -94,17 +94,25 @@ class DifficultyConfig {
     return d.index * 10000 + levelIndex;
   }
 
-  // আগে প্রতি difficulty এ permanently একটাই shape style (blob/snake/branchy) fixed
-  // ছিল, তাই একই difficulty এর সব level একই ধরনের দেখাতো — এখন level index অনুযায়ী
-  // ২টা সম্পর্কিত style এর মধ্যে ঘোরে যাতে একটানা একই রকম maze না আসে
-  /// Returns the shape style for a difficulty + level index, alternating
-  /// between two related styles per tier (instead of one fixed style for
-  /// every level of that difficulty) so consecutive levels look more varied.
+  // আগে প্রতি difficulty মাত্র ২টা style এর মধ্যে alternate করতো, তাই এক-লেভেল
+  // পরপরই একই রকম shape ফিরে আসতো আর maze গুলো একঘেয়ে/একই রকম লাগতো। এখন প্রতি
+  // difficulty তেই ৫টা style ই ঘুরিয়ে-ফিরিয়ে আসে (শুধু difficulty অনুযায়ী ভিন্ন
+  // ক্রমে শুরু হয়) — ফলে পরপর ৫টা level সবসময় আলাদা ধরনের দেখায়, আর seed ও প্রতি
+  // level এ বদলায় বলে একই style এর দুটো level-ও আলাদা shape পায়।
+  /// Returns the shape style for a difficulty + level index by cycling
+  /// through all five styles (in a difficulty-appropriate order), so five
+  /// consecutive levels are always visually distinct families instead of
+  /// alternating between only two. Combined with the per-level [seedForLevel],
+  /// even two levels that land on the same style get different shapes.
   static ShapeStyle styleForLevel(Difficulty d, int levelIndex) {
-    return switch (d) {
-      Difficulty.easy => levelIndex % 2 == 0 ? ShapeStyle.blob : ShapeStyle.spiral,
-      Difficulty.medium => levelIndex % 2 == 0 ? ShapeStyle.snake : ShapeStyle.cross,
-      Difficulty.hard => levelIndex % 3 == 0 ? ShapeStyle.spiral : ShapeStyle.branchy,
+    final styles = switch (d) {
+      Difficulty.easy =>
+        const [ShapeStyle.blob, ShapeStyle.spiral, ShapeStyle.snake, ShapeStyle.cross, ShapeStyle.branchy],
+      Difficulty.medium =>
+        const [ShapeStyle.snake, ShapeStyle.cross, ShapeStyle.spiral, ShapeStyle.branchy, ShapeStyle.blob],
+      Difficulty.hard =>
+        const [ShapeStyle.branchy, ShapeStyle.spiral, ShapeStyle.cross, ShapeStyle.snake, ShapeStyle.blob],
     };
+    return styles[levelIndex % styles.length];
   }
 }

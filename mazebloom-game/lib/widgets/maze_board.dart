@@ -242,13 +242,17 @@ class _MazeBoardState extends State<MazeBoard> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Cell size — শেপ এর rows/cols অনুযায়ী যতটা জায়গায় ফিট হয়, কিন্তু একটা
-        // min/max range এ clamp করা থাকে যাতে ছোট আর বড় শেপেও cell গুলো একই রকম
-        // সাইজে দেখায় (এর আগে ছোট shape এ অনেক বড়, বড় shape এ অনেক ছোট হয়ে যেত)
+        // Cell size — শেপ এর bounding box পুরোটা যাতে সবসময় viewport এ ফিট হয়
+        // (কখনো কেটে না যায়), সেজন্য rawSize = ঠিক যতটুকু হলে পুরো board জায়গায়
+        // ধরে সেই মাপ। আগে এটা min 26px এ clamp করা ছিল, ফলে বড় (Hard/Marathon)
+        // শেপ viewport ছাড়িয়ে গিয়ে অর্ধেক কাটা পড়ে যেত — এখন শুধু উপরের দিকে
+        // cap (58px) রাখা হয় যাতে ছোট শেপে cell অতিরিক্ত বড় না দেখায়; নিচের দিকে
+        // কোনো floor নেই বলে বড় শেপ যতটুকু দরকার ততটুকু ছোট হয়ে পুরোটা ফিট করে।
+        // ছোট cell এ খেলতে হলে player pinch-zoom করে বড় করে নিতে পারে।
         final maxW = constraints.maxWidth;
         final maxH = constraints.maxHeight;
         final rawSize = min(maxW / _boundCols, maxH / _boundRows);
-        _cellSize = rawSize.clamp(26.0, 58.0);
+        _cellSize = min(rawSize, 58.0);
 
         final boardW = _cellSize * _boundCols;
         final boardH = _cellSize * _boundRows;

@@ -395,11 +395,11 @@ class _GameScreenState extends State<GameScreen> {
   Future<void> _loadNextUnlimitedShape() async {
     setState(() => _generating = true);
     final nextCells = 10 + (_unlimitedStreak * 2).clamp(0, 30);
-    // cycle through all shape families (instead of locking onto one style for
-    // the rest of the run) so long Unlimited sessions don't keep showing the
-    // same kind of maze over and over
+    // cycle through all shape families, changing style every single shape (not
+    // every 3) so no two consecutive Marathon mazes share a look — combined
+    // with unseeded generation this keeps every maze in a run unique
     const styleCycle = [ShapeStyle.blob, ShapeStyle.snake, ShapeStyle.cross, ShapeStyle.spiral, ShapeStyle.branchy];
-    final style = styleCycle[(_unlimitedStreak ~/ 3) % styleCycle.length];
+    final style = styleCycle[_unlimitedStreak % styleCycle.length];
     final next = await compute(generateShapeInBackground, ShapeGenRequest(targetCells: nextCells, style: style));
     if (!mounted) return;
     setState(() {

@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final streak = await ProgressManager.getUnlimitedStreak();
     final cells = 10 + (streak * 2).clamp(0, 30);
     const styleCycle = [ShapeStyle.blob, ShapeStyle.snake, ShapeStyle.cross, ShapeStyle.spiral, ShapeStyle.branchy];
-    final style = styleCycle[(streak ~/ 3) % styleCycle.length];
+    final style = styleCycle[streak % styleCycle.length];
     final shape = ShapeFactory.generate(targetCells: cells, style: style);
     if (!mounted) return;
     Navigator.push(
@@ -256,25 +256,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 36),
 
                 _dailyChallengeCard(),
-                const SizedBox(height: 14),
-
-                _modeButton(
-                  '🇧🇩 ${tr('সংস্কৃতির যাত্রা', 'Culture Journey')}',
-                  tr('বাংলাদেশের রিকশা, ইলিশ, শাপলা ঘুরে আসো',
-                      "Explore Bangladesh's rickshaws, hilsa, and water lilies"),
-                  const [Color(0xFF26A69A), Color(0xFF00695C)],
-                  _openStoryMode,
-                ),
-                const SizedBox(height: 14),
-
-                _modeButton(
-                  '♾️ ${tr('আনলিমিটেড মোড', 'Unlimited Mode')}',
-                  tr('যতদূর পারো খেলো, লাইফ ফুরালে শেষ', 'Play as far as you can — ends when your lives run out'),
-                  const [Color(0xFFFF7043), Color(0xFFFF5252)],
-                  _openUnlimited,
-                ),
                 const SizedBox(height: 24),
 
+                // Culture Journey বাটন আপাতত hide করা হয়েছে; আর আগের আলাদা
+                // "Unlimited Mode" বাটনটা এখন "Marathon" নামে নিচের Levels
+                // সেকশনেই Easy/Medium/Hard এর সাথে একসাথে দেখানো হয়।
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -298,6 +284,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       () => _openDifficulty(d),
                     ),
                   ),
+                ),
+
+                _modeButton(
+                  '🏃 ${tr('ম্যারাথন', 'Marathon')}',
+                  tr('যতদূর পারো খেলো, লাইফ ফুরালে শেষ', 'Play as far as you can — ends when your lives run out'),
+                  const [Color(0xFFFF7043), Color(0xFFFF5252)],
+                  _openUnlimited,
                 ),
                 const SizedBox(height: 20),
               ],
